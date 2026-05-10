@@ -45,10 +45,10 @@ print(result)
 
 ```mermaid
 flowchart TD
-    A['invoke({"target_language": "英文", "text": "人工智能..."})'] --> B["[Prompt] 填充模板变量，生成 Message 列表"]
+    A["invoke 调用：传入 target_language 和 text 参数"] --> B["[Prompt] 填充模板变量，生成 Message 列表"]
     B --> C["[LLM] 发送 Message 到 GPT-4o-mini，获取 AIMessage"]
     C --> D["[Parser] 从 AIMessage 中提取 content 字符串"]
-    D --> E['"Artificial intelligence is changing..."']
+    D --> E["输出翻译结果：Artificial intelligence is changing..."]
 ```
 
 ## 扩展：多语言翻译批处理
