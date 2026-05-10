@@ -59,16 +59,28 @@ for step in range(max_len):
 
 ### KV Cache 的大小
 
+每个 token 的 KV Cache 计算（单层 K + V）：
+
+$$\text{PerTokenPerLayer} = 2 \times n\_kv\_heads \times d\_k \times \text{bytes\_per\_elem}$$
+
+全部层的总 KV Cache：
+
 $$\text{KV Cache Size} = 2 \times n\_layers \times n\_kv\_heads \times seq\_len \times d\_k \times \text{bytes\_per\_elem}$$
+
+> 公式中第一个 `2` = K + V 两份缓存, `bytes_per_elem` = 2 (BF16/FP16)。
 
 以 LLaMA-7B (32 层, 32 KV heads, $d_k=128$, BF16):
 
-| 序列长度 | 每 token KV | 总 KV Cache |
-|----------|------------|-------------|
-| 1K | 0.5 MB | 0.5 GB |
-| 4K | 0.5 MB | 2 GB |
-| 32K | 0.5 MB | 16 GB |
-| 128K | 0.5 MB | 64 GB ← 已经超过 GPU 显存！ |
+$$\text{每 token} = 2 \times 32 \times 32 \times 1 \times 128 \times 2 = 524288 \text{ bytes} = 512 \text{ KiB}$$
+
+| 序列长度 | 总 KV Cache |
+|----------|-------------|
+| 1K (1024) | 512 MiB |
+| 4K (4096) | 2 GiB |
+| 32K | 16 GiB |
+| 128K | 64 GiB ← 已经超过单卡 H100 (80GB) 显存！ |
+
+> 简化公式：$\text{KV Cache} = 2 \times n\_{layers} \times d\_{model} \times seq\\_len \times 2 \text{ bytes}$ ，因为 $n\_{kv\\_heads} \times d\_k = d\_{model}$。
 
 **KV Cache 是长序列推理的主要显存瓶颈。** 这就是为什么 GQA（减少 KV 头数）和 MLA（KV 压缩）如此重要。
 
