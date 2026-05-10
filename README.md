@@ -14,6 +14,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 │   Agent 框架    │  LangChain → LangGraph → RAG → 多Agent → 生产部署     │
 │   Hermes Agent │  Agent 核心循环 → 工具系统 → 记忆/技能 → 多平台接入    │
 │   Claude Code  │  CLI 交互 → Tools/Skills/Hooks → MCP → Agent SDK     │
+│   Ray 分布式    │  Core 原语 → 调度/容错/对象管理 → AI库 → 集群/生产      │
 └────────────────┴─────────────────────────────────────────────────────┘
 ```
 
@@ -117,6 +118,23 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 | 06 | [Agent SDK 开发 — SDK 架构、交互式/自动化会话](claude-code-learning-path/06-Agent-SDK开发/) |
 | 07 | [生产实践 — 多Agent协作、CI/CD、企业级治理](claude-code-learning-path/07-生产实践/) |
 
+### 7. [Ray 分布式计算框架](ray-learning-path/)
+
+系统学习 Ray 分布式计算框架，从 Core 三大原语（Task/Actor/Object）到 AI 库（Data/Train/Tune/Serve/RLlib），再到集群部署和生产实践。
+
+| 阶段 | 内容 | 学时 |
+|------|------|------|
+| 00 | [入口 — Ray 是什么、环境搭建、第一个分布式程序](ray-learning-path/00-入口/) | 2h |
+| 01 | [核心抽象 — Task、Actor、Object、三大抽象配合](ray-learning-path/01-核心抽象/) | 6h |
+| 02 | [对象管理 — Plasma 原理、零拷贝与内存层级、引用计数 GC](ray-learning-path/02-对象管理机制/) | 5h |
+| 03 | [调度系统 — 两级调度架构、资源抽象、放置组、调度策略](ray-learning-path/03-调度系统/) | 6h |
+| 04 | [容错与一致性 — 血统重建、Actor 故障恢复、GCS](ray-learning-path/04-容错与一致性/) | 5h |
+| 05 | [AI 库总览 — 生态全景、Ray Data、Ray Train 入门](ray-learning-path/05-AI库总览/) | 4h |
+| 06 | [训练与调优 — Ray Train 深度、Tune 超参优化、框架集成、大规模最佳实践](ray-learning-path/06-训练与调优/) | 8h |
+| 07 | [模型服务 — Serve 核心概念、自动扩缩容、多模型编排、高级部署](ray-learning-path/07-模型服务/) | 6h |
+| 08 | [集群与生产 — 集群架构、KubeRay 云原生部署、监控、性能调优](ray-learning-path/08-集群与生产/) | 6h |
+| 09 | [高级专题 — RLlib、MLOps 集成、自定义扩展、案例研究](ray-learning-path/09-高级专题/) | 6h |
+
 ---
 
 ## 学习顺序建议
@@ -130,9 +148,12 @@ LLM 理论基础 (必学基础)
         │
         ├──→ Hermes Agent 源码                  (Agent 框架路线)
         │
-        └──→ Claude Code 学习路径               (Claude Code 工具路线)
+        ├──→ Claude Code 学习路径               (Claude Code 工具路线)
+        │
+        └──→ Ray 分布式计算                     (分布式/ML 基础设施路线)
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
 - **Agent 方向**：LLM 基础 → Agent → Hermes（想深挖框架实现）
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
+- **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
