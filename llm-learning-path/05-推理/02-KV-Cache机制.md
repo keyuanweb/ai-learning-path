@@ -27,7 +27,7 @@
 
 ### 原理
 
-第 t+1 步时，只有新 token $x_t$ 的 $K_t$ 和 $V_t$ 是新的。前面的 $K_{0:t-1}$ 和 $V_{0:t-1}$ 与上一步完全相同。
+第 t+1 步时，只有新 token 的 K 和 V 是新的。前面已生成 token 的 K 和 V 与上一步完全相同。
 
 ```python
 # 没有 KV Cache (浪费)
@@ -61,17 +61,23 @@ for step in range(max_len):
 
 每个 token 的 KV Cache 计算（单层 K + V）：
 
-$$\text{PerTokenPerLayer} = 2 \times n\_kv\_heads \times d\_k \times \text{bytes\_per\_elem}$$
+```
+PerTokenPerLayer = 2 × n_kv_heads × d_k × bytes_per_elem
+```
 
 全部层的总 KV Cache：
 
-$$\text{KV Cache Size} = 2 \times n\_layers \times n\_kv\_heads \times seq\_len \times d\_k \times \text{bytes\_per\_elem}$$
+```
+KV Cache Size = 2 × n_layers × n_kv_heads × seq_len × d_k × bytes_per_elem
+```
 
-> 公式中第一个 `2` = K + V 两份缓存, `bytes_per_elem` = 2 (BF16/FP16)。
+> 公式中 `2` = K + V 两份缓存, `bytes_per_elem` = 2 (BF16/FP16)。
 
-以 LLaMA-7B (32 层, 32 KV heads, $d_k=128$, BF16):
+以 LLaMA-7B (32 层, 32 KV heads, `d_k` = 128, BF16):
 
-$$\text{每 token} = 2 \times 32 \times 32 \times 1 \times 128 \times 2 = 524288 \text{ bytes} = 512 \text{ KiB}$$
+```
+每 token = 2 × 32 × 32 × 1 × 128 × 2 = 524288 bytes = 512 KiB
+```
 
 | 序列长度 | 总 KV Cache |
 |----------|-------------|
@@ -80,7 +86,7 @@ $$\text{每 token} = 2 \times 32 \times 32 \times 1 \times 128 \times 2 = 524288
 | 32K | 16 GiB |
 | 128K | 64 GiB ← 已经超过单卡 H100 (80GB) 显存！ |
 
-> 简化公式：$\text{KV Cache} = 2 \times n\_{layers} \times d\_{model} \times seq\_len \times 2 \text{ bytes}$ ，因为 $n\_{kv\_heads} \times d\_k = d\_{model}$。
+> 简化公式：`KV Cache = 2 × n_layers × d_model × seq_len × 2 bytes` , 因为 `n_kv_heads × d_k = d_model`。
 
 **KV Cache 是长序列推理的主要显存瓶颈。** 这就是为什么 GQA（减少 KV 头数）和 MLA（KV 压缩）如此重要。
 
