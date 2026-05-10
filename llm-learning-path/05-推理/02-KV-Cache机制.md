@@ -80,7 +80,7 @@ $$\text{每 token} = 2 \times 32 \times 32 \times 1 \times 128 \times 2 = 524288
 | 32K | 16 GiB |
 | 128K | 64 GiB ← 已经超过单卡 H100 (80GB) 显存！ |
 
-> 简化公式：$\text{KV Cache} = 2 \times n\_{layers} \times d\_{model} \times seq\\_len \times 2 \text{ bytes}$ ，因为 $n\_{kv\\_heads} \times d\_k = d\_{model}$。
+> 简化公式：$\text{KV Cache} = 2 \times n\_{layers} \times d\_{model} \times seq\_len \times 2 \text{ bytes}$ ，因为 $n\_{kv\_heads} \times d\_k = d\_{model}$。
 
 **KV Cache 是长序列推理的主要显存瓶颈。** 这就是为什么 GQA（减少 KV 头数）和 MLA（KV 压缩）如此重要。
 
