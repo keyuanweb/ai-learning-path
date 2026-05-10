@@ -43,20 +43,12 @@ print(result)
 
 ## 数据流解析
 
-```
-invoke({"target_language": "英文", "text": "人工智能..."})
-  │
-  ▼
-[Prompt] → 填充模板变量，生成 Message 列表
-  │
-  ▼
-[LLM]    → 发送 Message 到 GPT-4o-mini，获取 AIMessage
-  │
-  ▼
-[Parser] → 从 AIMessage 中提取 content 字符串
-  │
-  ▼
-"Artificial intelligence is changing..."
+```mermaid
+flowchart TD
+    A['invoke({"target_language": "英文", "text": "人工智能..."})'] --> B["[Prompt] 填充模板变量，生成 Message 列表"]
+    B --> C["[LLM] 发送 Message 到 GPT-4o-mini，获取 AIMessage"]
+    C --> D["[Parser] 从 AIMessage 中提取 content 字符串"]
+    D --> E['"Artificial intelligence is changing..."']
 ```
 
 ## 扩展：多语言翻译批处理

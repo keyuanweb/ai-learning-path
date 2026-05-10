@@ -6,18 +6,18 @@
 
 ## Skill Creation Graph
 
-```
-START → capture_intent → write_skill → validate
-                ↑              ↑            ↓ (未通过且未超限)
-                │              └── fix_validate ←─────┘
-                │                        ↓ (通过)
-                │                   run_tests
-                │              ↑      ↓ (未全通过且未超限)
-                │              └── refine_tests ←─────┘
-                │                        ↓ (全部通过)
-                │                   persist → verify → finalize_ok → END
-                │
-                └── 失败重试（最多 3 次）
+```mermaid
+flowchart TD
+    START([START]) --> capture_intent
+    capture_intent --> write_skill
+    write_skill --> validate
+    validate -->|"未通过且未超限"| fix_validate
+    fix_validate --> write_skill
+    validate -->|"通过"| run_tests
+    run_tests -->|"未全通过且未超限"| refine_tests
+    refine_tests --> run_tests
+    run_tests -->|"全部通过"| persist
+    persist --> verify --> finalize_ok --> END([END])
 ```
 
 ## LangGraph 实现

@@ -4,12 +4,19 @@
 
 Deep Research 是最复杂的 Agent 模式，模拟人类研究员的完整工作流程：**规划 → 并行调研 → 反思 → 补充调研 → 综合**。
 
-```
-          ┌──→ Researcher 1 (子主题 A) ──┐
-Plan  ───┼──→ Researcher 2 (子主题 B) ──┼──→ Reflect ──┬──→ Synthesize → END
-          └──→ Researcher 3 (子主题 C) ──┘              │
-                                                  ┌─────┘
-                                                  └──→ (需要更多) → 新一轮 Send
+```mermaid
+flowchart TD
+    Plan --> R1["Researcher 1\n（子主题 A）"]
+    Plan --> R2["Researcher 2\n（子主题 B）"]
+    Plan --> R3["Researcher 3\n（子主题 C）"]
+    R1 --> Reflect
+    R2 --> Reflect
+    R3 --> Reflect
+    Reflect -->|"充分"| Synthesize --> END([END])
+    Reflect -->|"需要更多"| SEND["新一轮 Send"]
+    SEND --> R1
+    SEND --> R2
+    SEND --> R3
 ```
 
 ## 核心组件
@@ -271,21 +278,19 @@ deep_research = builder.compile(checkpointer=MemorySaver())
 
 ## 数据流图
 
-```
-invoke({"question": "..."})
-  │
-  ▼
-[plan] → subtopics = [A, B, C]
-  │
-  ▼
-Send("research", A) ─┐
-Send("research", B) ─┤ 并行执行
-Send("research", C) ─┘
-  │
-  ▼ (等待所有完成, operator.add 合并 findings)
-[reflect] → sufficient? → [synthesize]
-              │                  │
-              └─ insufficient ──→ Send("research", new_topics) → [reflect] → ...
+```mermaid
+flowchart TD
+    INVOKE['invoke({"question": "..."})'] --> PLAN["[plan]\n→ subtopics = [A, B, C]"]
+    PLAN -->|"Send"| RA["Send\nresearch A"]
+    PLAN -->|"Send"| RB["Send\nresearch B"]
+    PLAN -->|"Send"| RC["Send\nresearch C"]
+    RA --> WAIT(["等待所有完成\noperator.add 合并 findings"])
+    RB --> WAIT
+    RC --> WAIT
+    WAIT --> REFLECT["[reflect]"]
+    REFLECT -->|"sufficient"| SYNTH["[synthesize]"]
+    REFLECT -->|"insufficient"| SEND2["Send\nresearch new_topics"]
+    SEND2 --> REFLECT
 ```
 
 ## 关键技巧

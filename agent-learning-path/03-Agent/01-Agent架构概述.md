@@ -4,14 +4,21 @@
 
 Agent（智能体）是**使用 LLM 来决定采取什么行动**的系统。与普通 Chain 的区别在于：Agent 能**自主决策**调用哪些工具、以什么顺序调用。
 
-```
-Chain（预设流程）:
-  输入 → 步骤1 → 步骤2 → 步骤3 → 输出
-
-Agent（自主决策）:
-  输入 → 思考 → [决定] → 工具A? 工具B? 回答?
-              ↑                    │
-              └──── 观察结果 ←──────┘
+```mermaid
+flowchart LR
+    subgraph Chain["Chain（预设流程）"]
+        direction LR
+        C1["输入"] --> C2["步骤1"] --> C3["步骤2"] --> C4["步骤3"] --> C5["输出"]
+    end
+    subgraph Agent["Agent（自主决策）"]
+        direction LR
+        A1["输入"] --> A2["思考"] --> A3["决定"]
+        A3 -->|"调用"| A4["工具A"]
+        A3 -->|"调用"| A5["工具B"]
+        A4 -->|"结果"| A2
+        A5 -->|"结果"| A2
+        A3 -->|"回答"| A6["输出"]
+    end
 ```
 
 ## 五大架构层级
@@ -59,19 +66,17 @@ def route(state):
 
 **Re**asoning + **Act**ing：LLM 交替进行"思考"和"行动"。
 
-```
-User: "今天北京天气怎么样？明天的呢？"
-
-Agent 思考：我需要查今天和明天的天气
-  → Action: get_weather("北京", "今天")
-  → Observation: 晴，25°C
-
-Agent 思考：还需要明天的天气
-  → Action: get_weather("北京", "明天")
-  → Observation: 多云，22°C
-
-Agent 思考：我有了所有信息
-  → Answer: "今天北京晴，25°C；明天多云，22°C"
+```mermaid
+sequenceDiagram
+    User->>Agent: "今天北京天气怎么样？明天的呢？"
+    Agent->>Agent: 思考：需要查今明两天天气
+    Agent->>Tool: get_weather("北京", "今天")
+    Tool-->>Agent: 晴，25°C
+    Agent->>Agent: 思考：还需要明天的天气
+    Agent->>Tool: get_weather("北京", "明天")
+    Tool-->>Agent: 多云，22°C
+    Agent->>Agent: 思考：信息已齐全
+    Agent->>User: "今天北京晴，25°C；明天多云，22°C"
 ```
 
 ### ReAct 在 LangGraph 中的实现
@@ -98,26 +103,32 @@ graph = builder.compile()
 
 ## L5：Multi-Agent
 
-多个 Agent 协作完成复杂任务。详见阶段 5。
+多个 Agent 协作完成复杂任务。详见阶段 6。
 
-```
-              ┌──→ 搜索 Agent ──┐
-Supervisor ──┼──→ 分析 Agent ──┼──→ Supervisor → 最终答案
-              └──→ 写作 Agent ──┘
+```mermaid
+flowchart LR
+    Supervisor --> Search["搜索 Agent"]
+    Supervisor --> Analysis["分析 Agent"]
+    Supervisor --> Writing["写作 Agent"]
+    Search --> Supervisor
+    Analysis --> Supervisor
+    Writing --> Supervisor
+    Supervisor --> Answer["最终答案"]
 ```
 
 ## 架构选择决策树
 
-```
-你的任务是否需要工具（搜索、计算、API 等）？
-├── 否 → Chain（固定流程）或 LLM Call（简单问答）
-└── 是 → Agent 是否需要处理多种不同领域？
-    ├── 否 → ReAct Agent（单 Agent + 工具）
-    └── 是 → 任务是否可以由一个中心协调者管理？
-        ├── 是 → Supervisor 多 Agent
-        └── 否 → 任务是否分层级或有子团队？
-            ├── 是 → Hierarchical 多 Agent
-            └── 否 → Swarm 多 Agent
+```mermaid
+flowchart TD
+    Q1["你的任务是否需要工具？"]
+    Q1 -->|"否"| Q1N["Chain（固定流程）或 LLM Call（简单问答）"]
+    Q1 -->|"是"| Q2["Agent 是否需要处理多种不同领域？"]
+    Q2 -->|"否"| Q2N["ReAct Agent（单 Agent + 工具）"]
+    Q2 -->|"是"| Q3["是否可以由一个中心协调者管理？"]
+    Q3 -->|"是"| Q3Y["Supervisor 多 Agent"]
+    Q3 -->|"否"| Q4["任务是否分层级或有子团队？"]
+    Q4 -->|"是"| Q4Y["Hierarchical 多 Agent"]
+    Q4 -->|"否"| Q4N["Swarm 多 Agent"]
 ```
 
 ## 实践练习

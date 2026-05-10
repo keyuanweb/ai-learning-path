@@ -20,28 +20,17 @@
 > "Let models think, let code execute, keep the two cleanly separated."
 > —— Remote 工程团队的架构原则
 
-```
-┌─────────────────────────────────────┐
-│         LangGraph 编排层             │
-│                                     │
-│  Ingestion → Mapping → Validation   │
-│     │           │           │        │
-│     └───────────┴───────────┘        │
-│                 │                    │
-│            LLM Planner               │
-│          (gpt-4o / claude)           │
-│                 │                    │
-│        生成 Python 转换脚本           │
-│                 │                    │
-│     ┌───────────┴───────────┐        │
-│     │   WebAssembly 沙箱    │        │
-│     │   Python + Pandas     │        │
-│     │   执行转换脚本         │        │
-│     └───────────────────────┘        │
-│                 │                    │
-│            Validation               │
-│            + Output                  │
-└─────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph LangGraph["LangGraph 编排层"]
+        direction LR
+        I["Ingestion"] --> M["Mapping"] --> V["Validation"]
+        I --> LP["LLM Planner\n(gpt-4o / claude)"]
+        M --> LP
+        V --> LP
+        LP -->|"生成 Python 转换脚本"| WASM["WebAssembly 沙箱\nPython + Pandas\n执行转换脚本"]
+        WASM --> OUT["Validation + Output"]
+    end
 ```
 
 ## LangGraph 工作流实现

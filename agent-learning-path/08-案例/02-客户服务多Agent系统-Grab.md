@@ -20,35 +20,28 @@ ADW 团队面临典型的数据平台支撑困境：
 
 ### 系统全景
 
-```
-┌──────────────────────────────────────────┐
-│              FastAPI 网关                  │
-│  /chat  /query  /schema  /health         │
-└─────────────┬────────────────────────────┘
-              │
-    ┌─────────┴──────────┐
-    │   LangGraph Agent   │
-    │                     │
-    │  ┌───────────────┐  │
-    │  │ Intent Router │  │
-    │  └───┬───┬───┬───┘  │
-    │      │   │   │      │
-    │  ┌───┘   │   └───┐  │
-    │  ▼       ▼       ▼  │
-    │ Schema  Query   FAQ  │
-    │ Agent   Agent   Agent│
-    │  │       │       │   │
-    │  └───────┴───────┘   │
-    │          │           │
-    │     Supervisor       │
-    └─────────┬────────────┘
-              │
-    ┌─────────┴──────────┐
-    │  数据层             │
-    │  Redis (缓存+状态)  │
-    │  PostgreSQL (元数据)│
-    │  Data Warehouse     │
-    └─────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Gateway["FastAPI 网关"]
+        direction LR
+        G1["/chat"] & G2["/query"] & G3["/schema"] & G4["/health"]
+    end
+    subgraph Agent["LangGraph Agent"]
+        IR["Intent Router"]
+        IR --> SA["Schema Agent"]
+        IR --> QA["Query Agent"]
+        IR --> FA["FAQ Agent"]
+        SA --> SV["Supervisor"]
+        QA --> SV
+        FA --> SV
+    end
+    subgraph Data["数据层"]
+        RD["Redis\n(缓存+状态)"]
+        PG["PostgreSQL\n(元数据)"]
+        DW["Data Warehouse"]
+    end
+    Gateway --> Agent
+    Agent --> Data
 ```
 
 ### Supervisor + Worker 模式

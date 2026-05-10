@@ -125,16 +125,17 @@ site:arxiv.org {query}
 
 ## Skill vs Agent vs MCP 选型
 
-```
-你的需求是什么？
-├── 单一功能（搜索/计算/读文件） → Tool
-├── 固定流程的多步骤任务 → Skill
-│   ├── 需要外部服务连接 → Skill + MCP Server
-│   └── 纯内部逻辑 → Skill
-├── 需要自主决策的开放任务 → Agent
-│   ├── 单一领域 → 单 Agent + Skills
-│   └── 多领域协作 → 多 Agent + Skills
-└── 工具/服务标准化接入 → MCP Server
+```mermaid
+flowchart TD
+    Q0["你的需求是什么？"]
+    Q0 -->|"单一功能"| T["Tool\n（搜索/计算/读文件）"]
+    Q0 -->|"固定流程多步骤"| S1["Skill"]
+    S1 -->|"需要外部服务"| S2["Skill + MCP Server"]
+    S1 -->|"纯内部逻辑"| S3["Skill"]
+    Q0 -->|"自主决策的开放任务"| A1["Agent"]
+    A1 -->|"单一领域"| A2["单 Agent + Skills"]
+    A1 -->|"多领域协作"| A3["多 Agent + Skills"]
+    Q0 -->|"工具/服务标准化接入"| M["MCP Server"]
 ```
 
 ## 实践练习

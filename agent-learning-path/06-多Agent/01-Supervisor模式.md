@@ -4,10 +4,16 @@
 
 Supervisor 模式是多 Agent 系统最常用的架构。一个**中心 Supervisor Agent** 将任务分发给**专门的 Worker Agent**，各 Worker 完成后返回 Supervisor，由 Supervisor 决定下一步。
 
-```
-                    ┌──→ Researcher Agent ──┐
-User → Supervisor ──┼──→ Coder Agent ───────┼──→ Supervisor → User
-                    └──→ Writer Agent ──────┘
+```mermaid
+flowchart LR
+    U["User"] --> S["Supervisor"]
+    S --> R["Researcher Agent"]
+    S --> C["Coder Agent"]
+    S --> W["Writer Agent"]
+    R --> S
+    C --> S
+    W --> S
+    S --> U
 ```
 
 ### 与单 Agent 的对比

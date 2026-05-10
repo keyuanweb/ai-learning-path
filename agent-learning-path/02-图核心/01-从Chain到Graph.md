@@ -49,14 +49,21 @@ LangGraph 将应用建模为**有向图（StateGraph）**，LLM 调用只是图�
 
 ## 核心思想：从"链"到"图"
 
-```
-Chain 思维:
-  A ──→ B ──→ C ──→ D
-
-Graph 思维:
-       ┌──→ B ──→ C ──┐
-  START┤               ├──→ END
-       └──→ D ──→ E ──┘
+```mermaid
+flowchart LR
+    subgraph Chain["Chain 思维"]
+        direction LR
+        C1["A"] --> C2["B"] --> C3["C"] --> C4["D"]
+    end
+    subgraph Graph["Graph 思维"]
+        direction LR
+        G1["START"] --> G2["B"]
+        G2 --> G3["C"]
+        G3 --> G5["END"]
+        G1 --> G4["D"]
+        G4 --> G6["E"]
+        G6 --> G5
+    end
 ```
 
 图中的每个节点可以是：
@@ -99,8 +106,9 @@ print(result["greeting"])  # "Hello, World!"
 
 Agent 的本质是**不确定次数的循环**：
 
-```
-Think → Act → Observe → Think → Act → Observe → ... → Final Answer
+```mermaid
+flowchart LR
+    Think --> Act --> Observe --> Think
 ```
 
 这在 Graph 中天然表达为一个**条件循环**：

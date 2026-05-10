@@ -4,9 +4,14 @@
 
 Swarm（蚁群）模式是一种**去中心化**的多 Agent 架构。没有中心 Supervisor，Agent 之间通过 **Handoff 直接交接**控制权。State 中跟踪 "current_agent" 来决定谁在处理。
 
-```
-User → Support Agent → (handoff) → Billing Agent → (handoff) → Tech Agent → User
-                        ← (handoff)               ← (handoff)
+```mermaid
+flowchart LR
+    U["User"] --> S["Support Agent"]
+    S -->|"handoff"| B["Billing Agent"]
+    B -->|"handoff"| T["Tech Agent"]
+    T -->|"answer"| U
+    B -.->|"handoff"| S
+    T -.->|"handoff"| B
 ```
 
 ### 三种多 Agent 模式对比
@@ -186,16 +191,17 @@ def agent_with_loop_guard(name: str, max_handoffs: int = MAX_HANDOFFS):
 
 ## Swarm vs Supervisor 选择指南
 
-```
-你的 Agent 之间是否有清晰的职责边界？
-├── 是 → 任务是否通常由单个 Agent 完成？
-│   ├── 是 → 使用 Swarm 模式
-│   └── 否 → 是否需要一个中心协调者来保证质量？
-│       ├── 是 → 使用 Supervisor 模式
-│       └── 否 → 使用 Swarm + 简单路由
-└── 否 → 是否需要多轮协作？
-    ├── 是 → 使用 Supervisor 模式
-    └── 否 → 使用 Router Agent（单 Agent 多分支）
+```mermaid
+flowchart TD
+    Q1["Agent 之间是否有清晰的职责边界？"]
+    Q1 -->|"是"| Q2["任务是否通常由单个 Agent 完成？"]
+    Q2 -->|"是"| SW["使用 Swarm 模式"]
+    Q2 -->|"否"| Q3["是否需要一个中心协调者来保证质量？"]
+    Q3 -->|"是"| SV["使用 Supervisor 模式"]
+    Q3 -->|"否"| SW2["使用 Swarm + 简单路由"]
+    Q1 -->|"否"| Q4["是否需要多轮协作？"]
+    Q4 -->|"是"| SV2["使用 Supervisor 模式"]
+    Q4 -->|"否"| RO["使用 Router Agent\n（单 Agent 多分支）"]
 ```
 
 ## 实践练习

@@ -6,20 +6,19 @@ LangGraph Platform 是 LangGraph 的生产化部署平台，提供 API 服务化
 
 ## 从开发到部署
 
-```
-开发阶段                      部署阶段
-┌──────────┐               ┌──────────────┐
-│ Python   │               │ LangGraph     │
-│ StateGraph ─── deploy ───→ Platform      │
-│ local dev │               │ (Cloud/Self) │
-└──────────┘               └──────────────┘
-                                    │
-                            ┌───────┴───────┐
-                            │  REST API     │
-                            │  Streaming    │
-                            │  Cron Jobs    │
-                            │  Webhooks     │
-                            └───────────────┘
+```mermaid
+flowchart LR
+    subgraph Dev["开发阶段"]
+        A["Python StateGraph\nlocal dev"]
+    end
+    subgraph Deploy["部署阶段"]
+        B["LangGraph Platform\n(Cloud/Self)"]
+        B --> C["REST API"]
+        B --> D["Streaming"]
+        B --> E["Cron Jobs"]
+        B --> F["Webhooks"]
+    end
+    Dev -->|"deploy"| Deploy
 ```
 
 ## LangGraph Cloud 部署

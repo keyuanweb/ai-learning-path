@@ -19,20 +19,19 @@ S&P Global 拥有全球最大的金融数据集之一，涵盖股票研究、固
 
 ### Router Graph：统一查询入口
 
-```
-用户自然语言查询
-       │
-       ▼
-   Router Agent（意图识别 + 领域分类）
-       │
-       ├──→ Equity DRA（股票研究）
-       ├──→ Fixed Income DRA（固定收益）
-       ├──→ ESG DRA（环境社会治理）
-       ├──→ Macro DRA（宏观经济）
-       └──→ Commodities DRA（大宗商品）
-       │
-       ▼
-   结果聚合 + 格式化输出
+```mermaid
+flowchart TD
+    Q["用户自然语言查询"] --> RA["Router Agent\n（意图识别 + 领域分类）"]
+    RA --> EQ["Equity DRA\n（股票研究）"]
+    RA --> FI["Fixed Income DRA\n（固定收益）"]
+    RA --> ESG["ESG DRA\n（环境社会治理）"]
+    RA --> MC["Macro DRA\n（宏观经济）"]
+    RA --> CO["Commodities DRA\n（大宗商品）"]
+    EQ --> AG["结果聚合 + 格式化输出"]
+    FI --> AG
+    ESG --> AG
+    MC --> AG
+    CO --> AG
 ```
 
 ### 核心概念：Data Retrieval Agent (DRA)

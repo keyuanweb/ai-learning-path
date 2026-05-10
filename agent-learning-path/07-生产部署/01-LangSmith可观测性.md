@@ -42,18 +42,18 @@ result = graph.invoke(
 
 在 LangSmith UI 中可以看到：
 
-```
-Trace: thread_id=trace-123
-├── agent_node (1.2s, 450 tokens)
-│   ├── Input: [HumanMessage("..."), SystemMessage("...")]
-│   ├── LLM Call: gpt-4o-mini (420 tokens in, 30 tokens out)
-│   └── Output: AIMessage(tool_calls=[...])
-├── tool_node (0.3s)
-│   ├── Tool: web_search("query") → "..."
-│   └── Output: ToolMessage("...")
-└── agent_node (0.8s, 380 tokens)
-    ├── LLM Call: gpt-4o-mini (350 tokens in, 30 tokens out)
-    └── Output: AIMessage("最终回答...")
+```mermaid
+flowchart TD
+    T["Trace: thread_id=trace-123"] --> A1["agent_node\n(1.2s, 450 tokens)"]
+    A1 --> A1I["Input: [HumanMessage, SystemMessage]"]
+    A1 --> A1L["LLM Call: gpt-4o-mini\n(420 in, 30 out)"]
+    A1 --> A1O["Output: AIMessage(tool_calls=...)"]
+    T --> T1["tool_node\n(0.3s)"]
+    T1 --> T1T["Tool: web_search(query) → ..."]
+    T1 --> T1O["Output: ToolMessage(...)"]
+    T --> A2["agent_node\n(0.8s, 380 tokens)"]
+    A2 --> A2L["LLM Call: gpt-4o-mini\n(350 in, 30 out)"]
+    A2 --> A2O["Output: AIMessage(最终回答...)"]
 ```
 
 ### 3. 延迟分析

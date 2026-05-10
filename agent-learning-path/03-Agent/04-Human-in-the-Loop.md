@@ -14,12 +14,11 @@ LangGraph 的 `interrupt()` 机制是**真正的暂停**（不仅是一个确认
 
 ## 核心机制
 
-```
-graph.invoke() → 执行到 interrupt() → 暂停
-                ↓
-        人工检查/修改状态
-                ↓
-     graph.invoke(Command(resume=...)) → 从断点继续
+```mermaid
+flowchart LR
+    A["graph.invoke()"] --> B["执行到 interrupt()"] --> C["暂停"]
+    C --> D["人工检查/修改状态"]
+    D --> E["graph.invoke(Command(resume=...))"] --> F["从断点继续"]
 ```
 
 ## interrupt()：在节点中暂停

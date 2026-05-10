@@ -4,12 +4,19 @@
 
 Hierarchical（层级化）模式是 Supervisor 模式的自然扩展。当任务规模大到单一 Supervisor 难以管理时，引入**多层级管理结构**。
 
-```
-                     ┌──→ Research Supervisor ──→ [Web 搜索, 数据分析]
-Top Supervisor ──────┤
-                     ├──→ Engineering Supervisor → [前端, 后端, 架构]
-                     │
-                     └──→ Quality Supervisor ────→ [代码审查, 测试]
+```mermaid
+flowchart TD
+    TS["Top Supervisor"]
+    TS --> RS["Research Supervisor"]
+    TS --> ES["Engineering Supervisor"]
+    TS --> QS["Quality Supervisor"]
+    RS --> R1["Web 搜索"]
+    RS --> R2["数据分析"]
+    ES --> E1["前端"]
+    ES --> E2["后端"]
+    ES --> E3["架构"]
+    QS --> Q1["代码审查"]
+    QS --> Q2["测试"]
 ```
 
 ### 与平级 Supervisor 的对比
