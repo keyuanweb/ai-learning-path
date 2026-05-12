@@ -188,13 +188,82 @@ flowchart TD
 | QA | 测试 | 编写集成测试用例 | Sonnet |
 | Integration | 串联 | 验证全链路功能正确 | Sonnet |
 
-**执行命令**：
+**Claude Code 实现流程**：
+
+整个流程由开发者在一个 Claude Code 交互式会话中启动，通过 SDK 或 Headless 模式协调多个子 Agent。
+
+**Step 1 — PM Agent 分解需求**（Claude Code 交互式会话）：
 
 ```bash
-# 6 个 Agent 在各自的 worktree 中并行工作
-for agent in pm db api fe qa integration; do
-  claude --worktree --tmux --model sonnet &
-done
+# 在主会话中启动 PM 分析
+claude -p "分析'商品收藏'功能需求，将其分解为数据库、API、前端三个子任务，
+并输出每个子任务的具体接口契约（DB schema / API spec / 组件接口）。
+输出 JSON 格式：{db_task: {...}, api_task: {...}, fe_task: {...}}" \
+  --output-format json > contracts.json
+```
+
+PM Agent 输出的契约文件 `contracts.json` 作为后续子 Agent 的输入约束。
+
+**Step 2 — 并行启动 3 个开发 Agent**（Headless 模式，在隔离 worktree 中执行）：
+
+```bash
+# DB Agent: 根据契约创建迁移脚本
+claude --worktree -p "$(cat <<'PROMPT'
+根据以下接口契约创建数据库迁移脚本：
+$(cat contracts.json | jq '.db_task')
+要求：1. 创建 favorites 表 2. 添加 user_id + product_id 联合索引
+3. 添加 created_at 时间戳 4. 外键约束
+PROMPT
+)" --allowedTools "Read,Write,Edit,Bash" --output-format json > db_result.json &
+
+# API Agent: 根据契约实现 REST 端点
+claude --worktree -p "$(cat <<'PROMPT'
+根据以下接口契约实现收藏功能的 REST API：
+$(cat contracts.json | jq '.api_task')
+要求：1. POST/GET/DELETE /api/favorites 2. JWT 权限校验
+3. 分页支持 4. 输入验证
+PROMPT
+)" --allowedTools "Read,Write,Edit,Bash" --output-format json > api_result.json &
+
+# FE Agent: 根据契约实现前端组件
+claude --worktree -p "$(cat <<'PROMPT'
+根据以下接口契约实现收藏功能的前端组件：
+$(cat contracts.json | jq '.fe_task')
+要求：1. 收藏按钮（HeartIcon 切换）2. 收藏列表页 3. 调用 /api/favorites
+4. 乐观更新（optimistic update）5. 错误状态处理
+PROMPT
+)" --allowedTools "Read,Write,Edit,Bash" --output-format json > fe_result.json &
+
+wait
+```
+
+每个 Agent 在自己的 worktree 中独立工作，产物通过 `*_result.json` 返回。
+
+**Step 3 — QA Agent 编写集成测试**（依赖 API 输出后执行）：
+
+```bash
+claude -p "根据 API 实现 $(cat api_result.json) 编写集成测试，覆盖：
+1. 正常 CRUD 流程 2. 未登录拒绝 3. 重复收藏处理 4. 分页边界" \
+  --allowedTools "Read,Write,Edit,Bash(npm test:*)" --output-format json > qa_result.json
+```
+
+**Step 4 — Integration Agent 串联验证**：
+
+```bash
+claude -p "$(cat <<'PROMPT'
+验证全链路功能完整性：
+- DB 迁移: $(cat db_result.json)
+- API 端点: $(cat api_result.json)
+- 前端组件: $(cat fe_result.json)
+- 测试结果: $(cat qa_result.json)
+
+1. 启动项目并验证端到端流程
+2. 检查前端调用的 API 端点是否与后端一致
+3. 确认 DB schema 与 API 的数据结构匹配
+4. 运行测试套件
+5. 输出验证报告，标注 blocking / warning 问题
+PROMPT
+)" --allowedTools "Read,Edit,Bash" --output-format json > integration_report.json
 ```
 
 ### 案例 2：遗留系统迁移（Map-Reduce 模式）
@@ -527,7 +596,12 @@ async def translate_docs(files: list[str], languages: list[str]):
         - Translate descriptions but keep code identifiers
         - Preserve Mermaid diagram node labels (translate text, keep structure)
         """
-        # ... execute claude headless ...
+        result = subprocess.run(
+            ["claude", "-p", prompt, "--output-format", "json",
+             "--allowedTools", "Read,Write,Edit", "--max-turns", "15"],
+            capture_output=True, text=True, timeout=300
+        )
+        return {"file": file, "lang": lang, "status": "success" if result.returncode == 0 else "failed"}
 
     # Phase 1: 先翻译一份术语表
     glossary = await extract_glossary(files)
@@ -574,6 +648,109 @@ flowchart TD
 | Metrics Agent | Prometheus / Grafana | MCP 读取指标 |
 | Code Agent | git log / diff | `git diff`, `git log` |
 | Dependency Agent | 第三方 Status Page | `WebFetch` |
+
+**Claude Code 实现**：
+
+Step 1 — Incident Commander 在主会话中分析告警，确定排查方向：
+
+```bash
+# Incident Commander 接收 PagerDuty 告警上下文，分发排查指令
+claude -p "$(cat <<'PROMPT'
+生产告警：API 响应延迟 > 5s，影响用户登录和下单。
+近期部署：30 分钟前发布了 v2.3.1（新增推荐算法模块）。
+请制定排查计划，确定需要并行调查的 4 个方向，输出 JSON：
+{"directions": [{"name": "...", "prompt": "...", "tools": "...", "datasource": "..."}]}
+PROMPT
+)" --output-format json > investigation_plan.json
+```
+
+Step 2 — 4 个 Agent 并行调查（Headless 模式，各连接不同数据源）：
+
+```python
+import asyncio, subprocess, json
+
+async def incident_investigation(alert_context: dict):
+    """生产故障多线并行排查"""
+
+    # 4 条调查线，各自有不同的工具和数据源
+    investigations = {
+        "log": {
+            "prompt": f"""分析 ELK 错误日志，时间窗口：{alert_context['time_range']}。
+            查找: 1. 5xx 错误激增 2. 超时日志 3. 连接池耗尽 4. 慢查询
+            输出: 按时间线排列的异常事件列表 + 最可疑的根因假设""",
+            "tools": "Read,Grep,Bash(grep:*,jq:*,awk:*)",
+            "datasource": "ELK JSON 日志文件"
+        },
+        "metrics": {
+            "prompt": f"""从 Prometheus 拉取以下指标（时间窗口：{alert_context['time_range']}）：
+            1. API 响应时间 P50/P95/P99 2. CPU/Memory 使用率
+            3. DB 连接数 4. Redis 命中率 5. GC 暂停时间
+            对比 v2.3.1 部署前后的指标变化，标注突增点""",
+            "tools": "Read,Bash(curl:*,jq:*)",
+            "datasource": "Prometheus API (via MCP)"
+        },
+        "code": {
+            "prompt": f"""分析 {alert_context['recent_deploy']} 的代码变更：
+            1. git diff 变更了什么 2. 是否有新增的外部调用
+            3. 是否有 N+1 查询 4. 缓存策略是否有改动
+            输出: 可疑代码列表，按风险排序""",
+            "tools": "Read,Grep,Bash(git:diff*,git:log*)",
+            "datasource": "git 仓库"
+        },
+        "dependency": {
+            "prompt": f"""检查依赖服务状态：
+            1. 第三方 API 状态页（Stripe/SendGrid/AWS）
+            2. 内部服务健康检查端点
+            3. 网络连通性
+            输出: 各依赖服务状态汇总""",
+            "tools": "WebFetch,WebSearch,Bash(curl:*)",
+            "datasource": "第三方 Status Page + 内部健康端点"
+        }
+    }
+
+    async def run_investigation(name: str, config: dict) -> dict:
+        result = subprocess.run(
+            ["claude", "-p", config["prompt"],
+             "--output-format", "json",
+             "--allowedTools", config["tools"],
+             "--max-turns", "12"],
+            capture_output=True, text=True, timeout=180
+        )
+        return {"direction": name, "findings": json.loads(result.stdout)}
+
+    # 4 线并行调查
+    all_findings = await asyncio.gather(*[
+        run_investigation(name, cfg) for name, cfg in investigations.items()
+    ])
+```
+
+Step 3 — Situation Report Agent 综合研判：
+
+```bash
+claude -p "$(cat <<'PROMPT'
+综合以下 4 条调查线的发现，进行根因分析：
+
+Log 发现: $(cat log_findings.json)
+Metrics 发现: $(cat metrics_findings.json)  
+Code 发现: $(cat code_findings.json)
+Dependency 发现: $(cat dependency_findings.json)
+
+请输出：
+1. 根因定位（最可能的故障原因 + 置信度）
+2. 影响范围评估
+3. 立即修复方案（可在 5 分钟内执行的）
+4. 长期改进建议
+5. 是否需要回滚 v2.3.1（判断标准：修复耗时 > 15 分钟则建议回滚）
+PROMPT
+)" --allowedTools "Read" --output-format json > incident_resolution.json
+```
+
+**关键设计要点**：
+
+- 每条调查线**独立并行**，互不阻塞，最大化排查速度
+- Incident Commander 只负责**编排和最终决策**，不参与具体调查
+- 调查 Agent 输出结构化 JSON，便于 Situation Report Agent 解析
+- 整个过程无需人工介入，自动生成修复或回滚建议
 
 ## 案例模式总结
 
