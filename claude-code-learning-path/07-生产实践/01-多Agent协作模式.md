@@ -152,6 +152,34 @@ claude --worktree --tmux &   # Agent 3
 - 可以独立运行测试
 - 通过 PR 合并结果
 
+## 两种实现方式
+
+多 Agent 协同有两种实现途径：
+
+| 方式 | 机制 | 适用场景 | 示例 |
+|------|------|---------|------|
+| **对话模式** | 在交互式会话中，自然语言描述任务，Claude 自动调用内置 `Agent` 工具并行启动子代理 | 一次性分析、探索性任务、日常开发 | "检查项目健康状态，并行分析测试覆盖率、依赖过期、TODO 分布" |
+| **编程模式** | 通过 SDK（`ClaudeAgentClient`）或 Headless 模式（`claude -p`）编写脚本调度 | CI/CD 流水线、批量自动化、可复现工作流 | Python 脚本并行调用 `claude -p` 处理 200 个文件 |
+
+**对话模式的核心机制**：
+
+```
+用户在交互式会话中输入指令
+        ↓
+主 Agent 解析任务，决定启动几个子代理
+        ↓
+主 Agent 调用 Agent 工具（run_in_background: true）
+   → 子代理1（独立上下文 200K tokens）
+   → 子代理2（独立上下文 200K tokens）
+   → 子代理3（独立上下文 200K tokens）
+        ↓
+子代理返回结果摘要（不污染主上下文）
+        ↓
+主 Agent 综合汇总，输出最终结果
+```
+
+对话模式无需任何代码，Claude Code 原生支持。以下每个案例同时展示两种实现方式。
+
 ## 多 Agent 使用案例
 
 ### 案例 1：全栈功能开发（Hierarchical + Parallel 混合）
@@ -188,11 +216,21 @@ flowchart TD
 | QA | 测试 | 编写集成测试用例 | Sonnet |
 | Integration | 串联 | 验证全链路功能正确 | Sonnet |
 
-**Claude Code 实现流程**：
+**对话方式**（在 Claude Code 交互式会话中直接说）：
+
+```
+帮我给电商系统添加"商品收藏"功能。先分解需求确定接口契约，
+然后并行启动 3 个子代理分别实现数据库迁移、API 端点和前端组件。
+都完成后运行集成测试验证全链路。每个子代理用 worktree 隔离。
+```
+
+Claude 会自动调用 Agent 工具并行启动子代理，等待结果后汇总。整个过程在同一个对话中完成。
+
+**编程方式**（Headless + worktree）：
 
 整个流程由开发者在一个 Claude Code 交互式会话中启动，通过 SDK 或 Headless 模式协调多个子 Agent。
 
-**Step 1 — PM Agent 分解需求**（Claude Code 交互式会话）：
+**Step 1 — PM Agent 分解需求**：
 
 ```bash
 # 在主会话中启动 PM 分析
@@ -296,7 +334,17 @@ flowchart LR
     CHECK -->|通过| DONE["迁移完成"]
 ```
 
-**实现**：
+**对话方式**：
+
+```
+把 src/ 下所有 .js 文件迁移到 TypeScript。分批并行处理，
+每批 10 个文件，迁移完一批后跑 tsc --noEmit 验证类型，
+有错误立即修复再继续。
+```
+
+> 小规模（<20 文件）对话方式完全可以。200 个文件的大规模迁移建议用下面的编程模式分批自动化。
+
+**编程方式**（批量 Headless 迁移）：
 
 ```python
 import asyncio
@@ -380,7 +428,14 @@ flowchart TD
 | Logic | 边界情况、错误处理、空值处理、并发安全 | 逻辑缺陷 + 修复方案 |
 | Test | 测试覆盖率、边界测试、模拟准确性 | 测试缺口 + 建议用例 |
 
-**CI 配置**：
+**对话方式**：
+
+```
+审查这个 PR。并行启动 5 个子代理分别审查安全、性能、代码风格、
+业务逻辑、测试覆盖率，然后汇总成一份综合审查报告，按严重度排序。
+```
+
+**编程方式**（GitHub Actions CI）：
 
 ```yaml
 # .github/workflows/multi-agent-review.yml
@@ -423,6 +478,16 @@ flowchart TD
 ```
 
 **每个 Agent 的研究任务**：
+
+**对话方式**：
+
+```
+评估 4 种缓存方案（Redis Cluster / Memcached / 本地+Redis / Dragonfly）
+用于高并发读场景（100GB 数据，QPS 10K+）。
+启动 4 个子代理各自研究一种方案，最后汇总决策矩阵给出推荐。
+```
+
+**编程方式**：
 
 ```python
 async def swarm_evaluation(requirement: str, candidates: list[str]):
@@ -496,6 +561,18 @@ flowchart TD
 ```
 
 **实现**：
+
+**对话方式**：
+
+```
+CI 失败了（日志见附件）。先启动一个分析子代理找出根因，
+然后根据失败类型启动对应的修复子代理，修复后重新运行 CI 验证。
+如果 3 次尝试后仍未通过，提示我人工介入。
+```
+
+> 注意：对话模式适合单次排查修复。若需每次 CI 失败都自动触发，应使用编程模式集成到 CI 流水线。
+
+**编程方式**（CI 自动修复流水线）：
 
 ```python
 async def auto_fix_ci_failure(ci_log: str, max_attempts: int = 3):
@@ -574,7 +651,17 @@ flowchart LR
     QA --> GLOSSARY["术语表 Agent<br/>提取并统一术语"]
 ```
 
-**实现要点**：
+**对话方式**：
+
+```
+把 docs/ 下 30 个中文 .md 文档翻译成英文和日文。
+先提取术语表确保翻译一致性，然后并行启动翻译子代理。
+翻译完成后用 QA 子代理检查术语统一性。
+```
+
+> 小规模文档（<10 个文件）对话方式即可。大规模批量（30+ 文件）建议用下面的编程模式。
+
+**编程方式**（批量并行翻译）：
 
 ```python
 async def translate_docs(files: list[str], languages: list[str]):
@@ -649,7 +736,18 @@ flowchart TD
 | Code Agent | git log / diff | `git diff`, `git log` |
 | Dependency Agent | 第三方 Status Page | `WebFetch` |
 
-**Claude Code 实现**：
+**对话方式**：
+
+```
+PagerDuty 告警：API 响应延迟 > 5s，影响登录和下单。
+近期部署了 v2.3.1。并行启动 4 个子代理分别排查：
+1. ELK 错误日志  2. Prometheus 指标  3. 代码变更 diff  4. 第三方依赖状态
+最后汇总根因分析和修复建议。
+```
+
+> 故障排查场景中对话方式更快，因为可以实时调整调查方向。编程方式适合将排查流程固化到 oncall runbook。
+
+**编程方式**（自动化故障排查脚本）：
 
 Step 1 — Incident Commander 在主会话中分析告警，确定排查方向：
 
