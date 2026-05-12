@@ -152,6 +152,451 @@ claude --worktree --tmux &   # Agent 3
 - 可以独立运行测试
 - 通过 PR 合并结果
 
+## 多 Agent 使用案例
+
+### 案例 1：全栈功能开发（Hierarchical + Parallel 混合）
+
+**场景**：给电商系统添加 "商品收藏" 功能，涉及数据库、API、前端三个层面。
+
+```mermaid
+flowchart TD
+    PM["PM Agent<br/>分解需求：用户可收藏商品"] --> DB_AGENT["DB Agent<br/>创建 favorites 表"]
+    PM --> API_AGENT["API Agent<br/>CRUD 收藏接口"]
+    PM --> FE_AGENT["Frontend Agent<br/>收藏按钮 + 收藏列表"]
+
+    DB_AGENT --> DB_OUT["Schema 迁移脚本"]
+    API_AGENT --> API_OUT["REST 端点代码"]
+    FE_AGENT --> FE_OUT["React 组件代码"]
+
+    API_AGENT --> QA_AGENT["QA Agent<br/>编写集成测试"]
+    DB_OUT --> INTEG["Integration Agent<br/>串联验证"]
+    API_OUT --> INTEG
+    FE_OUT --> INTEG
+    QA_AGENT --> INTEG
+
+    INTEG --> FINAL["功能交付 + PR"]
+```
+
+**Agent 分配**：
+
+| Agent | 角色 | 任务 | 模型 |
+|-------|------|------|------|
+| PM | 需求分解 | 分析需求，拆分子任务，定义接口契约 | Opus |
+| DB | 数据库 | 建迁移脚本，添加索引 | Sonnet |
+| API | 后端 | 实现 CRUD 端点 + 权限校验 | Sonnet |
+| FE | 前端 | 收藏按钮 + 收藏列表页面 | Sonnet |
+| QA | 测试 | 编写集成测试用例 | Sonnet |
+| Integration | 串联 | 验证全链路功能正确 | Sonnet |
+
+**执行命令**：
+
+```bash
+# 6 个 Agent 在各自的 worktree 中并行工作
+for agent in pm db api fe qa integration; do
+  claude --worktree --tmux --model sonnet &
+done
+```
+
+### 案例 2：遗留系统迁移（Map-Reduce 模式）
+
+**场景**：将 200 个文件的 JavaScript 代码库迁移到 TypeScript，逐个文件处理。
+
+```mermaid
+flowchart LR
+    subgraph Batch1["批次 1: files 1-50"]
+        W1["Agent 1"]
+        W2["Agent 2"]
+        W3["Agent 3"]
+    end
+    subgraph Batch2["批次 2: files 51-100"]
+        W4["Agent 4"]
+        W5["Agent 5"]
+        W6["Agent 6"]
+    end
+    subgraph Validate["验证"]
+        CHECK["Type Check Agent<br/>tsc --noEmit"]
+    end
+    subgraph Fix["修复"]
+        FIXER["Fix Agent<br/>修复类型错误"]
+    end
+
+    Batch1 --> CHECK
+    Batch2 --> CHECK
+    CHECK -->|有错误| FIXER
+    FIXER --> CHECK
+    CHECK -->|通过| DONE["迁移完成"]
+```
+
+**实现**：
+
+```python
+import asyncio
+import subprocess
+from pathlib import Path
+
+
+async def migrate_file(file_path: str) -> dict:
+    """迁移单个 JS 文件到 TS"""
+    prompt = f"""Convert {file_path} to TypeScript:
+
+    Rules:
+    1. Rename .js → .ts (or .jsx → .tsx)
+    2. Add type annotations to all function parameters and returns
+    3. Convert PropTypes to TypeScript interfaces
+    4. Handle .default imports correctly
+    5. Use strict mode conventions
+    6. Update imports to use .ts extensions
+
+    Write the new TypeScript file and delete the old JS file.
+    """
+    result = subprocess.run(
+        ["claude", "-p", prompt, "--output-format", "json",
+         "--allowedTools", "Read,Write,Edit,Bash(mv *,rm *)",
+         "--max-turns", "20"],
+        capture_output=True, text=True, timeout=300
+    )
+    return {"file": file_path, "status": "success" if result.returncode == 0 else "failed"}
+
+
+async def batch_migrate(js_files: list[str], batch_size: int = 10):
+    """分批迁移，每批并行 10 个文件"""
+    for i in range(0, len(js_files), batch_size):
+        batch = js_files[i:i + batch_size]
+        print(f"Batch {i//batch_size + 1}: {len(batch)} files")
+        results = await asyncio.gather(*[migrate_file(f) for f in batch])
+
+        # 每批迁移后检查类型
+        subprocess.run(["npx", "tsc", "--noEmit"], check=False)
+
+        failed = [r for r in results if r["status"] == "failed"]
+        if failed:
+            print(f"  Failed: {[f['file'] for f in failed]}")
+
+
+# 使用
+js_files = [str(p) for p in Path("src").rglob("*.js")]
+asyncio.run(batch_migrate(js_files))
+```
+
+### 案例 3：多维度 PR 审查（Supervisor 模式）
+
+**场景**：对每个 PR 执行 5 个维度的并行审查。
+
+```mermaid
+flowchart TD
+    PR["新 PR 提交"] --> SUP["Supervisor<br/>分发审查任务"]
+
+    SUP --> S1["Security Agent<br/>安全漏洞扫描"]
+    SUP --> S2["Perf Agent<br/>性能瓶颈分析"]
+    SUP --> S3["Style Agent<br/>代码规范检查"]
+    SUP --> S4["Logic Agent<br/>业务逻辑审查"]
+    SUP --> S5["Test Agent<br/>测试覆盖率审查"]
+
+    S1 --> MERGE["Supervisor 汇总"]
+    S2 --> MERGE
+    S3 --> MERGE
+    S4 --> MERGE
+    S5 --> MERGE
+
+    MERGE --> REPORT["生成审查报告<br/>Critical / Warning / Info<br/>合并重复问题<br/>按严重度排序"]
+```
+
+**每个 Agent 的审查维度**：
+
+| Agent | 关注点 | 输出 |
+|-------|--------|------|
+| Security | SQL 注入、XSS、密钥泄露、路径遍历、不安全的反序列化 | 安全问题列表 + 严重度 |
+| Performance | N+1 查询、不必要的重新渲染、内存泄漏、大文件加载 | 性能瓶颈 + 优化建议 |
+| Style | 命名规范、代码重复、函数长度、导入顺序 | 风格问题 + 自动修复 |
+| Logic | 边界情况、错误处理、空值处理、并发安全 | 逻辑缺陷 + 修复方案 |
+| Test | 测试覆盖率、边界测试、模拟准确性 | 测试缺口 + 建议用例 |
+
+**CI 配置**：
+
+```yaml
+# .github/workflows/multi-agent-review.yml
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parallel Review
+        run: |
+          # 5 个 Agent 并行审查
+          claude -p "Security review of PR changes" --output-format json --max-turns 15 > security.json &
+          claude -p "Performance review of PR changes" --output-format json --max-turns 15 > perf.json &
+          claude -p "Code style review of PR changes" --output-format json --max-turns 15 > style.json &
+          claude -p "Business logic review of PR changes" --output-format json --max-turns 15 > logic.json &
+          claude -p "Test coverage review of PR changes" --output-format json --max-turns 15 > test.json &
+          wait
+
+          # Supervisor 汇总
+          claude -p "Synthesize review reports from security.json, perf.json, style.json, logic.json, test.json into a single PR review" --output-format json > final-review.json
+```
+
+### 案例 4：技术方案选型（Swarm 模式）
+
+**场景**：评估 4 种缓存方案，每个 Agent 独立研究一种方案，最后投票汇聚。
+
+```mermaid
+flowchart TD
+    QUESTION["需求：高并发读缓存<br/>数据量 100GB，QPS 10K+"] --> R1["Agent A<br/>Redis Cluster"]
+    QUESTION --> R2["Agent B<br/>Memcached"]
+    QUESTION --> R3["Agent C<br/>本地内存 + Redis"]
+    QUESTION --> R4["Agent D<br/>Dragonfly"]
+
+    R1 --> EVAL["Evaluation Agent<br/>汇总对比"]
+    R2 --> EVAL
+    R3 --> EVAL
+    R4 --> EVAL
+
+    EVAL --> MATRIX["决策矩阵<br/>性能/成本/运维/扩展性<br/>给出推荐结论"]
+```
+
+**每个 Agent 的研究任务**：
+
+```python
+async def swarm_evaluation(requirement: str, candidates: list[str]):
+    """Swarm 评估：每个候选方案由独立 Agent 评估"""
+    async def evaluate_candidate(candidate: str) -> dict:
+        prompt = f"""Evaluate {candidate} as a caching solution for:
+
+        Requirement: {requirement}
+
+        Analyze:
+        1. Architecture overview and key features
+        2. Performance characteristics (read/write latency, throughput)
+        3. Operational complexity (deployment, monitoring, scaling)
+        4. Cost estimation (infrastructure + operational)
+        5. Community and ecosystem (maturity, plugins, support)
+        6. Risk assessment (single point of failure, data loss risk)
+
+        Output a structured JSON with scores (1-10) for each dimension.
+        """
+        result = subprocess.run(
+            ["claude", "-p", prompt, "--output-format", "json",
+             "--allowedTools", "WebSearch,WebFetch", "--max-turns", "15"],
+            capture_output=True, text=True, timeout=300
+        )
+        return {"candidate": candidate, "analysis": json.loads(result.stdout)}
+
+    # 并行评估所有候选方案
+    results = await asyncio.gather(*[
+        evaluate_candidate(c) for c in candidates
+    ])
+
+    # 汇总 Agent 根据各维度评分给出最终推荐
+    synthesis_prompt = f"""Based on these evaluations:
+    {json.dumps(results, indent=2)}
+
+    Create a decision matrix comparing all candidates on:
+    - Performance | Cost | Reliability | Operations | Scalability
+
+    Give a final recommendation with rationale.
+    """
+    final = subprocess.run(
+        ["claude", "-p", synthesis_prompt, "--output-format", "json"],
+        capture_output=True, text=True
+    )
+    return json.loads(final.stdout)
+```
+
+### 案例 5：持续集成修复流水线（Sequential 模式）
+
+**场景**：CI 失败后自动分析 → 修复 → 验证 → 提交的串行流水线。
+
+```mermaid
+flowchart TD
+    FAIL["CI 构建失败"] --> ANALYZE["Analysis Agent<br/>分析失败原因"]
+    ANALYZE --> CATEGORY{"失败类型?"}
+
+    CATEGORY -->|测试失败| TEST_FIX["Test Fix Agent<br/>修复测试或代码"]
+    CATEGORY -->|类型错误| TYPE_FIX["Type Fix Agent<br/>修复类型定义"]
+    CATEGORY -->|Lint 错误| LINT_FIX["Lint Fix Agent<br/>修复代码风格"]
+
+    TEST_FIX --> VERIFY["Verification Agent<br/>重新运行 CI 检查"]
+    TYPE_FIX --> VERIFY
+    LINT_FIX --> VERIFY
+
+    VERIFY --> PASS{"通过?"}
+    PASS -->|是| COMMIT["Commit Agent<br/>创建修复提交"]
+    PASS -->|否, <3次| CATEGORY
+    PASS -->|否, >=3次| ALERT["Alert Agent<br/>通知人工介入"]
+
+    COMMIT --> PR["创建 PR / 评论"]
+```
+
+**实现**：
+
+```python
+async def auto_fix_ci_failure(ci_log: str, max_attempts: int = 3):
+    """自动修复 CI 失败的流水线"""
+    attempt = 0
+    while attempt < max_attempts:
+        attempt += 1
+        print(f"[Attempt {attempt}/{max_attempts}]")
+
+        # Step 1: 分析失败原因
+        analysis = subprocess.run(
+            ["claude", "-p",
+             f"Analyze this CI failure log and identify the root cause:\n{ci_log}\n"
+             "Output: {{'category': 'test|type|lint', 'files': [...], 'root_cause': '...'}}",
+             "--output-format", "json",
+             "--allowedTools", "Read,Grep"],
+            capture_output=True, text=True, timeout=120
+        )
+        root_cause = json.loads(analysis.stdout)
+
+        # Step 2: 修复（只允许修改相关文件）
+        files_arg = " ".join(root_cause.get("files", []))
+        fix_result = subprocess.run(
+            ["claude", "-p",
+             f"Fix the CI failure. Root cause: {root_cause['root_cause']}\n"
+             f"Only modify these files: {files_arg}\n"
+             f"Category: {root_cause['category']}",
+             "--output-format", "json",
+             "--allowedTools", "Read,Edit,Bash(npm test:*,npx tsc:*,npx eslint:*)",
+             "--max-turns", "20"],
+            capture_output=True, text=True, timeout=300
+        )
+
+        # Step 3: 验证
+        verify = subprocess.run(
+            ["npm", "test", "&&", "npx", "tsc", "--noEmit", "&&", "npx", "eslint", "."],
+            capture_output=True, text=True, shell=True
+        )
+
+        if verify.returncode == 0:
+            # Step 4: 提交修复
+            subprocess.run(["git", "add", "-A"])
+            subprocess.run(["git", "commit", "-m",
+                          f"ci: auto-fix {root_cause['category']} failure\n\n"
+                          f"Root cause: {root_cause['root_cause']}"])
+            print("CI fix committed successfully")
+            return {"status": "fixed", "attempts": attempt}
+
+        ci_log = verify.stderr or verify.stdout
+
+    # 超过最大尝试次数，通知人工介入
+    print("Max attempts reached, manual intervention required")
+    return {"status": "manual_intervention_required", "attempts": attempt}
+```
+
+### 案例 6：文档多语言翻译（Parallel Fork 模式）
+
+**场景**：将项目文档从中文批量翻译为英文、日文、韩文。
+
+```mermaid
+flowchart LR
+    DOC["中文文档<br/>30 个 .md 文件"] --> SPLIT["Split Agent<br/>按文件切分任务"]
+
+    SPLIT --> EN1["EN Agent 1<br/>docs/en/"]
+    SPLIT --> EN2["EN Agent 2<br/>docs/en/"]
+    SPLIT --> JA1["JA Agent 1<br/>docs/ja/"]
+    SPLIT --> JA2["JA Agent 2<br/>docs/ja/"]
+    SPLIT --> KO1["KO Agent 1<br/>docs/ko/"]
+
+    EN1 --> QA["QA Agent<br/>术语一致性检查"]
+    EN2 --> QA
+    JA1 --> QA
+    JA2 --> QA
+    KO1 --> QA
+
+    QA --> GLOSSARY["术语表 Agent<br/>提取并统一术语"]
+```
+
+**实现要点**：
+
+```python
+async def translate_docs(files: list[str], languages: list[str]):
+    """并行翻译文档到多种语言"""
+    async def translate_one(file: str, lang: str, glossary: dict) -> dict:
+        glossary_hint = "\n".join(
+            f"- {cn} → {trans[lang]}" if lang in trans else f"- {cn} (keep)"
+            for cn, trans in glossary.items()
+        ) if glossary else ""
+
+        prompt = f"""Translate {file} to {lang}.
+
+        Glossary (must use these translations):
+        {glossary_hint}
+
+        Rules:
+        - Preserve markdown structure and code blocks
+        - Keep file paths unchanged
+        - Translate descriptions but keep code identifiers
+        - Preserve Mermaid diagram node labels (translate text, keep structure)
+        """
+        # ... execute claude headless ...
+
+    # Phase 1: 先翻译一份术语表
+    glossary = await extract_glossary(files)
+
+    # Phase 2: 并行翻译所有文件到所有语言
+    tasks = []
+    for lang in languages:
+        os.makedirs(f"docs/{lang}", exist_ok=True)
+        for file in files:
+            tasks.append(translate_one(file, lang, glossary))
+
+    results = await asyncio.gather(*tasks)
+
+    # Phase 3: QA 检查术语一致性
+    await check_terminology_consistency(languages)
+```
+
+### 案例 7：生产故障排查（Swarm + Supervisor 混合）
+
+**场景**：生产环境突发故障，需要多线并行排查。
+
+```mermaid
+flowchart TD
+    ALERT["PagerDuty 告警<br/>API 响应延迟 > 5s"] --> SUP["Incident Commander Agent<br/>协调排查"]
+
+    SUP --> LOG["Log Agent<br/>分析错误日志"]
+    SUP --> METRIC["Metrics Agent<br/>检查 CPU/Mem/DB 指标"]
+    SUP --> CODE["Code Agent<br/>分析近期部署的代码变更"]
+    SUP --> DEP["Dependency Agent<br/>检查第三方服务状态"]
+
+    LOG --> SUMMARIZE["Situation Report Agent<br/>综合研判"]
+    METRIC --> SUMMARIZE
+    CODE --> SUMMARIZE
+    DEP --> SUMMARIZE
+
+    SUMMARIZE --> ROOT["根因分析 + 修复建议"]
+```
+
+**Agent 分工**：
+
+| Agent | 数据源 | 工具 |
+|-------|--------|------|
+| Log Agent | ELK / CloudWatch | `grep`, `jq` 分析日志 |
+| Metrics Agent | Prometheus / Grafana | MCP 读取指标 |
+| Code Agent | git log / diff | `git diff`, `git log` |
+| Dependency Agent | 第三方 Status Page | `WebFetch` |
+
+## 案例模式总结
+
+```mermaid
+flowchart TD
+    QUESTION["你的任务适合哪种模式?"]
+
+    QUESTION --> Q1{"需要从多个<br/>角度审查?"}
+    Q1 -->|是| C1["Supervisor<br/>案例3: PR审查<br/>案例7: 故障排查"]
+
+    QUESTION --> Q2{"任务有层级<br/>上下游依赖?"}
+    Q2 -->|是| C2["Hierarchical + Parallel<br/>案例1: 全栈功能开发"]
+
+    QUESTION --> Q3{"大量独立<br/>同质任务?"}
+    Q3 -->|是| C3["Map-Reduce<br/>案例2: 代码迁移<br/>案例6: 文档翻译"]
+
+    QUESTION --> Q4{"需要多方案<br/>对比选优?"}
+    Q4 -->|是| C4["Swarm<br/>案例4: 技术选型"]
+
+    QUESTION --> Q5{"有明确步骤<br/>需串行执行?"}
+    Q5 -->|是| C5["Sequential<br/>案例5: CI修复流水线"]
+```
+
 ## 工作流模式总结
 
 ```mermaid
