@@ -102,6 +102,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 | [08-高级特性](hermes-learning-path/08-高级特性.md) | 定时任务、语音、会话管理 |
 | [09-SDK与API开发接口](hermes-learning-path/09-SDK与API开发接口.md) | Python SDK、ACP/MCP协议、Plugin、Skills |
 | [10-多Agent协作模式](hermes-learning-path/10-多Agent协作模式.md) | delegate_task、子Agent隔离、Orchestrator嵌套 |
+| [11-Kanban看板系统](hermes-learning-path/11-Kanban看板系统.md) | SQLite 持久化任务调度、状态机、Dispatcher/Worker、fan-out/fan-in |
 > 源码位置：`code/hermes/`
 
 ### 6. [Claude Code 学习路径](claude-code-learning-path/)
