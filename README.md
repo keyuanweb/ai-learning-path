@@ -13,6 +13,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 │   vLLM-Omni    │  多阶段流水线 → AR/Diffusion 双引擎 → OmniConnector   │
 │   Agent 框架    │  LangChain → LangGraph → RAG → 多Agent → 生产部署     │
 │   Hermes Agent │  Agent 核心循环 → 工具系统 → 记忆/技能 → 多平台接入    │
+│   OpenClaw     │  Gateway → ReAct循环 → 工具/技能 → 记忆 → 多Agent     │
 │   Claude Code  │  CLI 交互 → Tools/Skills/Hooks → MCP → Agent SDK     │
 │   Ray 分布式    │  Core 原语 → 调度/容错/对象管理 → AI库 → 集群/生产 → LLM Wiki │
 └────────────────┴─────────────────────────────────────────────────────┘
@@ -105,7 +106,25 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 | [11-Kanban看板系统](hermes-learning-path/11-Kanban看板系统.md) | SQLite 持久化任务调度、状态机、Dispatcher/Worker、fan-out/fan-in |
 > 源码位置：`code/hermes/`
 
-### 6. [Claude Code 学习路径](claude-code-learning-path/)
+### 6. [OpenClaw 源码学习](openclaw-learning-path/)
+
+通读 OpenClaw 源码，理解开源 AI Agent 框架的完整架构——从多通道网关、ReAct 核心循环、工具/技能系统（含 ClawHub）、四层记忆栈到多 Agent Hub-Spoke 协作。**含与 Hermes Agent 的全面对比**。
+
+| 阶段 | 内容 | 学时 |
+|------|------|------|
+| 00 | [入口 — 学习路线总览、环境搭建](openclaw-learning-path/00-入口/) | 1-2h |
+| 01 | [概述与架构 — OpenClaw 概述、四层架构总览](openclaw-learning-path/01-概述与架构/) | 2-3h |
+| 02 | [Agent 核心循环 — ReAct 循环、双引擎设计](openclaw-learning-path/02-Agent核心循环/) | 3-5h |
+| 03 | [多通道网关 — Gateway 架构、Lane Queue、多平台接入](openclaw-learning-path/03-多通道网关/) | 3-5h |
+| 04 | [工具与技能 — 工具调用、懒加载、ClawHub、安全护栏](openclaw-learning-path/04-工具与技能系统/) | 4-6h |
+| 05 | [记忆系统 — 四层记忆栈、记忆固化机制](openclaw-learning-path/05-记忆系统/) | 3-5h |
+| 06 | [上下文管理 — 上下文压缩、Workspace 文件体系](openclaw-learning-path/06-上下文管理/) | 3-5h |
+| 07 | [多 Agent — Hub-Spoke 模式、sessions_spawn](openclaw-learning-path/07-多Agent协作/) | 3-5h |
+| 08 | [插件与扩展 — Channel/Memory/Tool/Provider 插件、多 Provider](openclaw-learning-path/08-插件与扩展/) | 3-5h |
+| 09 | [安全与可观测 — 多层护栏、沙箱、CVE 分析、OTel/Dashboard](openclaw-learning-path/09-安全与可观测/) | 3-5h |
+| 10 | [与 Hermes 对比 — 架构/能力/选型三篇对比](openclaw-learning-path/10-与Hermes对比/) | 2-3h |
+
+### 7. [Claude Code 学习路径](claude-code-learning-path/)
 
 系统掌握 Claude Code 的完整技术栈，从 CLI 交互式开发到企业级多 Agent 生产部署。
 
@@ -120,7 +139,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 | 06 | [Agent SDK 开发 — SDK 架构、交互式/自动化会话](claude-code-learning-path/06-Agent-SDK开发/) |
 | 07 | [生产实践 — 多Agent协作、CI/CD、企业级治理](claude-code-learning-path/07-生产实践/) |
 
-### 7. [Ray 分布式计算框架](ray-learning-path/)
+### 8. [Ray 分布式计算框架](ray-learning-path/)
 
 系统学习 Ray 分布式计算框架，从 Core 三大原语（Task/Actor/Object）到 AI 库（Data/Train/Tune/Serve/RLlib），再到集群部署和生产实践。
 
@@ -149,7 +168,9 @@ LLM 理论基础 (必学基础)
         │
         ├──→ Agent 学习路径                     (Agent 应用路线)
         │
-        ├──→ Hermes Agent 源码                  (Agent 框架路线)
+        ├──→ Hermes Agent 源码                  (Agent 框架路线 - Python)
+        │
+        ├──→ OpenClaw 源码                      (Agent 框架路线 - Node.js)
         │
         ├──→ Claude Code 学习路径               (Claude Code 工具路线)
         │
@@ -157,6 +178,6 @@ LLM 理论基础 (必学基础)
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
-- **Agent 方向**：LLM 基础 → Agent → Hermes（想深挖框架实现）
+- **Agent 方向**：LLM 基础 → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
 - **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
