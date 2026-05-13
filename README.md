@@ -14,7 +14,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 │   Agent 框架    │  LangChain → LangGraph → RAG → 多Agent → 生产部署     │
 │   Hermes Agent │  Agent 核心循环 → 工具系统 → 记忆/技能 → 多平台接入    │
 │   Claude Code  │  CLI 交互 → Tools/Skills/Hooks → MCP → Agent SDK     │
-│   Ray 分布式    │  Core 原语 → 调度/容错/对象管理 → AI库 → 集群/生产      │
+│   Ray 分布式    │  Core 原语 → 调度/容错/对象管理 → AI库 → 集群/生产 → LLM Wiki │
 └────────────────┴─────────────────────────────────────────────────────┘
 ```
 
@@ -135,6 +135,7 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 | 07 | [模型服务 — Serve 核心概念、自动扩缩容、多模型编排、高级部署](ray-learning-path/07-模型服务/) | 6h |
 | 08 | [集群与生产 — 集群架构、KubeRay 云原生部署、监控、性能调优](ray-learning-path/08-集群与生产/) | 6h |
 | 09 | [高级专题 — RLlib、MLOps 集成、自定义扩展、案例研究](ray-learning-path/09-高级专题/) | 6h |
+| 10 | [LLM Wiki 知识库构建 — Karpathy 方法论、编译器模式、三层架构、防幻觉](ray-learning-path/10-LLM-Wiki/) | 3h |
 
 ---
 
