@@ -25,14 +25,17 @@ vllm-omni benchmark serve --model Qwen/Qwen2.5-Omni-7B
 
 ## CLI 架构
 
-```
-vllm-omni serve [model] [options]
-    │
-    ▼
-main.py → 解析子命令
-    │
-    ├─→ serve.py       ← 启动 API 服务器
-    └─→ benchmark/     ← 运行基准测试
+```mermaid
+flowchart LR
+  n0["vllm-omni serve [model] [options]"]
+  n1["▼"]
+  n2["main.py → 解析子命令"]
+  n3["serve.py       ← 启动 API 服务器"]
+  n4["benchmark/     ← 运行基准测试"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ## `serve` 命令 —— 启动 API 服务器

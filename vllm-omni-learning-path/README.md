@@ -11,35 +11,20 @@ vLLM-Omni 是 vLLM 的扩展框架，专门做一件事：**让各种模态的�
 
 ## 整体架构（读代码前先看这张图）
 
-```
-用户调用 Omni.generate("画一张猫的图片")
-        │
-        ▼
-┌─ entrypoints/omni.py ─────────────────────────────────────────────┐
-│  Omni / AsyncOmni：用户入口。接收 Prompt，转为内部请求，调 Orchestrator │
-└────────────────────────────────┬───────────────────────────────────┘
-                                 │
-                                 ▼
-┌─ engine/orchestrator.py ──────────────────────────────────────────┐
-│  Orchestrator（编排器）：多阶段流水线的大脑                           │
-│  内部循环：                                                        │
-│    1. 接收用户请求（add_request）                                   │
-│    2. 提交到 Stage 0（通常是 Thinker / AR 阶段）                    │
-│    3. 轮询所有 Stage 输出                                           │
-│    4. 当前 Stage 完成后 → 转换输出 → 提交到下一 Stage               │
-│    5. 最后一个 Stage 完成 → 返回给用户                               │
-└────┬────────────────────────────────────┬─────────────────────────┘
-     │                                    │
-     ▼                                    ▼
-┌─ StagePool（Stage 0: Thinker）─┐  ┌─ StagePool（Stage 1: Talker）──┐
-│  • AR Worker：自回归生成文本    │  │  • Generation Worker：生成音频   │
-│  • AR Scheduler：KV缓存调度     │  │  • Diffusion Engine：扩散推理   │
-│  • GPU Model Runner：模型前向   │  │  • 接收 Stage 0 输出的 token   │
-│  • 输出：token + embedding      │  │  • 输出：音频波形 / 图像 / 视频│
-└────────────────────────────────┘  └────────────────────────────────┘
-     │                                    │
-     └────────── OmniConnector ───────────┘
-          （KV Cache 跨 Stage 传输）
+```mermaid
+flowchart TD
+  user["用户调用 Omni.generate"]
+  entry["entrypoints/omni.py<br/>Omni / AsyncOmni 用户入口<br/>Prompt → 内部请求 → Orchestrator"]
+  orch["engine/orchestrator.py<br/>Orchestrator 编排器<br/>1 add_request 2 提交 Stage0<br/>3 轮询各 Stage 4 完成后转下一 Stage<br/>5 最后 Stage 完成则返回用户"]
+  s0["StagePool Stage0 Thinker<br/>AR Worker / AR Scheduler / GPU Model Runner<br/>输出 token + embedding"]
+  s1["StagePool Stage1 Talker<br/>Generation Worker / Diffusion Engine<br/>消费 Stage0 token 输出 音波图像视频"]
+  conn["OmniConnector KV Cache 跨 Stage 传输"]
+
+  user --> entry --> orch
+  orch --> s0
+  orch --> s1
+  s0 --> conn
+  s1 --> conn
 ```
 
 **核心设计理念**：
@@ -69,21 +54,21 @@ vLLM-Omni 处理两类主要的模型场景，代码路径不同：
 
 ### 主线 A：全模态对话模型（如 Qwen-Omni）
 
-```
-用户说话/打字
-  → Stage 0 (Thinker/AR): 理解输入，自回归生成文本 + 音频 Token
-  → Stage 1 (Talker/Generation): 将音频 Token 转为声学特征
-  → Stage 2 (Code2Wav/Generation): 将声学特征转为音频波形
-  → 返回音频 + 文本
+```mermaid
+flowchart LR
+  a0["用户说话打字"] --> a1["Stage0 Thinker AR<br/>文本与音频 Token"]
+  a1 --> a2["Stage1 Talker Generation<br/>声学特征"]
+  a2 --> a3["Stage2 Code2Wav Generation<br/>音频波形"]
+  a3 --> a4["返回音频与文本"]
 ```
 
 ### 主线 B：扩散生成模型（如 Flux 文生图）
 
-```
-用户输入文本描述
-  → Stage 0 (AR): 文本编码（可选，如用 T5 编码 prompt）
-  → Stage 1 (Diffusion): 扩散去噪，从噪声逐步生成图像
-  → 返回图像
+```mermaid
+flowchart LR
+  b0["用户文本描述"] --> b1["Stage0 AR 文本编码可选 T5"]
+  b1 --> b2["Stage1 Diffusion 去噪生成图像"]
+  b2 --> b3["返回图像"]
 ```
 
 ## 阅读建议

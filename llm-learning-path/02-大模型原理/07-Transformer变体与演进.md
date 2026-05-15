@@ -115,16 +115,27 @@ DeepSeek-V3 使用 MTP 进行训练，是 2025 年的重要技术方向。
 
 ## 5. 演进时间线
 
-```
-2017  Transformer                → 标准架构确立
-2019  Transformer-XL             → 处理长序列（片段级递归）
-2021  BigBird/Longformer         → 稀疏注意力（O(n log n)）
-2022  FlashAttention             → IO感知优化（不改变复杂度，实际加速2-4×）
-2023  Mamba                      → SSM 挑战 Attention
-2023  GQA (LLaMA 2)              → KV Cache 优化
-2024  MoE (DeepSeek-V3, Qwen3)   → 稀疏激活
-2024  MLA (DeepSeek-V2/V3)       → KV Cache 极致压缩
-2024  MTP (DeepSeek-V3)          → 多 token 预测
-2025  FlashAttention-3            → H100 专用优化
-2025  混合注意力/SSM              → Qwen3-Next, Kimi K2
+```mermaid
+flowchart LR
+  n0["2017  Transformer                → 标准架构确立"]
+  n1["2019  Transformer-XL             → 处理长序列（片段级递归）"]
+  n2["2021  BigBird/Longformer         → 稀疏注意力（O(n log n)）"]
+  n3["2022  FlashAttention             → IO感知优化（不改变复杂度，实际加速2-4×）"]
+  n4["2023  Mamba                      → SSM 挑战 Attention"]
+  n5["2023  GQA (LLaMA 2)              → KV Cache 优化"]
+  n6["2024  MoE (DeepSeek-V3, Qwen3)   → 稀疏激活"]
+  n7["2024  MLA (DeepSeek-V2/V3)       → KV Cache 极致压缩"]
+  n8["2024  MTP (DeepSeek-V3)          → 多 token 预测"]
+  n9["2025  FlashAttention-3            → H100 专用优化"]
+  n10["2025  混合注意力/SSM              → Qwen3-Next, Kimi K2"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
 ```

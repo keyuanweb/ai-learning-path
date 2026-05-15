@@ -6,9 +6,11 @@ OpenClaw 是一个**开源（MIT）、本地优先的 AI Agent 框架**，由奥
 
 **核心理念：从 Chat 到 Action。**
 
-```
-传统 Chatbot:  用户提问 → LLM 回答 → 用户再提问 → ...
-OpenClaw Agent: 用户指令 → ReAct 循环(Think→Act→Observe) → 自主完成任务
+```mermaid
+flowchart TD
+  n0["传统 Chatbot:  用户提问 → LLM 回答 → 用户再提问 → ..."]
+  n1["OpenClaw Agent: 用户指令 → ReAct 循环(Think→Act→Observe) → 自主完成任务"]
+  n0 --> n1
 ```
 
 ## 发展历程
@@ -62,23 +64,37 @@ OpenClaw 被业界称为"AI Agent 的 DeepSeek 时刻"——它像 DeepSeek 在 
 
 ## 技术全景
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                      OpenClaw 技术全景                         │
-├───────────────┬──────────────────────────────────────────────┤
-│   层级         │   技术                                        │
-├───────────────┼──────────────────────────────────────────────┤
-│   语言         │   TypeScript (Node.js 18+)                    │
-│   网关         │   Fastify HTTP + WebSocket                    │
-│   Agent 运行时  │   Pi Agent (嵌入式) / RPC 模式               │
-│   LLM 接入     │   OpenAI / Anthropic / Gemini / DeepSeek SDK  │
-│   记忆         │   Redis + Vector DB (Qdrant/PGVector) + Graph DB│
-│   技能         │   懒加载 Metadata + 动态 Read 机制             │
-│   通道         │   Telegram/Discord/Slack/WhatsApp Bot API     │
-│   沙箱         │   Docker / Node.js VM 隔离                    │
-│   调度         │   node-cron + Heartbeat (30min 间隔)          │
-│   可观测       │   OpenTelemetry + Micrometer                  │
-│   配置         │   YAML + Markdown (Workspace 文件)             │
-│   包管理       │   npm (全局安装)                               │
-└───────────────┴──────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  n0["OpenClaw 技术全景                         │"]
+  n1["┬──────────────────────────────────────────────┤"]
+  n2["层级         │   技术                                        │"]
+  n3["┼──────────────────────────────────────────────┤"]
+  n4["语言         │   TypeScript (Node.js 18+)                    │"]
+  n5["网关         │   Fastify HTTP + WebSocket                    │"]
+  n6["Agent 运行时  │   Pi Agent (嵌入式) / RPC 模式               │"]
+  n7["LLM 接入     │   OpenAI / Anthropic / Gemini / DeepSeek SDK  │"]
+  n8["记忆         │   Redis + Vector DB (Qdrant/PGVector) + Graph DB│"]
+  n9["技能         │   懒加载 Metadata + 动态 Read 机制             │"]
+  n10["通道         │   Telegram/Discord/Slack/WhatsApp Bot API     │"]
+  n11["沙箱         │   Docker / Node.js VM 隔离                    │"]
+  n12["调度         │   node-cron + Heartbeat (30min 间隔)          │"]
+  n13["可观测       │   OpenTelemetry + Micrometer                  │"]
+  n14["配置         │   YAML + Markdown (Workspace 文件)             │"]
+  n15["包管理       │   npm (全局安装)                               │"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n15
 ```

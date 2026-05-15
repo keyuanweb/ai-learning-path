@@ -2,20 +2,16 @@
 
 ## 三层架构
 
+```mermaid
+flowchart TD
+  backend["AttentionBackend 注册表"]
+  impl["AttentionImpl.forward CUDA或Triton kernel"]
+  builder["AttentionMetadataBuilder build与block_table等"]
+  backend --> impl
+  backend --> builder
 ```
-AttentionBackend (注册在 registry)
-  │ 静态方法：描述自己是什么，验证兼容性
-  │
-  ├─→ AttentionImpl (ABC)
-  │   └── forward(layer, query, key, value, kv_cache, attn_metadata, output)
-  │       标准 PagedAttention 的前向——核心的 CUDA/Triton kernel 在此
-  │
-  └─→ AttentionMetadataBuilder (ABC)
-      ├── build(common_prefix_len, common_attn_metadata) → metadata
-      ├── build_for_cudagraph_capture(...) → metadata
-      ├── update_block_table(...) → metadata
-      └── use_cascade_attention(...) → bool
-```
+
+**`AttentionImpl.forward`**：PagedAttention 核心；**AttentionMetadataBuilder** 负责 `build` / `build_for_cudagraph_capture` / `update_block_table` / `use_cascade_attention` 等。
 
 ## AttentionImpl.forward() — PagedAttention 的签名
 

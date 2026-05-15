@@ -6,18 +6,21 @@
 
 ## `load_model()` — 模型加载
 
-```
-load_model(vllm_config)
-  ├─ get_model_loader(load_config) → 选择合适的 loader
-  ├─ loader.load_model(vllm_config) → 实例化模型 + 加载权重
-  ├─ 如果启用 LoRA → LoRAModel.wrap(model, lora_config)
-  ├─ 如果有 EAGLE 投机解码 → 插入 AuxHiddenStates 层（提取 draft token 用的 hidden states）
-  ├─ 如果启用 torch.compile → torch.compile(model, ...)
-  ├─ 如果是 PP 非首 rank → 创建持久化的 intermediate_tensors 缓冲区
-  └─ 调用 compile_or_warm_up_model() → 录制 CUDA graphs
+```mermaid
+flowchart TD
+  root["load_model vllm_config"]
+  l1["get_model_loader"]
+  l2["loader.load_model"]
+  l3["LoRA wrap 可选"]
+  l4["EAGLE AuxHiddenStates 可选"]
+  l5["torch.compile 可选"]
+  l6["PP缓冲区 可选"]
+  l7["compile_or_warm_up CUDA graph"]
+
+  root --> l1 --> l2 --> l3 --> l4 --> l5 --> l6 --> l7
 ```
 
-## `execute_model()` — 一次前向执行（四步）
+LoRA / EAGLE / `torch.compile` / PP 缓冲均为**条件分支**，上图表示源码中的典型拼装顺序。
 
 ```python
 def execute_model(self, scheduler_output: SchedulerOutput) -> ModelRunnerOutput:

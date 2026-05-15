@@ -18,18 +18,21 @@
 
 ## DiffusionEngine 的核心组件
 
-```
-                    DiffusionEngine
-                          │
-         ┌────────────────┼────────────────┐
-         ▼                ▼                ▼
-   RequestScheduler  StepScheduler   DiffusionExecutor
-   (请求级调度)      (去噪步调度)    (GPU 执行)
-         │                │                │
-         └────────────────┼────────────────┘
-                          ▼
-                  DiffusionWorker
-                  (实际模型前向)
+```mermaid
+flowchart TD
+  n0["DiffusionEngine"]
+  n1["▼                ▼                ▼"]
+  n2["RequestScheduler  StepScheduler   DiffusionExecutor"]
+  n3["(请求级调度)      (去噪步调度)    (GPU 执行)"]
+  n4["▼"]
+  n5["DiffusionWorker"]
+  n6["(实际模型前向)"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ### 三大核心
@@ -40,31 +43,43 @@
 
 ## 一个扩散请求的完整生命周期
 
-```
-用户提交请求（prompt + sampling_params）
-  │
-  ▼
-RequestScheduler.add_request()
-  │  排队等待（可能前面有其他请求）
-  ▼
-RequestScheduler 调度 → 请求进入"执行队列"
-  │
-  ▼
-StepScheduler 初始化 → 从第 0 步开始去噪
-  │
-  ├─→ Step 0: 纯噪声 + 条件 → DiT forward → 预测噪声 → 更新样本
-  ├─→ Step 1: 更新后样本 → DiT forward → ...
-  ├─→ ...
-  └─→ Step N-1: 最终去噪 → 干净样本
-  │
-  ▼
-VAE Decoder（潜空间 → 像素）
-  │
-  ▼
-后处理（可选：帧插值、超分、颜色校正）
-  │
-  ▼
-返回用户（PIL Image / numpy array / 文件路径）
+```mermaid
+flowchart LR
+  n0["用户提交请求（prompt + sampling_params）"]
+  n1["▼"]
+  n2["RequestScheduler.add_request()"]
+  n3["排队等待（可能前面有其他请求）"]
+  n4["▼"]
+  n5["RequestScheduler 调度 → 请求进入'执行队列'"]
+  n6["▼"]
+  n7["StepScheduler 初始化 → 从第 0 步开始去噪"]
+  n8["Step 0: 纯噪声 + 条件 → DiT forward → 预测噪声 → 更新样本"]
+  n9["Step 1: 更新后样本 → DiT forward → ..."]
+  n10["..."]
+  n11["Step N-1: 最终去噪 → 干净样本"]
+  n12["▼"]
+  n13["VAE Decoder（潜空间 → 像素）"]
+  n14["▼"]
+  n15["后处理（可选：帧插值、超分、颜色校正）"]
+  n16["▼"]
+  n17["返回用户（PIL Image / numpy array / 文件路径）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n15
+  n15 --> n16
+  n16 --> n17
 ```
 
 ## DiffusionEngine 的核心方法

@@ -4,16 +4,23 @@ Gateway 是 OpenClaw 的**中央控制面**，它是所有消息的唯一入口�
 
 ## 为什么需要独立的 Gateway？
 
-```
-无 Gateway（直接连接）:
-  Telegram Bot ──→ Agent Instance
-  Discord Bot  ──→ Agent Instance    ← 三个独立连接
-  Slack Bot    ──→ Agent Instance      状态无法共享
-
-有 Gateway:
-  Telegram Bot ──┐
-  Discord Bot  ──┼──→ Gateway ──→ Agent Runtime    ← 统一入口
-  Slack Bot    ──┘                                 状态集中管理
+```mermaid
+flowchart LR
+  n0["无 Gateway（直接连接）:"]
+  n1["Telegram Bot ──→ Agent Instance"]
+  n2["Discord Bot  ──→ Agent Instance    ← 三个独立连接"]
+  n3["Slack Bot    ──→ Agent Instance      状态无法共享"]
+  n4["有 Gateway:"]
+  n5["Telegram Bot ──┐"]
+  n6["Discord Bot  ──┼──→ Gateway ──→ Agent Runtime    ← 统一入口"]
+  n7["Slack Bot    ──┘                                 状态集中管理"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 独立的 Gateway 层提供了：
@@ -57,27 +64,32 @@ graph TD
 - 不会出现两个并发操作同时修改同一个文件
 - 记忆状态不会因并发写入而损坏
 
-```
-Session A: [Msg1] → [Msg2] → [Msg3]   ← 串行处理
-Session B: [Msg1] → [Msg2]            ← 独立并行
-Session C: [Msg1]                     ← 独立并行
+```mermaid
+flowchart LR
+  n0["Session A: [Msg1] → [Msg2] → [Msg3]   ← 串行处理"]
+  n1["Session B: [Msg1] → [Msg2]            ← 独立并行"]
+  n2["Session C: [Msg1]                     ← 独立并行"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 ### 2. Lane Queue（泳道队列）
 
 Lane Queue 是 OpenClaw 特有的并发控制机制：
 
-```
-┌────────────────────────────────────┐
-│            Lane Queue               │
-│                                     │
-│  Lane 1 (Session A):  [M1][M2]     │  ← 队内串行
-│  Lane 2 (Session B):  [M1]          │  ← 队内串行
-│  Lane 3 (Session C):  [M1][M2][M3] │  ← 队内串行
-│  Lane 4 (Internal):    [CRON]       │  ← 系统任务
-│                                     │
-│  各 Lane 之间并行执行               │
-└────────────────────────────────────┘
+```mermaid
+flowchart TD
+  n0["Lane Queue               │"]
+  n1["Lane 1 (Session A):  [M1][M2]     │  ← 队内串行"]
+  n2["Lane 2 (Session B):  [M1]          │  ← 队内串行"]
+  n3["Lane 3 (Session C):  [M1][M2][M3] │  ← 队内串行"]
+  n4["Lane 4 (Internal):    [CRON]       │  ← 系统任务"]
+  n5["各 Lane 之间并行执行               │"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 关键特性：
@@ -90,14 +102,19 @@ Lane Queue 是 OpenClaw 特有的并发控制机制：
 
 跨平台会话关联——同一个用户在不同平台上拥有同一份 Agent 状态：
 
-```
-用户 Alice:
-  Telegram (chat_id=123456)  ─┐
-  Discord  (user_id=789012)  ─┼──→ Session "alice-default"
-  Web UI   (browser cookie)  ─┘
-
-用户 Bob:
-  WhatsApp (phone=+86138...) ───→ Session "bob-default"
+```mermaid
+flowchart LR
+  n0["用户 Alice:"]
+  n1["Telegram (chat_id=123456)  ─┐"]
+  n2["Discord  (user_id=789012)  ─┼──→ Session 'alice-default'"]
+  n3["Web UI   (browser cookie)  ─┘"]
+  n4["用户 Bob:"]
+  n5["WhatsApp (phone=+86138...) ───→ Session 'bob-default'"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 会话生命周期：

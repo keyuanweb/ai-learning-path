@@ -9,23 +9,33 @@
 
 每个 Stage 都是一个**独立进程**，有自己的 GPU 上下文、vLLM EngineCore、模型参数。启动过程如下：
 
-```
-Orchestrator 初始化
-  │
-  ├─→ 读取 PipelineRegistry → 知道有几个 Stage
-  │
-  ├─→ 对每个 Stage：
-  │     ├─ 1. 构建 Stage 的 VLLM Config（OmniModelConfig → VLLM Config）
-  │     ├─ 2. 创建 StageEngineCoreProc（子进程）
-  │     │      ├─ 启动独立进程
-  │     │      ├─ 初始化 CUDA 上下文
-  │     │      ├─ 加载模型权重
-  │     │      ├─ 创建 EngineCore（vLLM 的后端引擎）
-  │     │      └─ 进入推理循环
-  │     ├─ 3. 创建 StageEngineCoreClient（通信客户端）
-  │     └─ 4. 将 Client 包装成 StagePool
-  │
-  └─→ 所有 Stage 就绪 → 开始接收请求
+```mermaid
+flowchart TD
+  n0["Orchestrator 初始化"]
+  n1["读取 PipelineRegistry → 知道有几个 Stage"]
+  n2["对每个 Stage："]
+  n3["构建 Stage 的 VLLM Config（OmniModelConfig → VLLM Config）"]
+  n4["创建 StageEngineCoreProc（子进程）"]
+  n5["启动独立进程"]
+  n6["初始化 CUDA 上下文"]
+  n7["加载模型权重"]
+  n8["创建 EngineCore（vLLM 的后端引擎）"]
+  n9["进入推理循环"]
+  n10["创建 StageEngineCoreClient（通信客户端）"]
+  n11["将 Client 包装成 StagePool"]
+  n12["所有 Stage 就绪 → 开始接收请求"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
 ```
 
 ## 三个关键类
@@ -78,14 +88,17 @@ class StageEngineStartup:
 
 主进程（Orchestrator）和子进程（Stage Engine）之间的通信方式：
 
-```
-主进程（Orchestrator）                   子进程（Stage Engine）
-    │                                         │
-    ├── submit(request) ────────────────────▶│  接收请求
-    │                                         │  EngineCore.step()
-    │                                         │  模型 forward
-    │  ◀──────────── output ────────────────┤  输出结果
-    │                                         │
+```mermaid
+flowchart TD
+  n0["主进程（Orchestrator）                   子进程（Stage Engine）"]
+  n1["submit(request) ────────────────────▶│  接收请求"]
+  n2["EngineCore.step()"]
+  n3["模型 forward"]
+  n4["◀──────────── output ────────────────┤  输出结果"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 具体的 IPC 实现取决于配置：

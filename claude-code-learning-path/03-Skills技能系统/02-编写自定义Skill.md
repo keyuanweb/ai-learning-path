@@ -12,14 +12,21 @@
 
 ### 目录结构
 
-```
-.claude/skills/deploy/
-├── SKILL.md
-├── references/
-│   ├── environments.md
-│   └── rollback-guide.md
-└── scripts/
-    └── pre-deploy-check.sh
+```mermaid
+flowchart TD
+  n0[".claude/skills/deploy/"]
+  n1["SKILL.md"]
+  n2["references/"]
+  n3["environments.md"]
+  n4["rollback-guide.md"]
+  n5["scripts/"]
+  n6["pre-deploy-check.sh"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ### SKILL.md

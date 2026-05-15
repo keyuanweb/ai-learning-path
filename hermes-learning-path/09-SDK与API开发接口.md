@@ -156,15 +156,23 @@ ACP 是 Anthropic 推出的**Agent 间通信开放标准**。它定义了统一�
 
 Hermes 通过 `acp_adapter/` 目录完整实现了 ACP 协议:
 
-```
-acp_adapter/
-├── server.py       ← FastAPI 服务端 + WebSocket 端点
-├── session.py      ← ACP 会话生命周期管理
-├── events.py       ← ACP 事件类型定义
-├── tools.py        ← Hermes 工具 → ACP Tool 适配
-├── auth.py         ← 鉴权与 Token 验证
-├── permissions.py  ← 审批/权限控制
-└── entry.py        ← hermes-acp CLI 入口
+```mermaid
+flowchart TD
+  n0["acp_adapter/"]
+  n1["server.py       ← FastAPI 服务端 + WebSocket 端点"]
+  n2["session.py      ← ACP 会话生命周期管理"]
+  n3["events.py       ← ACP 事件类型定义"]
+  n4["tools.py        ← Hermes 工具 → ACP Tool 适配"]
+  n5["auth.py         ← 鉴权与 Token 验证"]
+  n6["permissions.py  ← 审批/权限控制"]
+  n7["entry.py        ← hermes-acp CLI 入口"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 ### 启动 ACP 服务
@@ -298,23 +306,34 @@ flowchart LR
 
 [plugins/model-providers/](code/hermes-agent/plugins/model-providers/) 下已有 8 个:
 
-```
-plugins/model-providers/
-├── anthropic/      ← Anthropic Messages API
-├── gemini/         ← Google Gemini API
-├── openrouter/     ← OpenRouter 聚合路由
-├── nvidia/         ← NVIDIA NIM API
-├── ollama-cloud/   ← Ollama Cloud
-├── opencode-zen/   ← OpenCode Zen
-├── stepfun/        ← StepFun (阶跃星辰)
-└── nous/           ← Nous Research 模型
+```mermaid
+flowchart TD
+  n0["plugins/model-providers/"]
+  n1["anthropic/      ← Anthropic Messages API"]
+  n2["gemini/         ← Google Gemini API"]
+  n3["openrouter/     ← OpenRouter 聚合路由"]
+  n4["nvidia/         ← NVIDIA NIM API"]
+  n5["ollama-cloud/   ← Ollama Cloud"]
+  n6["opencode-zen/   ← OpenCode Zen"]
+  n7["stepfun/        ← StepFun (阶跃星辰)"]
+  n8["nous/           ← Nous Research 模型"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
 ```
 
 ### 平台级扩展
 
-```
-plugins/
-└── google_meet/    ← Google Meet 集成（bot + 音频桥）
+```mermaid
+flowchart TD
+  n0["plugins/"]
+  n1["google_meet/    ← Google Meet 集成（bot + 音频桥）"]
+  n0 --> n1
 ```
 
 ---

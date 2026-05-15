@@ -20,16 +20,23 @@ vLLM-Omni 支持的语音模型大致可以分三类：
 
 CosyVoice3 将"文本→语音"分成两个 Stage：
 
-```
-Stage 0: AR 模型
-  ├─ 输入：文本 token + 说话人 embedding
-  ├─ 输出：语音 code（离散 codec token）
-  └─ worker_type: "ar"
-
-Stage 1: DiT / Code2Wav
-  ├─ 输入：语音 code
-  ├─ 输出：音频波形
-  └─ worker_type: "generation"
+```mermaid
+flowchart TD
+  n0["Stage 0: AR 模型"]
+  n1["输入：文本 token + 说话人 embedding"]
+  n2["输出：语音 code（离散 codec token）"]
+  n3["worker_type: 'ar'"]
+  n4["Stage 1: DiT / Code2Wav"]
+  n5["输入：语音 code"]
+  n6["输出：音频波形"]
+  n7["worker_type: 'generation'"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 ### 关键文件
@@ -69,9 +76,11 @@ class MiMoAudioForConditionalGeneration:
 
 Fish Speech 使用三 Stage 架构：
 
-```
-Slow AR → Fast AR → DAC Decoder
-(慢AR)    (快AR)    (解码器)
+```mermaid
+flowchart TD
+  n0["Slow AR → Fast AR → DAC Decoder"]
+  n1["(慢AR)    (快AR)    (解码器)"]
+  n0 --> n1
 ```
 
 - **Slow AR**：高质量地生成语音特征

@@ -137,17 +137,22 @@ sequenceDiagram
 
 子 Agent 间**不能直接通信**，所有信息通过 Orchestrator 中转：
 
-```
-Sub-Agent A  ──→ Orchestrator ──→ Sub-Agent B
-                  (筛选/合并)      (只接收相关信息)
+```mermaid
+flowchart TD
+  n0["Sub-Agent A  ──→ Orchestrator ──→ Sub-Agent B"]
+  n1["(筛选/合并)      (只接收相关信息)"]
+  n0 --> n1
 ```
 
 子 Agent 也可以通过文件系统交换数据（Orchestrator 授予权限后）：
 
-```
-Sub-Agent A → write("files/shared/analysis.json", data)
-Orchestrator → grant_read(Sub-Agent B, "files/shared/analysis.json")
-Sub-Agent B → read("files/shared/analysis.json")
+```mermaid
+flowchart LR
+  n0["Sub-Agent A → write('files/shared/analysis.json', data)"]
+  n1["Orchestrator → grant_read(Sub-Agent B, 'files/shared/analysis.json')"]
+  n2["Sub-Agent B → read('files/shared/analysis.json')"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 ## 配置示例

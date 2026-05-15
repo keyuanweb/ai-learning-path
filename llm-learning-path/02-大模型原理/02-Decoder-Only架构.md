@@ -57,24 +57,41 @@ Decoder-Only 的优势：
 
 ## 4. 现代 Decoder-Only 的标准组件
 
-```
-Input Tokens
-    ↓
-Token Embedding (可学习查表)
-    ↓
-[× N layers]
-    ├── RMSNorm (Pre-Norm)
-    ├── GQA + RoPE Causal Self-Attention
-    ├── 残差连接
-    ├── RMSNorm (Pre-Norm)
-    ├── SwiGLU FFN (可选 MoE)
-    └── 残差连接
-    ↓
-RMSNorm (Final)
-    ↓
-lm_head (与 Token Embedding 共享权重)
-    ↓
-Output Logits
+```mermaid
+flowchart TD
+  n0["Input Tokens"]
+  n1["↓"]
+  n2["Token Embedding (可学习查表)"]
+  n3["↓"]
+  n4["[× N layers]"]
+  n5["RMSNorm (Pre-Norm)"]
+  n6["GQA + RoPE Causal Self-Attention"]
+  n7["残差连接"]
+  n8["RMSNorm (Pre-Norm)"]
+  n9["SwiGLU FFN (可选 MoE)"]
+  n10["残差连接"]
+  n11["↓"]
+  n12["RMSNorm (Final)"]
+  n13["↓"]
+  n14["lm_head (与 Token Embedding 共享权重)"]
+  n15["↓"]
+  n16["Output Logits"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n15
+  n15 --> n16
 ```
 
 这些组件的每个设计细节都有明确的问题在解决：

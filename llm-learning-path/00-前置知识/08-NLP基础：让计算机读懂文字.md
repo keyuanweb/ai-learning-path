@@ -22,15 +22,19 @@
 
 **从最基本单元出发，逐步合并高频组合。**
 
-```
-初始: "unhappiness" → u, n, h, a, p, p, i, n, e, s, s
-每步：统计所有相邻 pair 的频率，把最高频的一对合并成一个新 token
-
-第 1 步: p+p → pp  (英文中很常见)
-第 2 步: n+pp → npp (不太常见了)
-...
-最终: un + happiness
-  或: un + happ + i + ness  (遇到不认识的词也能拆)
+```mermaid
+flowchart LR
+  n0["初始: 'unhappiness' → u, n, h, a, p, p, i, n, e, s, s"]
+  n1["每步：统计所有相邻 pair 的频率，把最高频的一对合并成一个新 token"]
+  n2["第 1 步: p+p → pp  (英文中很常见)"]
+  n3["第 2 步: n+pp → npp (不太常见了)"]
+  n4["最终: un + happiness"]
+  n5["或: un + happ + i + ness  (遇到不认识的词也能拆)"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 **它解决了一箭三雕**：
@@ -117,8 +121,9 @@ P("今天", "天气", "真", "好") = ?
 
 需要经过三道工序：
 
-```
-Logits (任意实数) → Softmax → 概率分布 (0~1, 和为1) → 采样 → 具体 token
+```mermaid
+flowchart TD
+  n0["Logits (任意实数) → Softmax → 概率分布 (0~1, 和为1) → 采样 → 具体 token"]
 ```
 
 ### Softmax：把分数变成概率
@@ -168,11 +173,15 @@ next_token = torch.multinomial(probs, 1)  # 按概率采样
 
 你不需要微调模型就能让它做新事——只要在 prompt 里给 2-3 个示例：
 
-```
-你输入: 把英文翻译成中文:
-         hello → 你好
-         world → 世界
-         goodbye → ?    ← 模型直接回答 "再见"
+```mermaid
+flowchart LR
+  n0["你输入: 把英文翻译成中文:"]
+  n1["hello → 你好"]
+  n2["world → 世界"]
+  n3["goodbye → ?    ← 模型直接回答 '再见'"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 **模型参数没有任何变化！** 它只是通过 Attention 机制找到"例子中的模式"并应用。

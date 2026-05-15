@@ -26,19 +26,27 @@ Speculative Decoding 解决一个核心矛盾：**推理是内存受限的（而
 
 > 用一个**极小的模型**快速生成 k 个"猜测 token"，然后用**大模型**一次性验证这 k 个 token 是否合理。通过的保留，不通过的由大模型重新生成。
 
-```
-1. Draft (小模型, 便宜):
-   prompt: "The capital of France is"
-   draft_model 快速生成: ["Paris", "and", "it", "is"]  (k=4)
-
-2. Verify (大模型, 一次前向):
-   把 prompt + ["Paris", "and", "it", "is"] 一起送进大模型
-   大模型一次前向计算每个位置的输出概率
-
-3. Accept/Reject:
-   检查大模型在位置 i 预测的 token 是否 = draft token i
-   "Paris": 大模型也预测 "Paris" ✓ → 接受
-   "and":   大模型预测 "the" ✗ → 拒绝，从这开始大模型自己生成
+```mermaid
+flowchart TD
+  n0["Draft (小模型, 便宜):"]
+  n1["prompt: 'The capital of France is'"]
+  n2["draft_model 快速生成: ['Paris', 'and', 'it', 'is']  (k=4)"]
+  n3["Verify (大模型, 一次前向):"]
+  n4["把 prompt + ['Paris', 'and', 'it', 'is'] 一起送进大模型"]
+  n5["大模型一次前向计算每个位置的输出概率"]
+  n6["Accept/Reject:"]
+  n7["检查大模型在位置 i 预测的 token 是否 = draft token i"]
+  n8["'Paris': 大模型也预测 'Paris' ✓ → 接受"]
+  n9["'and':   大模型预测 'the' ✗ → 拒绝，从这开始大模型自己生成"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
 ```
 
 ### 为什么能加速
@@ -73,12 +81,17 @@ Speculative Decoding 解决一个核心矛盾：**推理是内存受限的（而
 
 在模型最后一层加**多个额外的分类头**，每个头预测不同位置 offset 的 token：
 
-```
-大模型前向 → hidden_state
-            ├→ lm_head_0:  预测 token_{t+1}  (标准输出)
-            ├→ medusa_head_1: 预测 token_{t+2}  (直接跳到下一个)
-            ├→ medusa_head_2: 预测 token_{t+3}
-            └→ medusa_head_3: 预测 token_{t+4}
+```mermaid
+flowchart LR
+  n0["大模型前向 → hidden_state"]
+  n1["lm_head_0:  预测 token_{t+1}  (标准输出)"]
+  n2["medusa_head_1: 预测 token_{t+2}  (直接跳到下一个)"]
+  n3["medusa_head_2: 预测 token_{t+3}"]
+  n4["medusa_head_3: 预测 token_{t+4}"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 一次前向直接得到 4 个候选的下几个 token。不用 draft model！只需要训练几个小的 MLP 头。

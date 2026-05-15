@@ -97,13 +97,19 @@ RNN 的计算复杂度 $O(n \cdot d^2)$，Attention 是 $O(n^2 \cdot d)$。当 n
 
 ## 5. 发展脉络
 
-```
-2014  Bahdanau Attention    → RNN解码器中加入Attention对齐源句
-2015  Luong Attention       → 提出多种注意力分数计算方式(additive/multiplicative)
-2017  Transformer           → 去掉RNN，纯Attention架构 ← 革命性的一步
-2018  BERT (Encoder-Only)   → 双向Self-Attention理解文本
-2018  GPT (Decoder-Only)    → 单向Masked Self-Attention自回归生成
-2023+ LLaMA/Qwen/DeepSeek   → 大规模Decoder-Only + 各种Attention效率优化
+```mermaid
+flowchart LR
+  n0["2014  Bahdanau Attention    → RNN解码器中加入Attention对齐源句"]
+  n1["2015  Luong Attention       → 提出多种注意力分数计算方式(additive/multiplicative)"]
+  n2["2017  Transformer           → 去掉RNN，纯Attention架构 ← 革命性的一步"]
+  n3["2018  BERT (Encoder-Only)   → 双向Self-Attention理解文本"]
+  n4["2018  GPT (Decoder-Only)    → 单向Masked Self-Attention自回归生成"]
+  n5["2023+ LLaMA/Qwen/DeepSeek   → 大规模Decoder-Only + 各种Attention效率优化"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 Attention 是当前一切大模型的基石。Transformer 就是"Attention + FFN + 残差 + 归一化"的巧妙组合——下面几章逐一拆解。

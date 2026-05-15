@@ -69,25 +69,36 @@ Claude Code 会扫描整个代码库，自动生成 `CLAUDE.md`，内容通常�
 
 Claude Code 支持多层 CLAUDE.md 文件，按照**由广到精**的顺序加载：
 
-```
-~/.claude/CLAUDE.md          ← 个人全局记忆（所有项目）
-    ↓
-项目根/CLAUDE.md             ← 项目级记忆（团队共享）
-    ↓
-子目录/CLAUDE.md             ← 子模块记忆（特定上下文）
+```mermaid
+flowchart TD
+  n0["~/.claude/CLAUDE.md          ← 个人全局记忆（所有项目）"]
+  n1["↓"]
+  n2["项目根/CLAUDE.md             ← 项目级记忆（团队共享）"]
+  n3["↓"]
+  n4["子目录/CLAUDE.md             ← 子模块记忆（特定上下文）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ### 目录级 CLAUDE.md
 
 你可以在子目录放置 `CLAUDE.md`，当 Claude 操作该目录中的文件时，会加载对应的记忆：
 
-```
-my-project/
-├── CLAUDE.md              ← 全局项目约定
-├── src/
-│   ├── CLAUDE.md           ← src-specific 约定
-│   └── api/
-│       └── CLAUDE.md       ← API 开发约定
+```mermaid
+flowchart TD
+  n0["my-project/"]
+  n1["CLAUDE.md              ← 全局项目约定"]
+  n2["src/"]
+  n3["CLAUDE.md           ← src-specific 约定"]
+  n4["api/"]
+  n5["CLAUDE.md       ← API 开发约定"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ## 使用 @ 引用外部文件

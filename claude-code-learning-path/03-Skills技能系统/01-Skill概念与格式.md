@@ -81,14 +81,21 @@ allowed-tools: Read, Write, Edit, Grep, Glob
 
 ## 目录结构
 
-```
-.claude/skills/my-deploy-skill/
-├── SKILL.md              ← 核心指令（Level 2）
-├── references/
-│   ├── staging-config.md ← 参考资料（Level 3）
-│   └── production-checklist.md
-└── scripts/
-    └── health-check.sh   ← 可执行脚本
+```mermaid
+flowchart TD
+  n0[".claude/skills/my-deploy-skill/"]
+  n1["SKILL.md              ← 核心指令（Level 2）"]
+  n2["references/"]
+  n3["staging-config.md ← 参考资料（Level 3）"]
+  n4["production-checklist.md"]
+  n5["scripts/"]
+  n6["health-check.sh   ← 可执行脚本"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ## Skill 触发方式
@@ -97,11 +104,15 @@ allowed-tools: Read, Write, Edit, Grep, Glob
 
 Claude 分析用户请求，匹配 Skill 的 `description` 中描述的场景：
 
-```
-用户: "帮我部署到 staging 环境"
-→ Claude 发现 deploy-skill 匹配
-→ 加载 SKILL.md
-→ 按指令执行部署流程
+```mermaid
+flowchart LR
+  n0["用户: '帮我部署到 staging 环境'"]
+  n1["→ Claude 发现 deploy-skill 匹配"]
+  n2["→ 加载 SKILL.md"]
+  n3["→ 按指令执行部署流程"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ### 手动触发

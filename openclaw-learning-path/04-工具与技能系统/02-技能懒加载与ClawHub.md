@@ -6,26 +6,36 @@ OpenClaw 的技能系统采用**懒加载（Lazy Loading）**策略，这是它�
 
 传统方式的问题：
 
-```
-传统方式（全量注入 Prompt）:
-  System Prompt = 基础指令 + 技能1完整文档(3000 tokens)
-                          + 技能2完整文档(2500 tokens)
-                          + 技能3完整文档(4000 tokens)
-                          ...
-                          + 技能N完整文档(2000 tokens)
-  → 200+ 技能全量注入会消耗 50万+ tokens，大部分永远不会被用到
+```mermaid
+flowchart TD
+  n0["传统方式（全量注入 Prompt）:"]
+  n1["System Prompt = 基础指令 + 技能1完整文档(3000 tokens)"]
+  n2["+ 技能2完整文档(2500 tokens)"]
+  n3["+ 技能3完整文档(4000 tokens)"]
+  n4["+ 技能N完整文档(2000 tokens)"]
+  n5["→ 200+ 技能全量注入会消耗 50万+ tokens，大部分永远不会被用到"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 OpenClaw 的懒加载方案：
 
-```
-懒加载方式:
-  System Prompt = 基础指令 + 技能1元数据(50 tokens)
-                          + 技能2元数据(50 tokens)
-                          + 技能3元数据(50 tokens)
-                          ...
-  → 200 技能仅消耗 ~10K tokens（元数据）
-  → 当 Agent 决定使用某技能时，通过 read 工具动态加载完整文档
+```mermaid
+flowchart LR
+  n0["懒加载方式:"]
+  n1["System Prompt = 基础指令 + 技能1元数据(50 tokens)"]
+  n2["+ 技能2元数据(50 tokens)"]
+  n3["+ 技能3元数据(50 tokens)"]
+  n4["→ 200 技能仅消耗 ~10K tokens（元数据）"]
+  n5["→ 当 Agent 决定使用某技能时，通过 read 工具动态加载完整文档"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ## 懒加载机制
@@ -112,16 +122,25 @@ openclaw skill update
 
 每个技能是一个包含标准化文件的目录：
 
-```
-skills/pdf_generator/
-├── SKILL.md           # 技能主文档（LLM 按需读取）
-├── MANIFEST.yaml      # 元数据（名称、描述、触发词、依赖）
-├── index.ts           # 技能入口代码
-├── tools/             # 技能暴露的工具
-│   ├── generate.ts
-│   └── template.ts
-└── tests/             # 测试
-    └── generate.test.ts
+```mermaid
+flowchart TD
+  n0["skills/pdf_generator/"]
+  n1["SKILL.md           # 技能主文档（LLM 按需读取）"]
+  n2["MANIFEST.yaml      # 元数据（名称、描述、触发词、依赖）"]
+  n3["index.ts           # 技能入口代码"]
+  n4["tools/             # 技能暴露的工具"]
+  n5["generate.ts"]
+  n6["template.ts"]
+  n7["tests/             # 测试"]
+  n8["generate.test.ts"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
 ```
 
 ### MANIFEST.yaml 示例

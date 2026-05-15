@@ -23,16 +23,25 @@ MoE (Mixture of Experts) 是 2024-2025 大模型最重要的架构创新。它�
 
 ### 结构
 
-```
-普通 Transformer Block:           MoE Transformer Block:
-    Attention                          Attention
-       ↓                                  ↓
-    FFN (全部参数激活)                  Router (路由)
-                                       /  |  \
-                                   Expert₁ Expert₂ ... Expertₙ
-                                    (只有被选中的才计算)
-                                       \  |  /
-                                    加权合并
+```mermaid
+flowchart TD
+  n0["普通 Transformer Block:           MoE Transformer Block:"]
+  n1["Attention                          Attention"]
+  n2["↓                                  ↓"]
+  n3["FFN (全部参数激活)                  Router (路由)"]
+  n4["/  |  \"]
+  n5["Expert₁ Expert₂ ... Expertₙ"]
+  n6["(只有被选中的才计算)"]
+  n7["\  |  /"]
+  n8["加权合并"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
 ```
 
 ### 路由：token → 专家的指派

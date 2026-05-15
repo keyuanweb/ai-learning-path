@@ -21,14 +21,21 @@ RLHF 是让 ChatGPT 成为可能的最后一块拼图。GRPO 是 DeepSeek 提出
 
 ### PPO 的训练流程
 
-```
-1. Policy 对 prompt 生成回答
-2. Reward Model 对回答打分
-3. 用 PPO 算法更新 Policy：
-   - 奖励高的回答 → 增加概率
-   - 奖励低的回答 → 降低概率
-   - 同时约束 Policy 不要偏离 Reference 太远 (KL 惩罚)
-4. 重复，收集新的生成、打分、更新...
+```mermaid
+flowchart LR
+  n0["Policy 对 prompt 生成回答"]
+  n1["Reward Model 对回答打分"]
+  n2["用 PPO 算法更新 Policy："]
+  n3["- 奖励高的回答 → 增加概率"]
+  n4["- 奖励低的回答 → 降低概率"]
+  n5["- 同时约束 Policy 不要偏离 Reference 太远 (KL 惩罚)"]
+  n6["重复，收集新的生成、打分、更新..."]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ### RLHF 的工程复杂度
@@ -107,12 +114,17 @@ loss = -log(sigmoid(r_chosen - r_rejected))
 
 ## 4. SFT → 偏好对齐的完整管线
 
-```
-预训练模型 (Base Model)
-    ↓ SFT (~10K 高质量指令-回答对)
-SFT 模型 (会回答，但质量参差不齐)
-    ↓ DPO 或 GRPO (~10-50K 偏好对)
-对齐模型 (回答质量显著提升)
+```mermaid
+flowchart TD
+  n0["预训练模型 (Base Model)"]
+  n1["↓ SFT (~10K 高质量指令-回答对)"]
+  n2["SFT 模型 (会回答，但质量参差不齐)"]
+  n3["↓ DPO 或 GRPO (~10-50K 偏好对)"]
+  n4["对齐模型 (回答质量显著提升)"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ### 什么时候用 DPO，什么时候用 GRPO

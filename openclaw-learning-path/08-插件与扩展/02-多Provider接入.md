@@ -4,21 +4,31 @@ OpenClaw 不绑定单一 LLM 提供商。通过 Provider 插件体系，它可�
 
 ## 支持的 Provider
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                    OpenClaw Provider 生态                      │
-├───────────────────┬───────────────────┬──────────────────────┤
-│   商业 API         │   开源/本地        │   聚合平台            │
-├───────────────────┼───────────────────┼──────────────────────┤
-│   Anthropic       │   Ollama          │   OpenRouter         │
-│   OpenAI          │   vLLM            │   Groq               │
-│   Google Gemini   │   Llama.cpp       │   Together AI        │
-│   DeepSeek        │   LocalAI         │   AnyScale           │
-│   MiniMax         │   TextGen WebUI   │                      │
-│   Kimi/Moonshot   │                   │                      │
-│   Qwen/通义千问    │                   │                      │
-│   Zhipu/智谱      │                   │                      │
-└───────────────────┴───────────────────┴──────────────────────┘
+```mermaid
+flowchart TD
+  n0["OpenClaw Provider 生态                      │"]
+  n1["┬───────────────────┬──────────────────────┤"]
+  n2["商业 API         │   开源/本地        │   聚合平台            │"]
+  n3["┼───────────────────┼──────────────────────┤"]
+  n4["Anthropic       │   Ollama          │   OpenRouter         │"]
+  n5["OpenAI          │   vLLM            │   Groq               │"]
+  n6["Google Gemini   │   Llama.cpp       │   Together AI        │"]
+  n7["DeepSeek        │   LocalAI         │   AnyScale           │"]
+  n8["MiniMax         │   TextGen WebUI   │                      │"]
+  n9["Kimi/Moonshot   │                   │                      │"]
+  n10["Qwen/通义千问    │                   │                      │"]
+  n11["Zhipu/智谱      │                   │                      │"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
 ```
 
 ## 配置方式
@@ -123,11 +133,15 @@ agent:
 
 故障转移流程：
 
-```
-1. Anthropic API 返回 429 (Rate Limit)
-2. 等待 2s 后重试 → 再次 429
-3. 切换到 OpenAI → 正常返回
-4. 日志记录: "Fallback triggered: anthropic → openai (reason: rate_limit)"
+```mermaid
+flowchart LR
+  n0["Anthropic API 返回 429 (Rate Limit)"]
+  n1["等待 2s 后重试 → 再次 429"]
+  n2["切换到 OpenAI → 正常返回"]
+  n3["日志记录: 'Fallback triggered: anthropic → openai (reason: rate_limit)'"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ## Provider 适配器标准化

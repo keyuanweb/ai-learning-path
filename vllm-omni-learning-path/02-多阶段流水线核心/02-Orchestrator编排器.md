@@ -36,21 +36,22 @@ async def run(self):
 
 ## 请求的生命周期
 
-```
-1. 前端发送 add_request 消息 → Orchestrator._handle_add_request()
-│
-├─→ 2. 创建 OrchestratorRequestState 跟踪该请求
-├─→ 3. 提交到 StagePool[0]（第一个 Stage）
-│
-4. _orchestration_loop() 轮询 Stage 输出：
-│
-├─→ 5. 发现 Stage 0 有输出 → pool.process_llm_raw_outputs()
-│
-├─→ 6. 判断：当前 Stage 是 final_output？
-│   ├─ 是 → 直接发给 output_async_queue（返回用户）
-│   └─ 否 → _forward_to_next_stage() → 提交到下一个 Stage
-│
-├─→ 7. 最后一个 Stage 完成 → 清理请求状态
+```mermaid
+flowchart TD
+  n0["前端 add_request → _handle_add_request"]
+  n1[创建 OrchestratorRequestState]
+  n2[提交到 StagePool 第一个 Stage]
+  n3[_orchestration_loop 轮询各 Stage 输出]
+  n4[Stage0 有输出 → process_llm_raw_outputs]
+  n5{当前 Stage 是否 final_output}
+  n6[是 → output_async_queue 返回用户]
+  n7[否 → _forward_to_next_stage 提交下一 Stage]
+  n8[最后 Stage 完成 → 清理请求状态]
+  n0 --> n1 --> n2 --> n3 --> n4 --> n5
+  n5 -->|Yes| n6
+  n5 -->|No| n7
+  n7 --> n3
+  n6 --> n8
 ```
 
 ## 关键方法详解

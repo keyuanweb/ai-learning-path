@@ -14,10 +14,13 @@ DeepSeek-V3 有 671B 参数，60+ 层，如果使用标准 MHA 或 GQA，KV Cach
 
 > 不在显存中存储完整的 K 和 V，而是存储它们在一个低维潜在空间的压缩表示。推理时再通过轻量的投影矩阵"解压"。
 
-```
-标准 Attention: K = X W_K, V = X W_V    → 存 K, V (大)
-MLA:            C = X W_C                 → 只存 C (小, 压缩比 5-10×)
-                K = C W_K', V = C W_V'   → 推理时从 C 解压出 K,V
+```mermaid
+flowchart LR
+  n0["标准 Attention: K = X W_K, V = X W_V    → 存 K, V (大)"]
+  n1["MLA:            C = X W_C                 → 只存 C (小, 压缩比 5-10×)"]
+  n2["K = C W_K', V = C W_V'   → 推理时从 C 解压出 K,V"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 ### 为什么压缩是可行的

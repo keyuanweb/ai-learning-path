@@ -38,33 +38,23 @@ Hermes 的 Kanban 看板系统就是为此设计的：一个基于 SQLite 的持
 
 ## 第二部分: 架构全景
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     ~/.hermes/kanban.db (SQLite + WAL)                │
-│                                                                       │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │
-│  │    tasks     │  │  task_links  │  │ task_comments│  │task_events│ │
-│  │  核心任务表   │  │  依赖关系表   │  │  评论线程     │  │  事件日志   │ │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └───────────┘ │
-│  ┌──────────────┐                                                     │
-│  │  task_runs   │  每次 Worker 执行的完整记录                          │
-│  └──────────────┘                                                     │
-└───────────────────────────┬─────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        ▼                   ▼                   ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│  Dispatcher   │  │   Worker 1    │  │   Worker 2    │
-│  守护进程      │  │  subprocess   │  │  subprocess   │
-│               │  │               │  │               │
-│  每 60s tick: │  │ $HERMES_      │  │ $HERMES_      │
-│  1.回收stale  │  │  KANBAN_TASK  │  │  KANBAN_TASK  │
-│    claims     │  │  =t_xxx       │  │  =t_yyy       │
-│  2.提升就绪   │  │               │  │               │
-│    任务       │  │ kanban_show() │  │ kanban_show() │
-│  3.匹配worker │  │ → work        │  │ → work        │
-│  → spawn      │  │ → heartbeat   │  │ → complete    │
-└───────────────┘  └───────────────┘  └───────────────┘
+```mermaid
+flowchart TB
+  subgraph db [SQLite WAL kanban.db]
+    tasks[tasks 核心任务]
+    links[task_links 依赖]
+    comments[task_comments 评论]
+    events[task_events 事件]
+    runs[task_runs Worker 执行记录]
+  end
+  subgraph rt [运行时]
+    disp[Dispatcher 守护进程 tick 回收 stale 提升 ready spawn]
+    w1[Worker 子进程 1]
+    w2[Worker 子进程 2]
+  end
+  db --> disp
+  disp --> w1
+  disp --> w2
 ```
 
 ### Dispatcher（调度器）
@@ -101,42 +91,18 @@ Worker 进程的环境变量：
 
 ## 第三部分: 任务状态机
 
-```
-                  ┌─────────┐
-                  │ triage  │  ← 用户丢了一个粗略想法（只有标题）
-                  └────┬────┘
-                       │ specify (kanban_specify.py 用 LLM 充实 body)
-                       ▼
-                  ┌─────────┐
-          ┌───────│  todo   │  ← 等待父任务完成
-          │       └────┬────┘
-          │            │ 所有父任务 done → Dispatcher 自动提升
-          │            ▼
-          │       ┌─────────┐
-          │  ┌───▶│  ready  │  ← 等待被 Dispatcher 认领
-          │  │    └────┬────┘
-          │  │         │ claim_task() CAS 原子操作
-          │  │         ▼
-          │  │    ┌─────────┐
-          │  │    │ running │  ← Worker 正在执行
-          │  │    └────┬────┘
-          │  │         │
-          │  │   ┌─────┼──────────┐
-          │  │   ▼     ▼          ▼
-          │  │ ┌────┐ ┌────────┐ ┌──────────┐
-          │  │ │done│ │blocked │ │reclaimed │ ← claim 超时 / PID 消失
-          │  │ └────┘ └───┬────┘ └────┬─────┘
-          │  │      ▲     │           │
-          │  │      │     │ unblock   │
-          │  │      │     ▼           │
-          │  │      │  ┌─────────┐    │
-          │  └──────┴──│  todo   │◀───┘
-          │            └─────────┘
-          │
-          ▼
-     ┌─────────┐
-     │archived │  ← 手动归档（不自动删除）
-     └─────────┘
+```mermaid
+stateDiagram-v2
+  [*] --> triage: 用户创建粗略标题
+  triage --> todo: specify 充实 body 后
+  todo --> ready: 父任务均 done Dispatcher 提升
+  ready --> running: claim_task CAS
+  running --> done: kanban_complete
+  running --> blocked: kanban_block
+  blocked --> ready: unblock
+  running --> reclaimed: claim 超时或 PID 消失
+  reclaimed --> todo: 回收后重试
+  done --> archived: 手动归档
 ```
 
 7 种状态：
@@ -310,8 +276,13 @@ kanban_link(parent_id="t_aaa", child_id="t_bbb")
 
 每个被 Dispatcher spawn 的 Worker 在 System Prompt 中自动注入 `KANBAN_GUIDANCE` 块（[prompt_builder.py:188](code/hermes-agent/agent/prompt_builder.py#L188)），定义了 6 步生命周期：
 
-```
-1. ORIENT → 2. WORK → 3. HEARTBEAT(可选) → 4. BLOCK → 5. COMPLETE → 6. 创建后续工作
+```mermaid
+flowchart LR
+  s1[1 Orient kanban_show] --> s2[2 Work]
+  s2 --> s3[3 Heartbeat 可选]
+  s3 --> s4[4 Block 可选]
+  s4 --> s5[5 Complete]
+  s5 --> s6[6 创建后续任务]
 ```
 
 **注入点**在 [run_agent.py:5376](code/hermes-agent/run_agent.py#L5376)：
@@ -403,24 +374,14 @@ Orchestrator 是特殊的 Kanban 参与者——它的 job 是**拆解和路由�
 
 ### 编排流程
 
-```
-Step 1: 理解目标（有歧义就问，问错比 spawn 错代价低）
-    │
-    ▼
-Step 2: 画出任务图（在回复中口头描述，等用户确认）
-    │
-    ▼
-Step 3: 创建任务并链接依赖
-    │  c1 = kanban_create(title="...", assignee="researcher")
-    │  c2 = kanban_create(title="...", assignee="researcher")
-    │  c3 = kanban_create(title="...", assignee="analyst", parents=[c1, c2])
-    │
-    ▼
-Step 4: 完成自己的编排任务
-    │  kanban_complete(summary="拆分为 T1-T3: 2 researcher 并行, 1 analyst 综合")
-    │
-    ▼
-Step 5: 向用户汇报创建了什么
+```mermaid
+flowchart TD
+  a[Step1 理解目标 有歧义就问] --> b[Step2 口头描述任务图 待用户确认]
+  b --> c[Step3 创建任务并链接依赖]
+  c --> d[kanban_create 并行 researcher 等]
+  d --> e[Step4 完成编排者自身任务]
+  e --> f["kanban_complete 汇报拆分结果"]
+  f --> g[Step5 向用户汇报创建了哪些卡]
 ```
 
 ---
@@ -518,18 +479,18 @@ kanban_create(
 
 单一看板（`default`）的数据库在 `~/.hermes/kanban.db`。多个看板可以隔离不同项目：
 
-```
+```text
 ~/.hermes/kanban/
-├── kanban.db                  ← default 看板（向后兼容）
-├── workspaces/                ← default 看板的工作空间
-├── logs/                      ← default 看板的日志
-├── current                    ← 当前激活的看板 slug
+├── kanban.db              # default 看板（向后兼容）
+├── workspaces/            # default 看板工作空间
+├── logs/                  # default 看板日志
+├── current                # 当前激活的看板 slug
 └── boards/
-    └── <slug>/                ← 每个额外看板的目录
+    └── <slug>/
         ├── kanban.db
         ├── workspaces/
         ├── logs/
-        └── board.json         ← 显示元数据（名称、描述、图标、颜色）
+        └── board.json     # 名称、描述、图标、颜色
 ```
 
 看板解析优先级（从高到低）：
@@ -716,13 +677,9 @@ Tick 5 (T=240s):
 kanban_block(reason="成本和性能数据互相矛盾——Postgres 成本高 15% 但性能高 40%，权衡取决于预算优先级。请指示。")
 ```
 
-用户看到 Dashboard 通知 → 打开任务 → 写评论 "优先性能，预算可放宽至 +20%" → `/unblock T3` → Dispatcher 在下一个 tick 重新 spawn analyst Worker → Worker 读取上下文继续执行。
+用户看到 Dashboard 通知 → 打开任务写评论（如「优先性能，预算可放宽至 +20%」）→ 执行 `/unblock T3` → Dispatcher 在下一个 tick 重新 spawn analyst Worker → Worker 读取上下文继续执行。
 
----
-
-## Kanban 工具 vs CLI
-
-Kanban 工具（`kanban_*` 函数调用）和 CLI（`hermes kanban ...`）的设计边界：
+### Kanban 工具 vs CLI
 
 | | Kanban 工具 | CLI |
 |--|-----------|-----|
@@ -731,20 +688,16 @@ Kanban 工具（`kanban_*` 函数调用）和 CLI（`hermes kanban ...`）的设
 | **数据库** | Agent 进程内 Python 直连 | 独立进程连接 |
 | **优势** | 跨后端可移植，无 shell 引用问题 | 脚本化、管道化 |
 
-Worker **必须**使用工具而非 CLI——因为 Worker 的 terminal backend 可能指向 Docker/SSH，容器内没有 `hermes` 二进制文件。
+Worker **必须**使用工具而非 CLI——因为 Worker 的 terminal backend 可能指向 Docker/SSH，容器内可能没有 `hermes` 二进制文件。
 
----
+### 与 delegate_task / 第 10 章的关系
 
-## 与 delegate_task / 第 10 章的关系
-
-```
-delegate_task                         Kanban 看板
-─────────────                         ──────────
-单次对话中的快速推理                   跨会话持久化工作流
-同步等待子 Agent                      异步调度 + 自动重试
-无状态                                完整审计轨迹
-适合: "读3个文件并总结"                 适合: "研究→分析→撰写→审核" 流水线
-```
+| delegate_task | Kanban 看板 |
+|----------------|------------|
+| 单次对话中的快速推理 | 跨会话持久化工作流 |
+| 同步等待子 Agent | 异步调度 + 自动重试 |
+| 无状态 | 完整审计轨迹 |
+| 适合：「读 3 个文件并总结」 | 适合：「研究→分析→撰写→审核」流水线 |
 
 Kanban 内部也可以使用 `delegate_task`——一个 Worker 在执行自己的任务时，可以将部分推理工作 delegate 出去。但反之不行——`delegate_task` 的临时子 Agent 不应该创建 Kanban 任务（kanban-worker 技能明确禁止了这一点）。
 

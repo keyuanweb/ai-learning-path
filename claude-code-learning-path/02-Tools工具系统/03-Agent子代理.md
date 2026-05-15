@@ -51,10 +51,13 @@ flowchart TD
 
 Claude Code 在以下情况会自动使用子代理：
 
-```
-用户: "审查整个项目中的认证逻辑"
-→ Claude 自动启动 Explore 子代理搜索所有相关代码
-→ 综合结果后给出分析
+```mermaid
+flowchart LR
+  n0["用户: '审查整个项目中的认证逻辑'"]
+  n1["→ Claude 自动启动 Explore 子代理搜索所有相关代码"]
+  n2["→ 综合结果后给出分析"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 ### 并行子代理
@@ -146,11 +149,15 @@ flowchart LR
 
 ### 上下文隔离
 
-```
-主 Agent 上下文: 200K tokens
-  ├── 子代理 1 上下文: 独立 200K tokens
-  ├── 子代理 2 上下文: 独立 200K tokens
-  └── 子代理 3 上下文: 独立 200K tokens
+```mermaid
+flowchart TD
+  n0["主 Agent 上下文: 200K tokens"]
+  n1["子代理 1 上下文: 独立 200K tokens"]
+  n2["子代理 2 上下文: 独立 200K tokens"]
+  n3["子代理 3 上下文: 独立 200K tokens"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 子代理结束后，只有结果摘要返回主代理，详细的中间过程不会污染主上下文。

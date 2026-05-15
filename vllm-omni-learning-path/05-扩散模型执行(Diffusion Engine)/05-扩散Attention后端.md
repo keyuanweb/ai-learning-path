@@ -14,24 +14,41 @@ DiT（Diffusion Transformer）使用 Attention 机制，但它的 Attention 模�
 
 ## Attention 后端架构
 
-```
-diffusion/attention/
-├── selector.py              ← 自动选择最优后端
-├── layer.py                 ← Attention 层封装
-├── backends/
-│   ├── abstract.py          ← 抽象基类
-│   ├── flash_attn.py        ← Flash Attention 后端
-│   ├── sdpa.py              ← PyTorch SDPA 后端
-│   ├── sage_attn.py         ← Sage Attention 后端
-│   ├── ring_flash_attn.py   ← Ring Attention (序列并行)
-│   ├── ring_pytorch_attn.py ← PyTorch Ring Attention
-│   ├── ring/                ← Ring 通信工具
-│   └── utils/fa.py          ← Flash Attention 工具
-└── parallel/
-    ├── factory.py           ← 并行策略工厂
-    ├── base.py              ← 并行基类
-    ├── ring.py              ← Ring 序列并行
-    └── ulysses.py           ← Ulysses 序列并行
+```mermaid
+flowchart TD
+  n0["diffusion/attention/"]
+  n1["selector.py              ← 自动选择最优后端"]
+  n2["layer.py                 ← Attention 层封装"]
+  n3["backends/"]
+  n4["abstract.py          ← 抽象基类"]
+  n5["flash_attn.py        ← Flash Attention 后端"]
+  n6["sdpa.py              ← PyTorch SDPA 后端"]
+  n7["sage_attn.py         ← Sage Attention 后端"]
+  n8["ring_flash_attn.py   ← Ring Attention (序列并行)"]
+  n9["ring_pytorch_attn.py ← PyTorch Ring Attention"]
+  n10["ring/                ← Ring 通信工具"]
+  n11["utils/fa.py          ← Flash Attention 工具"]
+  n12["parallel/"]
+  n13["factory.py           ← 并行策略工厂"]
+  n14["base.py              ← 并行基类"]
+  n15["ring.py              ← Ring 序列并行"]
+  n16["ulysses.py           ← Ulysses 序列并行"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n15
+  n15 --> n16
 ```
 
 ## 各后端的区别
@@ -74,13 +91,15 @@ class AttentionBackend(ABC):
 
 [`parallel/ring.py`](../../code/vllm-omni/vllm_omni/diffusion/attention/parallel/ring.py)：
 
-```
-GPU 0: Q0,K0,V0 → 算本地 attention → 传给 GPU 1
-GPU 1: Q1,K1,V1 → 算本地 attention（含 GPU 0 的 KV）→ 传给 GPU 2
-GPU 2: Q2,K2,V2 → 算本地 attention（含 GPU 1 的 KV）→ 传给 GPU 0
-...
-
-每个 GPU 持有序列的 1/N，KV 在 ring 中循环传输
+```mermaid
+flowchart LR
+  n0["GPU 0: Q0,K0,V0 → 算本地 attention → 传给 GPU 1"]
+  n1["GPU 1: Q1,K1,V1 → 算本地 attention（含 GPU 0 的 KV）→ 传给 GPU 2"]
+  n2["GPU 2: Q2,K2,V2 → 算本地 attention（含 GPU 1 的 KV）→ 传给 GPU 0"]
+  n3["每个 GPU 持有序列的 1/N，KV 在 ring 中循环传输"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ### Ulysses Attention

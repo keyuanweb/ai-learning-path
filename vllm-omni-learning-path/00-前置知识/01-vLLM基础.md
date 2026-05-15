@@ -10,13 +10,19 @@ vLLM-Omni 是在 vLLM 之上构建的。它的 AR（自回归）引擎直接复�
 
 vLLM V1 引擎的推理过程可以浓缩为 **五步紧循环**：
 
-```
-while True:
-    1. Scheduler.schedule()      → 决定这一步要计算哪些 token
-    2. Executor.execute_model()  → GPU 执行模型前向计算
-    3. Scheduler.get_grammar_bitmask() → 结构化输出约束（可选）
-    4. Executor.sample_tokens()  → 从概率分布中采样出 token
-    5. Scheduler.update_from_output() → 更新调度状态、释放 KV Cache
+```mermaid
+flowchart LR
+  n0["while True:"]
+  n1["Scheduler.schedule()      → 决定这一步要计算哪些 token"]
+  n2["Executor.execute_model()  → GPU 执行模型前向计算"]
+  n3["Scheduler.get_grammar_bitmask() → 结构化输出约束（可选）"]
+  n4["Executor.sample_tokens()  → 从概率分布中采样出 token"]
+  n5["Scheduler.update_from_output() → 更新调度状态、释放 KV Cache"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ### 前后端分离
@@ -26,9 +32,11 @@ vLLM V1 采用前后端分离架构：
 - **前端（LLMEngine）**：负责"请求的进出"。接收用户请求、预处理输入、把结果返回给用户。它是面向用户的接口。
 - **后端（EngineCore）**：负责"推理紧循环"。它只关心一件事：高效地在 GPU 上执行模型推理。它运行在自己的进程里，通过 IPC（进程间通信）与前端通信。
 
-```
-LLM.generate("你好")  →  LLMEngine  →  [IPC]  →  EngineCore  →  GPU
-    用户入口              前端              通信层       后端推理      硬件
+```mermaid
+flowchart TD
+  n0["LLM.generate('你好')  →  LLMEngine  →  [IPC]  →  EngineCore  →  GPU"]
+  n1["用户入口              前端              通信层       后端推理      硬件"]
+  n0 --> n1
 ```
 
 ## 关键概念速查

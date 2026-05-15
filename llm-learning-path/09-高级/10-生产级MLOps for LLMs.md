@@ -45,16 +45,25 @@ parameters:
 
 ### Prompt CI/CD 流水线
 
-```
-Prompt 变更 PR
-  ↓
-自动评估：在新 Prompt 下跑评测集  ← 关键：Prompt 改一行可能导致模型行为大变
-  ↓
-比较新旧 Prompt 的评分分布
-  ↓
-如果变差 → 自动评论 PR "本次 Prompt 修改导致回答质量下降 5%"
-  ↓
-人工 review → 合并 → 发布到生产
+```mermaid
+flowchart TD
+  n0["Prompt 变更 PR"]
+  n1["↓"]
+  n2["自动评估：在新 Prompt 下跑评测集  ← 关键：Prompt 改一行可能导致模型行为大变"]
+  n3["↓"]
+  n4["比较新旧 Prompt 的评分分布"]
+  n5["↓"]
+  n6["如果变差 → 自动评论 PR '本次 Prompt 修改导致回答质量下降 5%'"]
+  n7["↓"]
+  n8["人工 review → 合并 → 发布到生产"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
 ```
 
 ---

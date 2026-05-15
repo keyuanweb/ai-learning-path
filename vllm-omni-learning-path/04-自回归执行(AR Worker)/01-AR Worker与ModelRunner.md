@@ -14,14 +14,14 @@ vLLM-Omni 的 AR Worker 直接继承 vLLM 的 V1 Worker 架构，在此基础上
 
 ## Worker 层次结构
 
-```
-Worker（抽象基类）
-  ├─→ GPUWorker（vLLM 原生）
-  │     └─→ GPUARWorker（Omni 扩展，worker/gpu_ar_worker.py）
-  │           └─→ 多模态输入/输出处理
-  │
-  └─→ GPUGenerationWorker（Omni 新增，worker/gpu_generation_worker.py）
-        └─→ 非自回归生成
+```mermaid
+flowchart TD
+  W[Worker 抽象基类]
+  W --> GPUW[GPUWorker vLLM 原生]
+  W --> GPUGen[GPUGenerationWorker Omni 新增 gpu_generation_worker.py]
+  GPUW --> GPUAR[GPUARWorker gpu_ar_worker.py]
+  GPUAR --> MM[多模态输入输出处理]
+  GPUGen --> NAR[非自回归生成]
 ```
 
 ## GPUARWorker —— AR 模型的工作马
@@ -38,28 +38,30 @@ class GPUARWorker(GPUWorker):
 
 ### 执行流程
 
-```
-1. 接收请求（prompt_token_ids + mm_features）
-       │
-2. execute_model()
-       │
-       ├─→ 准备输入（prepare_input）
-       │     ├─→ 多模态特征合并
-       │     └─→ attention mask 构建
-       │
-       ├─→ 模型前向（GPUARModelRunner.forward）
-       │     ├─→ Token Embedding
-       │     ├─→ N 层 Transformer（含多模态注入）
-       │     ├─→ LM Head → logits
-       │     └─→ 收集 embedding（如果后续 Stage 需要）
-       │
-       ├─→ 采样（sample_tokens）
-       │     └─→ logits → 采样 → next_token_ids
-       │
-       └─→ 返回结果
-             ├─→ token_ids（文本 token）
-             ├─→ embeddings（给下一 Stage 用）
-             └─→ kv_transfer_params（KV Cache 传输参数）
+```mermaid
+flowchart TD
+  recv["接收请求 prompt_token_ids + mm_features"]
+  exec["execute_model"]
+  recv --> exec
+  subgraph prep [准备输入 prepare_input]
+    m1[多模态特征合并]
+    m2[attention mask 构建]
+  end
+  exec --> prep
+  prep --> fwd["模型前向 GPUARModelRunner.forward"]
+  subgraph modelFwd [前向内部]
+    e1[Token Embedding]
+    e2[N 层 Transformer 含多模态注入]
+    e3["LM Head 得到 logits"]
+    e4[收集 embedding 供下游 Stage]
+  end
+  fwd --> modelFwd
+  modelFwd --> samp["采样 sample_tokens"]
+  samp --> s1["logits 到 next_token_ids"]
+  s1 --> out[返回结果]
+  out --> o1[token_ids]
+  out --> o2[embeddings 给下一 Stage]
+  out --> o3[kv_transfer_params KV 传输参数]
 ```
 
 ## GPUARModelRunner —— 负责具体的模型 forward

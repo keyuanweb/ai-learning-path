@@ -8,12 +8,15 @@
 
 为什么需要副本？因为一个 Stage 可能成为瓶颈（比如 Thinker 计算量最大），需要多个副本来并行处理不同请求。
 
-```
-              StagePool (Stage 0: Thinker)
-        ┌──────────────┬──────────────┬──────────────┐
-        ▼              ▼              ▼              ▼
-    Replica 0     Replica 1     Replica 2     Replica 3
-    (GPU 0)       (GPU 1)       (GPU 2)       (GPU 3)
+```mermaid
+flowchart TD
+  n0["StagePool (Stage 0: Thinker)"]
+  n1["▼              ▼              ▼              ▼"]
+  n2["Replica 0     Replica 1     Replica 2     Replica 3"]
+  n3["(GPU 0)       (GPU 1)       (GPU 2)       (GPU 3)"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ## 核心数据结构

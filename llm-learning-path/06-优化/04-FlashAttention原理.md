@@ -6,12 +6,15 @@ FlashAttention 不改变 Attention 的数学，只改变**计算的执行方式*
 
 ## 1. GPU 存储层次
 
-```
-SRAM (on-chip, 片上):  ~20 MB, 带宽 ~19 TB/s  (快但小)
-HBM (high-bandwidth memory, 显存):  ~80 GB, 带宽 ~3 TB/s  (大但慢 6×)
-
-典型 Attention 的 n×n 矩阵:
-  n=8K 时 = 64M 元素 × 4 bytes = 256 MB → 远超 SRAM 容量
+```mermaid
+flowchart LR
+  n0["SRAM (on-chip, 片上):  ~20 MB, 带宽 ~19 TB/s  (快但小)"]
+  n1["HBM (high-bandwidth memory, 显存):  ~80 GB, 带宽 ~3 TB/s  (大但慢 6×)"]
+  n2["典型 Attention 的 n×n 矩阵:"]
+  n3["n=8K 时 = 64M 元素 × 4 bytes = 256 MB → 远超 SRAM 容量"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ### 传统 Attention 的问题
@@ -31,16 +34,19 @@ HBM (high-bandwidth memory, 显存):  ~80 GB, 带宽 ~3 TB/s  (大但慢 6×)
 
 不一次性生成整个 `n × n` 注意力矩阵，而是分成多个小块：
 
-```
-完整的 Q[8K, 64] × K^T[64, 8K] → S[8K, 8K]  256 MB
-
-FlashAttention:
-  Q 分块 → Q_0[2K, 64], Q_1[2K, 64], Q_2[2K, 64], Q_3[2K, 64]
-  K 分块 → K_0[2K, 64], K_1[2K, 64], K_2[2K, 64], K_3[2K, 64]
-
-  块 (0,0): Q_0 @ K_0^T → softmax → V_0 聚合  (只 4MB，在 SRAM 内完成)
-  块 (0,1): Q_0 @ K_1^T → softmax → V_1 聚合
-  ...
+```mermaid
+flowchart LR
+  n0["完整的 Q[8K, 64] × K^T[64, 8K] → S[8K, 8K]  256 MB"]
+  n1["FlashAttention:"]
+  n2["Q 分块 → Q_0[2K, 64], Q_1[2K, 64], Q_2[2K, 64], Q_3[2K, 64]"]
+  n3["K 分块 → K_0[2K, 64], K_1[2K, 64], K_2[2K, 64], K_3[2K, 64]"]
+  n4["块 (0,0): Q_0 @ K_0^T → softmax → V_0 聚合  (只 4MB，在 SRAM 内完成)"]
+  n5["块 (0,1): Q_0 @ K_1^T → softmax → V_1 聚合"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ### Online Softmax

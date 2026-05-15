@@ -138,25 +138,34 @@ sub_agent_defaults:
 
 Orchestrator 可以并行启动多个子 Agent：
 
-```
-用户: "分析三个微服务的性能瓶颈"
-
-Orchestrator 并行:
-  sessions_spawn(research, "分析 auth-service 性能")    ──┐
-  sessions_spawn(research, "分析 api-service 性能")     ──┼── 同时执行
-  sessions_spawn(research, "分析 worker-service 性能")  ──┘
-
-等待全部完成 → 汇总结果 → 输出统一报告
+```mermaid
+flowchart TD
+  n0["用户: '分析三个微服务的性能瓶颈'"]
+  n1["Orchestrator 并行:"]
+  n2["sessions_spawn(research, '分析 auth-service 性能')    ──┐"]
+  n3["sessions_spawn(research, '分析 api-service 性能')     ──┼── 同时执行"]
+  n4["sessions_spawn(research, '分析 worker-service 性能')  ──┘"]
+  n5["等待全部完成 → 汇总结果 → 输出统一报告"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 顺序依赖的任务则串行执行：
 
-```
-sessions_spawn(coding, "修复 auth.ts 的 bug")
-  → 等待完成
-  → sessions_spawn(coding, "为修复编写测试")
-    → 等待完成
-    → sessions_spawn(automation, "运行全量测试套件")
+```mermaid
+flowchart LR
+  n0["sessions_spawn(coding, '修复 auth.ts 的 bug')"]
+  n1["→ 等待完成"]
+  n2["→ sessions_spawn(coding, '为修复编写测试')"]
+  n3["→ 等待完成"]
+  n4["→ sessions_spawn(automation, '运行全量测试套件')"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ## 与 Hermes 多 Agent 对比

@@ -18,26 +18,45 @@ Plugin 将五者集成到一个目录中，用 `plugin.json` 声明元数据。
 
 ## Plugin 目录结构
 
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json            # 元数据：名称、版本、作者
-├── skills/
-│   ├── code-review/
-│   │   └── SKILL.md
-│   └── deploy/
-│       ├── SKILL.md
-│       ├── references/
-│       │   └── environments.md
-│       └── scripts/
-│           └── pre-deploy-check.sh
-├── commands/
-│   └── fix-issue.md
-├── agents/
-│   └── security-scanner.md
-├── hooks/
-│   └── hooks.json
-└── .mcp.json                  # MCP 服务器定义
+```mermaid
+flowchart TD
+  n0["my-plugin/"]
+  n1[".claude-plugin/"]
+  n2["plugin.json            # 元数据：名称、版本、作者"]
+  n3["skills/"]
+  n4["code-review/"]
+  n5["SKILL.md"]
+  n6["deploy/"]
+  n7["SKILL.md"]
+  n8["references/"]
+  n9["environments.md"]
+  n10["scripts/"]
+  n11["pre-deploy-check.sh"]
+  n12["commands/"]
+  n13["fix-issue.md"]
+  n14["agents/"]
+  n15["security-scanner.md"]
+  n16["hooks/"]
+  n17["hooks.json"]
+  n18[".mcp.json                  # MCP 服务器定义"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n14 --> n15
+  n15 --> n16
+  n16 --> n17
+  n17 --> n18
 ```
 
 ## plugin.json

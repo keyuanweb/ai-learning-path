@@ -19,12 +19,15 @@ Multi-Head Attention 解决的核心问题：**一种注意力模式不够用。
 
 > 运行 h 个独立的注意力机制并行，每个头学习不同的关系类型，最后拼接起来。
 
-```
-头1: "谁在做动作？"            → 学习主语-谓语依存
-头2: "哪个词和这个同义？"      → 学习语义相似性
-头3: "前面紧邻的词是什么？"    → 学习局部句法模式
-头4: "这个代词指代什么？"      → 学习指代消解
-...
+```mermaid
+flowchart LR
+  n0["头1: '谁在做动作？'            → 学习主语-谓语依存"]
+  n1["头2: '哪个词和这个同义？'      → 学习语义相似性"]
+  n2["头3: '前面紧邻的词是什么？'    → 学习局部句法模式"]
+  n3["头4: '这个代词指代什么？'      → 学习指代消解"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 每个头可以无干扰地专注于自己的模式，模型整体同时拥有多种"视角"。
@@ -47,22 +50,29 @@ $d_k = d_v = d_{model} / h$。例如 LLaMA-7B：$d_{model}=4096, h=32, d_k=128$�
 
 ### 完整计算流
 
-```
-输入 X: [batch, seq_len, 512]  (h=8, d_k=64)
-
-1. 投影 + 分头:
-   Q: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]
-   K: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]
-   V: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]
-
-2. 每个头独立计算 Attention:
-   head_i = softmax(Q_i @ K_i^T / √64) @ V_i   → [batch, seq_len, 64]
-
-3. 拼接:
-   Concat(8 × [batch, seq_len, 64]) → [batch, seq_len, 512]
-
-4. 最终投影 (W^O):
-   [batch, seq_len, 512] → [batch, seq_len, 512]
+```mermaid
+flowchart LR
+  n0["输入 X: [batch, seq_len, 512]  (h=8, d_k=64)"]
+  n1["投影 + 分头:"]
+  n2["Q: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]"]
+  n3["K: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]"]
+  n4["V: [batch, seq_len, 512] → reshape → [batch, 8, seq_len, 64]"]
+  n5["每个头独立计算 Attention:"]
+  n6["head_i = softmax(Q_i @ K_i^T / √64) @ V_i   → [batch, seq_len, 64]"]
+  n7["拼接:"]
+  n8["Concat(8 × [batch, seq_len, 64]) → [batch, seq_len, 512]"]
+  n9["最终投影 (W^O):"]
+  n10["[batch, seq_len, 512] → [batch, seq_len, 512]"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
 ```
 
 $W^O$ 的作用是**融合不同头的输出**——让来自不同"视角"的信息被有机整合，而不是简单拼接。

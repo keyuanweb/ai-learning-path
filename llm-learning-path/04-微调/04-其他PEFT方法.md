@@ -43,10 +43,13 @@ Adapter 的致命问题是**增加了推理延迟**——每次 forward 都要�
 
 ### 工作机制
 
-```
-普通输入: [token_1, token_2, ..., token_n]
-Prefix Tuning: [p_1, p_2, ..., p_k, token_1, token_2, ..., token_n]
-                ↑ 可训练的虚拟 tokens
+```mermaid
+flowchart TD
+  n0["普通输入: [token_1, token_2, ..., token_n]"]
+  n1["Prefix Tuning: [p_1, p_2, ..., p_k, token_1, token_2, ..., token_n]"]
+  n2["↑ 可训练的虚拟 tokens"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 这些 prefix tokens 在每一层都会被 Attention 看到，起到"soft prompt"的作用。KV Cache 中 prefix 部分的 K/V 来自可训练的参数而非实际输入。

@@ -157,17 +157,23 @@ You have a Kanban board for multi-agent task orchestration. Use it to:
 
 这是 Hermes Agent 区别于普通聊天模型的关键特性。如果配置了 `tool_use: enforce`:
 
-```
-CRITICAL: You MUST use tools to accomplish tasks. Never end your turn
-with just a text promise like "I'll do X." Actually use the tools to
-DO it right now.
-
-- To read a file → use read_file tool
-- To run a command → use terminal tool
-- To search the web → use web_search tool
-
-If you're unsure about something, use tools to investigate rather than
-asking the user or guessing.
+```mermaid
+flowchart LR
+  n0["CRITICAL: You MUST use tools to accomplish tasks. Never end your turn"]
+  n1["with just a text promise like 'I'll do X.' Actually use the tools to"]
+  n2["DO it right now."]
+  n3["- To read a file → use read_file tool"]
+  n4["- To run a command → use terminal tool"]
+  n5["- To search the web → use web_search tool"]
+  n6["If you're unsure about something, use tools to investigate rather than"]
+  n7["asking the user or guessing."]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 对于特定模型（GPT、Codex、Gemini），还有额外的执行指导:

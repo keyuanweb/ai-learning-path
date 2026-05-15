@@ -12,9 +12,11 @@ LLaMA 系列对中文不友好（tokenizer 32K，中文效率低）。需要一�
 
 ### Qwen 2.5 → Qwen3 的演化
 
-```
-Qwen 2.5: 密集模型 (0.5B → 72B)，标准 GQA + SwiGLU
-Qwen3:    密集 + MoE 双轨，混合 Pre/Post-Norm，思考模式
+```mermaid
+flowchart TD
+  n0["Qwen 2.5: 密集模型 (0.5B → 72B)，标准 GQA + SwiGLU"]
+  n1["Qwen3:    密集 + MoE 双轨，混合 Pre/Post-Norm，思考模式"]
+  n0 --> n1
 ```
 
 ---
@@ -67,15 +69,19 @@ DeepSeek 和 LLaMA 4 的 MoE 都有共享专家（用于捕获通用能力）。
 
 通过特殊的 token 控制模型的"思考深度"：
 
-```
-<|thinking|>  开启思维链模式 (CoT)
-<|/thinking|> 关闭思维链模式
-
-输入: "<|thinking|>证明根号2是无理数<|/thinking|>"
-模型: 生成详细的逐步推理链 → 给出结论
-
-输入: "今天几号？"
-模型: 直接回答（不生成无意义的中间推理）
+```mermaid
+flowchart TD
+  n0["<|thinking|>  开启思维链模式 (CoT)"]
+  n1["<|/thinking|> 关闭思维链模式"]
+  n2["输入: '<|thinking|>证明根号2是无理数<|/thinking|>'"]
+  n3["模型: 生成详细的逐步推理链 → 给出结论"]
+  n4["输入: '今天几号？'"]
+  n5["模型: 直接回答（不生成无意义的中间推理）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 **这解决了什么**：不需要部署两个模型（一个快、一个深）。同一个模型可以根据 prompt 中的标记切换行为模式。这是用模型能力取代多模型部署的聪明做法。

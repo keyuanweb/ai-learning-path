@@ -14,11 +14,15 @@ LoRA 只更新 ~0.1% 的参数，计算量确实小了，但**基础模型本身
 
 > 把基础模型量化到 4-bit（精度降低），给可训练的 LoRA adapter 腾出显存空间。
 
-```
-FP16 LoRA:   [14GB 基础模型] + [~2GB LoRA + 梯度 + 优化器] = ~16 GB
-QLoRA 4bit:  [4GB 基础模型]   + [~2GB LoRA + 梯度 + 优化器] = ~6 GB
-                                                              ↑
-                                            7B模型可在8GB显卡上微调！
+```mermaid
+flowchart TD
+  n0["FP16 LoRA:   [14GB 基础模型] + [~2GB LoRA + 梯度 + 优化器] = ~16 GB"]
+  n1["QLoRA 4bit:  [4GB 基础模型]   + [~2GB LoRA + 梯度 + 优化器] = ~6 GB"]
+  n2["↑"]
+  n3["7B模型可在8GB显卡上微调！"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ---

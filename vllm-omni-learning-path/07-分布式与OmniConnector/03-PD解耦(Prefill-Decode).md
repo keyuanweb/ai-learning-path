@@ -13,13 +13,17 @@
 
 传统的做法是 Prefill 和 Decode 在同一个 GPU（同一个 EngineCore）上进行。PD 解耦则是**把 Prefill 和 Decode 分到不同的 GPU/Stage** 上：
 
-```
-传统模式：
-  GPU 0: Prefill → Decode → Decode → Decode → ...
-
-PD 解耦模式：
-  GPU 0 (Prefill): Prefill → KV Cache 传给 GPU 1
-  GPU 1 (Decode): 接收 KV Cache → Decode → Decode → ...
+```mermaid
+flowchart LR
+  n0["传统模式："]
+  n1["GPU 0: Prefill → Decode → Decode → Decode → ..."]
+  n2["PD 解耦模式："]
+  n3["GPU 0 (Prefill): Prefill → KV Cache 传给 GPU 1"]
+  n4["GPU 1 (Decode): 接收 KV Cache → Decode → Decode → ..."]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
 ```
 
 ### 为什么需要 PD 解耦
@@ -41,13 +45,19 @@ self._pd_prefill_engine_id = "..." # Prefill 引擎 ID
 
 ### PD 请求的生命周期
 
-```
-1. 用户提交请求到 Stage 0（Prefill）
-2. Stage 0 完成 Prefill → KV Cache 就绪
-3. Orchestrator 检测到 KV Cache 就绪（_handle_kv_ready_raw_outputs）
-4. Orchestrator 构建 Stage 1 的 decode 参数（_build_pd_decode_params）
-5. decode 参数包含：如何从 Prefill 引擎拉取 KV Cache
-6. Stage 1 开始 Decode，从 Prefill 引擎拉取 KV Cache
+```mermaid
+flowchart TD
+  n0["用户提交请求到 Stage 0（Prefill）"]
+  n1["Stage 0 完成 Prefill → KV Cache 就绪"]
+  n2["Orchestrator 检测到 KV Cache 就绪（_handle_kv_ready_raw_outputs）"]
+  n3["Orchestrator 构建 Stage 1 的 decode 参数（_build_pd_decode_params）"]
+  n4["decode 参数包含：如何从 Prefill 引擎拉取 KV Cache"]
+  n5["Stage 1 开始 Decode，从 Prefill 引擎拉取 KV Cache"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ### `_build_pd_decode_params` —— 构建 Decode 参数
@@ -80,14 +90,19 @@ def _build_pd_decode_params(self, req_id, sp):
 
 PD 解耦**依赖** OmniConnector 来传输 KV Cache：
 
-```
-Stage 0 (Prefill)                  Stage 1 (Decode)
-    │                                   │
-    ├─ KV Cache 序列化                  │
-    ├─ OmniConnector.send() ──────────▶│  接收 KV Cache
-    │                                   ├─ 反序列化
-    │                                   ├─ 加载到本地的 KV Cache 管理器
-    │                                   └─ 开始 Decode
+```mermaid
+flowchart TD
+  n0["Stage 0 (Prefill)                  Stage 1 (Decode)"]
+  n1["KV Cache 序列化                  │"]
+  n2["OmniConnector.send() ──────────▶│  接收 KV Cache"]
+  n3["反序列化"]
+  n4["加载到本地的 KV Cache 管理器"]
+  n5["开始 Decode"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ## 阅读时间

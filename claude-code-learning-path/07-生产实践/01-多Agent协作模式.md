@@ -163,19 +163,31 @@ claude --worktree --tmux &   # Agent 3
 
 **对话模式的核心机制**：
 
-```
-用户在交互式会话中输入指令
-        ↓
-主 Agent 解析任务，决定启动几个子代理
-        ↓
-主 Agent 调用 Agent 工具（run_in_background: true）
-   → 子代理1（独立上下文 200K tokens）
-   → 子代理2（独立上下文 200K tokens）
-   → 子代理3（独立上下文 200K tokens）
-        ↓
-子代理返回结果摘要（不污染主上下文）
-        ↓
-主 Agent 综合汇总，输出最终结果
+```mermaid
+flowchart TD
+  n0["用户在交互式会话中输入指令"]
+  n1["↓"]
+  n2["主 Agent 解析任务，决定启动几个子代理"]
+  n3["↓"]
+  n4["主 Agent 调用 Agent 工具（run_in_background: true）"]
+  n5["→ 子代理1（独立上下文 200K tokens）"]
+  n6["→ 子代理2（独立上下文 200K tokens）"]
+  n7["→ 子代理3（独立上下文 200K tokens）"]
+  n8["↓"]
+  n9["子代理返回结果摘要（不污染主上下文）"]
+  n10["↓"]
+  n11["主 Agent 综合汇总，输出最终结果"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
 ```
 
 对话模式无需任何代码，Claude Code 原生支持。以下每个案例同时展示两种实现方式。

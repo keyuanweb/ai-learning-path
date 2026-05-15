@@ -6,13 +6,15 @@
 
 在多 Stage 流水线中，Stage 之间需要传递数据。最常见的场景是：
 
-```
-Stage 0 (Thinker, GPU 0) → 生成文本 + KV Cache
-                                   │
-                    KV Cache 如何传过去？
-                                   │
-                                   ▼
-Stage 1 (Talker, GPU 1) → 需要用到 Stage 0 的 KV Cache
+```mermaid
+flowchart LR
+  n0["Stage 0 (Thinker, GPU 0) → 生成文本 + KV Cache"]
+  n1["KV Cache 如何传过去？"]
+  n2["▼"]
+  n3["Stage 1 (Talker, GPU 1) → 需要用到 Stage 0 的 KV Cache"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 OmniConnector 就是解决 **"KV Cache 如何跨 Stage（跨进程、跨 GPU、甚至跨机器）传输"** 的组件。
@@ -21,30 +23,38 @@ OmniConnector 就是解决 **"KV Cache 如何跨 Stage（跨进程、跨 GPU、�
 
 Talker/Decoder Stage 在生成时需要"看到"Thinker 已经处理过的输入。如果没有 KV Cache 传输，Talker 就需要**重新计算** Thinker 做过的所有计算，浪费大量算力。
 
-```
-无 KV Cache 传输：
-  Thinker 处理 "你好，请介绍一下..." → 输出 token
-  Talker 需要重新把整个输入再过一遍 → 浪费计算
-
-有 KV Cache 传输：
-  Thinker 处理 → KV Cache 直接传给 Talker
-  Talker 从 KV Cache 继续 → 省掉重复计算
+```mermaid
+flowchart LR
+  n0["无 KV Cache 传输："]
+  n1["Thinker 处理 '你好，请介绍一下...' → 输出 token"]
+  n2["Talker 需要重新把整个输入再过一遍 → 浪费计算"]
+  n3["有 KV Cache 传输："]
+  n4["Thinker 处理 → KV Cache 直接传给 Talker"]
+  n5["Talker 从 KV Cache 继续 → 省掉重复计算"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ## OmniConnector 的抽象层次
 
-```
-Orchestrator / StagePool  ← 使用连接器
-         │
-         ▼
-    KVTransferManager      ← 管理传输生命周期
-         │
-         ▼
-    OmniConnector Adapter  ← 适配不同的传输后端
-         │
-    ┌────┼────┬──────────┐
-    ▼    ▼    ▼          ▼
-   SHM  Mooncake Yuanrong ...
+```mermaid
+flowchart TD
+  n0["Orchestrator / StagePool  ← 使用连接器"]
+  n1["▼"]
+  n2["KVTransferManager      ← 管理传输生命周期"]
+  n3["▼"]
+  n4["OmniConnector Adapter  ← 适配不同的传输后端"]
+  n5["▼    ▼    ▼          ▼"]
+  n6["SHM  Mooncake Yuanrong ..."]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ## KVTransferManager —— 传输管理器

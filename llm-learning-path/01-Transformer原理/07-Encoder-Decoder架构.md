@@ -16,10 +16,13 @@
 
 ## 2. 完整架构
 
-```
-Input → [Encoder × N] → Encoder Output
-                              ↓
-Output ← [Decoder × N] ← (cross-attention from Encoder Output)
+```mermaid
+flowchart LR
+  n0["Input → [Encoder × N] → Encoder Output"]
+  n1["↓"]
+  n2["Output ← [Decoder × N] ← (cross-attention from Encoder Output)"]
+  n0 --> n1
+  n1 --> n2
 ```
 
 ### Encoder Block
@@ -51,25 +54,35 @@ x = x + FFN(LayerNorm(x))
 
 ### Cross-Attention 的工作机制
 
-```
-Q ← Decoder: "我现在要生成什么？谁有我需要的信息？"
-K ← Encoder: "我的每个位置包含什么信息？"
-V ← Encoder: "把我的信息给Decoder"
-
-Q_dec · K_enc → 注意力分数 → 加权聚合 V_enc
+```mermaid
+flowchart LR
+  n0["Q ← Decoder: '我现在要生成什么？谁有我需要的信息？'"]
+  n1["K ← Encoder: '我的每个位置包含什么信息？'"]
+  n2["V ← Encoder: '把我的信息给Decoder'"]
+  n3["Q_dec · K_enc → 注意力分数 → 加权聚合 V_enc"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 在翻译中：
-```
-源句 (Encoder): "The agreement on European economic zone was signed..."
-正在生成 (Decoder): "关于欧洲经济区的协议已经签..."
-
-Decoder 当前要生成下一个词:
-  Q("签") 去 Encoder 中查找:
-    → K("signed"): 高分 ✓
-    → K("agreement"): 中分
-    → K("The"): 低分
-  聚合 V("signed") 的信息 → 输出 "署"（完成"签署"）
+```mermaid
+flowchart LR
+  n0["源句 (Encoder): 'The agreement on European economic zone was signed...'"]
+  n1["正在生成 (Decoder): '关于欧洲经济区的协议已经签...'"]
+  n2["Decoder 当前要生成下一个词:"]
+  n3["Q('签') 去 Encoder 中查找:"]
+  n4["→ K('signed'): 高分 ✓"]
+  n5["→ K('agreement'): 中分"]
+  n6["→ K('The'): 低分"]
+  n7["聚合 V('signed') 的信息 → 输出 '署'（完成'签署'）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 ---

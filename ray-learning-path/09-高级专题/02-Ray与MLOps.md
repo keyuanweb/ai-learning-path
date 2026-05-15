@@ -322,16 +322,20 @@ class ModelWithGuardrails:
 
 ### 1. 把 Airflow 用作计算引擎
 
-```
-❌ Airflow Worker 上跑训练 → OOM、没 GPU、慢
-✅ Airflow 只做触发 → 计算交给 Ray 集群
+```mermaid
+flowchart TD
+  n0["❌ Airflow Worker 上跑训练 → OOM、没 GPU、慢"]
+  n1["✅ Airflow 只做触发 → 计算交给 Ray 集群"]
+  n0 --> n1
 ```
 
 ### 2. MLOps 工具版本不兼容
 
-```
-Ray 更新快，确保 MLflow/Airflow 的集成版本与之匹配
-→ 使用固定版本号，不要 latest
+```mermaid
+flowchart TD
+  n0["Ray 更新快，确保 MLflow/Airflow 的集成版本与之匹配"]
+  n1["→ 使用固定版本号，不要 latest"]
+  n0 --> n1
 ```
 
 ### 3. Secret 管理

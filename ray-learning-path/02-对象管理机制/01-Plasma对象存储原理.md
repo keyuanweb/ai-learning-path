@@ -35,15 +35,21 @@ Arrow 不仅仅是一种序列化格式——它是一种**跨语言的列式内
 
 ### 传统序列化 vs Arrow
 
-```
-传统方式 (Pickle/JSON):
-  Python对象 → 序列化(字节流) → 反序列化 → Python对象
-  每次传递都要做完整的编码/解码，开销随数据大小增长
-
-Arrow:
-  数据始终以 Arrow 格式躺在共享内存里
-  不同进程/语言看到的是"同一份数据的不同视角"
-  不需要序列化/反序列化
+```mermaid
+flowchart TD
+  n0["传统方式 (Pickle/JSON):"]
+  n1["Python对象 → 序列化(字节流) → 反序列化 → Python对象"]
+  n2["每次传递都要做完整的编码/解码，开销随数据大小增长"]
+  n3["Arrow:"]
+  n4["数据始终以 Arrow 格式躺在共享内存里"]
+  n5["不同进程/语言看到的是'同一份数据的不同视角'"]
+  n6["不需要序列化/反序列化"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
 ```
 
 ### 列式布局的优势
@@ -68,24 +74,36 @@ Arrow 列式布局：
 
 ### 对象分配
 
-```
-创建对象流程：
-1. Worker 请求分配内存
-2. Plasma 在共享内存中分配空间
-3. Worker 将数据直接写入共享内存（mmap 映射）
-4. Plasma 记录 ObjectID → 内存地址的映射
-5. 对象创建完成，标记为 sealed（不可变）
+```mermaid
+flowchart TD
+  n0["创建对象流程："]
+  n1["Worker 请求分配内存"]
+  n2["Plasma 在共享内存中分配空间"]
+  n3["Worker 将数据直接写入共享内存（mmap 映射）"]
+  n4["Plasma 记录 ObjectID → 内存地址的映射"]
+  n5["对象创建完成，标记为 sealed（不可变）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ### 对象定位
 
-```
-读取对象流程：
-1. Worker 持有 ObjectRef（包含 ObjectID + 位置提示）
-2. 检查本地 Plasma Store → 如果有，mmap 直接读
-3. 如果没有 → 向 owner 节点请求传输
-4. Owner 节点将对象发过来，存入本地 Plasma Store
-5. 返回本地引用
+```mermaid
+flowchart LR
+  n0["读取对象流程："]
+  n1["Worker 持有 ObjectRef（包含 ObjectID + 位置提示）"]
+  n2["检查本地 Plasma Store → 如果有，mmap 直接读"]
+  n3["如果没有 → 向 owner 节点请求传输"]
+  n4["Owner 节点将对象发过来，存入本地 Plasma Store"]
+  n5["返回本地引用"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 ### 小对象的内联优化
@@ -115,20 +133,25 @@ for i in range(100):
 
 ### 溢出策略
 
-```
-Plasma Store (满了)
-    │
-    ▼
-LRU 选一个最少使用的对象
-    │
-    ▼
-序列化 → 写入磁盘 (/tmp/ray/session_xxx/plasma/...)
-    │
-    ▼
-释放 Plasma 中的该对象空间
-    │
-    ▼ (当该对象后来被访问时)
-从磁盘加载 → 恢复到 Plasma Store → 返回给请求者
+```mermaid
+flowchart TD
+  n0["Plasma Store (满了)"]
+  n1["▼"]
+  n2["LRU 选一个最少使用的对象"]
+  n3["▼"]
+  n4["序列化 → 写入磁盘 (/tmp/ray/session_xxx/plasma/...)"]
+  n5["▼"]
+  n6["释放 Plasma 中的该对象空间"]
+  n7["▼ (当该对象后来被访问时)"]
+  n8["从磁盘加载 → 恢复到 Plasma Store → 返回给请求者"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
 ```
 
 > **类比**：Plasma 是工作台上的**热区**（放常用工具），磁盘是身后的**工具柜**。热区满了就把不太用的工具放回柜子，需要时再取出来——比重新买一把（重新计算）划算。

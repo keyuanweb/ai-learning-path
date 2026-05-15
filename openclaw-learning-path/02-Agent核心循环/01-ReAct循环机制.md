@@ -4,24 +4,15 @@ OpenClaw 的 Agent 运行时采用 **ReAct（Reasoning + Acting）** 范式，�
 
 ## ReAct 循环原理
 
+```mermaid
+flowchart LR
+  Think["THINK 思考"] --> Act["ACT 行动"]
+  Act --> Observe["OBSERVE 观察"]
+  Observe --> Output["OUTPUT 输出"]
+  Output -->|"继续任务"| Think
 ```
-┌─────────────────────────────────────────┐
-│              ReAct 循环                   │
-│                                          │
-│   ┌──────────┐      ┌──────────┐        │
-│   │  THINK   │ ──→  │   ACT    │        │
-│   │  思考    │      │  行动    │        │
-│   └──────────┘      └──────────┘        │
-│         ↑                  │             │
-│         │                  ↓             │
-│   ┌──────────┐      ┌──────────┐        │
-│   │  OUTPUT  │ ←──   │ OBSERVE  │        │
-│   │  输出    │      │  观察    │        │
-│   └──────────┘      └──────────┘        │
-│                                          │
-│   终止条件: 任务完成 / 超时 / 用户中断    │
-└─────────────────────────────────────────┘
-```
+
+终止条件：任务完成 / 超时 / 用户中断。
 
 ### 四阶段详解
 
@@ -70,28 +61,40 @@ Pi Agent 是 OpenClaw 的嵌入式 Agent 运行时，有两种工作模式：
 
 Pi Agent 直接运行在 Gateway 进程中，适合单用户/轻量场景：
 
-```
-Gateway Process
-    ├── HTTP Server (Fastify)
-    ├── WebSocket Server
-    ├── Pi Agent Runtime  ← 嵌入在此
-    │   ├── ReAct Loop
-    │   ├── Context Manager
-    │   ├── Tool Executor
-    │   └── Skill Loader
-    └── Memory Manager
+```mermaid
+flowchart TB
+  GW[Gateway Process]
+  GW --> HTTP[HTTP Server Fastify]
+  GW --> WS[WebSocket Server]
+  GW --> PI[Pi Agent Runtime 嵌入在此]
+  PI --> RL[ReAct Loop]
+  PI --> CM[Context Manager]
+  PI --> TE[Tool Executor]
+  PI --> SL[Skill Loader]
+  GW --> MM[Memory Manager]
 ```
 
 ### 2. RPC 模式
 
 Pi Agent 作为独立进程运行，Gateway 通过 RPC 与之通信，适合多用户/生产场景：
 
-```
-Gateway Process                    Pi Agent Process(es)
-    ├── HTTP Server        ←RPC→     ├── ReAct Loop
-    ├── WebSocket Server   ←RPC→     ├── Context Manager
-    ├── Session Router      ←RPC→     ├── Tool Executor
-    └── Memory Manager               └── Skill Loader
+```mermaid
+flowchart LR
+  subgraph gatewayProc [Gateway Process]
+    G1[HTTP Server]
+    G2[WebSocket Server]
+    G3[Session Router]
+    G4[Memory Manager]
+  end
+  subgraph piProc [Pi Agent Process]
+    P1[ReAct Loop]
+    P2[Context Manager]
+    P3[Tool Executor]
+    P4[Skill Loader]
+  end
+  G1 <-. RPC .-> P1
+  G2 <-. RPC .-> P2
+  G3 <-. RPC .-> P3
 ```
 
 ## 上下文构建（每次 ReAct 迭代）

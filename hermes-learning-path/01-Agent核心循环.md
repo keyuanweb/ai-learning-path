@@ -248,13 +248,19 @@ agent.interrupt("User pressed Ctrl+C")
 
 假设用户说 "帮我在当前目录创建一个 Python web 项目":
 
-```
-轮次1: LLM → 调用 terminal("ls")            查看目录结构
-轮次2: LLM → 调用 terminal("mkdir myproject && cd myproject")  创建项目目录
-轮次3: LLM → 调用 write_file("main.py", ...)  写入主文件
-轮次4: LLM → 调用 write_file("requirements.txt", ...)  写入依赖
-轮次5: LLM → 调用 terminal("pip install -r requirements.txt")  安装依赖
-轮次6: LLM → "项目已创建完毕，包含以下文件..."  ← 最终回复
+```mermaid
+flowchart LR
+  n0["轮次1: LLM → 调用 terminal('ls')            查看目录结构"]
+  n1["轮次2: LLM → 调用 terminal('mkdir myproject && cd myproject')  创建项目目录"]
+  n2["轮次3: LLM → 调用 write_file('main.py', ...)  写入主文件"]
+  n3["轮次4: LLM → 调用 write_file('requirements.txt', ...)  写入依赖"]
+  n4["轮次5: LLM → 调用 terminal('pip install -r requirements.txt')  安装依赖"]
+  n5["轮次6: LLM → '项目已创建完毕，包含以下文件...'  ← 最终回复"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
 ```
 
 每一轮都是一次完整的"调用LLM → 解析 → 执行工具 → 反馈结果"循环。

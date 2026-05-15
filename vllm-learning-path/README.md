@@ -5,45 +5,20 @@
 
 ## 整体架构（读代码前先看这张图）
 
-```
-用户调用 LLM.generate(["你好"])
-        │
-        ▼
-┌─ entrypoints/llm.py ─────────────────────────────────────┐
-│  LLM 类：用户入口。把 prompt 转成 token ids，调引擎        │
-└──────────────────────────┬───────────────────────────────┘
-                           │
-                           ▼
-┌─ v1/engine/llm_engine.py ────────────────────────────────┐
-│  LLMEngine（前端）：管请求生命周期                          │
-│  内部持有：InputProcessor / OutputProcessor / EngineCoreClient │
-└──────────────────────────┬───────────────────────────────┘
-                           │  (InprocClient/ZMQ)
-                           ▼
-┌─ v1/engine/core.py ──────────────────────────────────────┐
-│  EngineCore（后端）：推理紧循环                             │
-│  step() 做四件事：                                        │
-│    1. Scheduler.schedule()   → SchedulerOutput            │
-│    2. Executor.execute_model() → ModelRunnerOutput        │
-│    3. Scheduler.get_grammar_bitmask() → 结构化输出约束     │
-│    4. Scheduler.update_from_output() → EngineCoreOutputs   │
-└──────┬──────────────────────────────┬────────────────────┘
-       │                              │
-       ▼                              ▼
-┌─ v1/core/sched/ ─────┐    ┌─ v1/executor/ + v1/worker/ ─┐
-│  Scheduler            │    │  Executor 分发 → Worker       │
-│  KVCacheManager       │    │  GPUModelRunner:              │
-│  KVCacheCoordinator   │    │    prepare_inputs → forward   │
-│  BlockPool            │    │    → sample_tokens            │
-│  决定「何时算哪些」    │    │  决定「如何算」              │
-└───────────────────────┘    └─────────────────────────────┘
-                                        │
-                                        ▼
-                              ┌─ model_executor/ ──────────┐
-                              │  models/llama.py 等         │
-                              │  layers/linear.py (并行层)  │
-                              │  model_loader/ (权重加载)   │
-                              └─────────────────────────────┘
+```mermaid
+flowchart TD
+  userCall["用户调用 LLM.generate"]
+  llmPy["entrypoints/llm.py LLM类"]
+  llmEngine["v1/engine/llm_engine.py LLMEngine前端"]
+  core["v1/engine/core.py EngineCore后端 step紧循环"]
+  sched["v1/core/sched Scheduler KVCache BlockPool"]
+  execWorker["v1/executor 加 v1/worker GPUModelRunner"]
+  modelExec["model_executor 模型 parallel linear loader"]
+
+  userCall --> llmPy --> llmEngine
+  llmEngine -->|"InprocClient或ZMQ"| core
+  core --> sched
+  core --> execWorker --> modelExec
 ```
 
 **核心设计**：前后端分离。前端 `LLMEngine` 管「请求从哪来、结果回哪去」；后端 `EngineCore` 管「每步调度-执行-采样的紧循环」。两者通过 `EngineCoreClient`（IPC 抽象层：InprocClient/MpClient/AsyncMPClient）通信。
@@ -61,7 +36,7 @@
 | 4 | [04-模型执行与采样](04-模型执行与采样/) — Executor/Worker/GPUModelRunner | 3~5 小时 |
 | 5 | [05-模型实现](05-模型实现/) — 模型实现模式、层、加载 | 3~5 小时 |
 | 6 | [06-Attention后端](06-Attention后端/) — 可插拔 attention 后端设计 | 2~3 小时 |
-| 7 | [07-高级特性](07-高级特性/) — 投机解码、分布式、多模态等（按需） | 每项 1~3 天 |
+| 7 | [07-高级特性](07-高级特性/) — 投机解码、分布式、多模态等（按需）；专题 [Kimi-K2.6 量化与加载](07-高级特性/07-Kimi-K2.6量化与权重加载.md)、[多模态权重加载](07-高级特性/08-多模态权重加载.md) | 每项 1~3 天 |
 
 **建议节奏**：阶段 0~1 第一天；阶段 2 第二天；阶段 3 第三~四天；阶段 4 第五~六天；阶段 5 第七~八天；阶段 6 第九天；阶段 7 按需深入。
 

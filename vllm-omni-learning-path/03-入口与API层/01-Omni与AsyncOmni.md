@@ -91,19 +91,23 @@ def _maybe_expand_sampling_params(self, sampling_params_list):
 
 ## 请求生命周期（从用户视角）
 
-```
-omni.generate(prompts, sampling_params_list)
-  │
-  ├─→ OmniBase._init_engine()           ← 创建 Orchestrator + Stage Pools
-  │
-  ├─→ 对每个 prompt：
-  │     ├─ 预处理（tokenize, mm_data 编码）
-  │     ├─ 构造 ClientRequestState
-  │     └─ 提交到 Orchestrator
-  │
-  ├─→ 等待 Orchestrator 返回结果
-  │
-  └─→ 返回 OmniRequestOutput 列表
+```mermaid
+flowchart TD
+  n0["omni.generate(prompts, sampling_params_list)"]
+  n1["OmniBase._init_engine()           ← 创建 Orchestrator + Stage Pools"]
+  n2["对每个 prompt："]
+  n3["预处理（tokenize, mm_data 编码）"]
+  n4["构造 ClientRequestState"]
+  n5["提交到 Orchestrator"]
+  n6["等待 Orchestrator 返回结果"]
+  n7["返回 OmniRequestOutput 列表"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
 ```
 
 ## ClientRequestState —— 请求在前端的表示

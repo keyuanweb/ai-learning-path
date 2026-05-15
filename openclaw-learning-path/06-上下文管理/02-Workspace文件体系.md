@@ -4,19 +4,31 @@
 
 ## Workspace 目录结构
 
-```
-workspaces/<name>/
-├── AGENTS.md          # Agent 行为指令（类似 CLAUDE.md）
-├── IDENTITY.md        # Agent 身份定义
-├── SOUL.md            # Agent 个性、价值观、语调
-├── USER.md            # 用户画像与偏好
-├── MEMORY.md          # 长时记忆（Agent 读写）
-├── HEARTBEAT.md       # 心跳/定时任务配置
-├── TOOLS.md           # 可用工具清单与使用说明
-├── .claw/             # 内部数据（上下文归档、索引等）
-│   ├── context/       # Lossless 上下文归档
-│   └── index/         # 全文索引
-└── files/             # Agent 的工作文件（可自由读写）
+```mermaid
+flowchart TD
+  n0["workspaces/<name>/"]
+  n1["AGENTS.md          # Agent 行为指令（类似 CLAUDE.md）"]
+  n2["IDENTITY.md        # Agent 身份定义"]
+  n3["SOUL.md            # Agent 个性、价值观、语调"]
+  n4["USER.md            # 用户画像与偏好"]
+  n5["MEMORY.md          # 长时记忆（Agent 读写）"]
+  n6["HEARTBEAT.md       # 心跳/定时任务配置"]
+  n7["TOOLS.md           # 可用工具清单与使用说明"]
+  n8[".claw/             # 内部数据（上下文归档、索引等）"]
+  n9["context/       # Lossless 上下文归档"]
+  n10["index/         # 全文索引"]
+  n11["files/             # Agent 的工作文件（可自由读写）"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
+  n3 --> n4
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n8 --> n9
+  n9 --> n10
+  n10 --> n11
 ```
 
 ## 核心文件详解

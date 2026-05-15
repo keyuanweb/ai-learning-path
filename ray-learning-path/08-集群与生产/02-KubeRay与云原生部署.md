@@ -333,12 +333,15 @@ resources:
 
 ### 2. 用 K8s HPA 而不是 Ray Autoscaler
 
-```
-❌ 用 K8s HPA 控制 Worker Pod 数量
-→ HPA 只看 CPU/Memory 指标，不理解 Ray Task 的资源需求
-
-✅ 用 Ray Autoscaler（KubeRay 默认）
-→ Autoscaler 根据待调度的 Task 做精确决策
+```mermaid
+flowchart LR
+  n0["❌ 用 K8s HPA 控制 Worker Pod 数量"]
+  n1["→ HPA 只看 CPU/Memory 指标，不理解 Ray Task 的资源需求"]
+  n2["✅ 用 Ray Autoscaler（KubeRay 默认）"]
+  n3["→ Autoscaler 根据待调度的 Task 做精确决策"]
+  n0 --> n1
+  n1 --> n2
+  n2 --> n3
 ```
 
 ### 3. Dashboard 暴露到公网
