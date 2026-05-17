@@ -5,17 +5,23 @@ AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理�
 ## 学习路径总览
 
 ```mermaid
-flowchart TB
-  subgraph overview [AI 学习路径全景]
+flowchart LR
+  subgraph theory [理论与引擎]
     direction TB
-    p1["LLM 理论基础<br/>Transformer → 训练/微调 → 推理优化 → 进阶"]
-    p2["vLLM 推理引擎<br/>引擎入口 → 主循环 → 调度/KV缓存 → Attention 后端"]
-    p3["vLLM-Omni<br/>多阶段流水线 → AR/Diffusion 双引擎 → OmniConnector"]
-    p4["Agent 框架<br/>LangChain → LangGraph → RAG → 多Agent → 生产部署"]
-    p5["Hermes Agent<br/>核心循环 → 工具系统 → 记忆/技能 → 多平台接入"]
-    p6["OpenClaw<br/>Gateway → ReAct → 工具/技能 → 记忆 → 多Agent"]
-    p7["Claude Code<br/>CLI → Tools/Skills/Hooks → MCP → Agent SDK"]
-    p8["Ray 分布式<br/>Core 原语 → 调度/容错/对象管理 → AI 库 → 集群/生产 → LLM Wiki"]
+    p1[LLM 理论基础]
+    p2[vLLM]
+    p3[vLLM-Omni]
+  end
+  subgraph agentEco [Agent 生态]
+    direction TB
+    p4[Agent 框架]
+    p5[Hermes Agent]
+    p6[OpenClaw]
+  end
+  subgraph tooling [工具与基础设施]
+    direction TB
+    p7[Claude Code]
+    p8[Ray 分布式]
   end
 ```
 
@@ -163,13 +169,11 @@ flowchart TB
 
 ```mermaid
 flowchart TD
-  base["LLM 理论基础 必学基础"]
-  base --> eng["vLLM 源码 → vLLM-Omni 推理引擎路线"]
-  base --> agentPath["Agent 学习路径 Agent 应用路线"]
-  base --> hermes["Hermes Agent 源码 Agent 框架 Python"]
-  base --> openclaw["OpenClaw 源码 Agent 框架 Node.js"]
-  base --> claude["Claude Code 学习路径 工具路线"]
-  base --> ray["Ray 分布式计算 基础设施路线"]
+  base[LLM 理论基础]
+  base --> eng[推理引擎<br/>vLLM → vLLM-Omni]
+  base --> agent[Agent 应用<br/>Agent → Hermes → OpenClaw]
+  base --> tool[工具路线<br/>Claude Code]
+  base --> ray[分布式基础设施<br/>Ray]
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
