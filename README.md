@@ -22,6 +22,7 @@ flowchart LR
     direction TB
     p7[Claude Code]
     p8[Ray 分布式]
+    p9[K8s 云原生]
   end
 ```
 
@@ -163,6 +164,23 @@ flowchart LR
 | 09 | [高级专题 — RLlib、MLOps 集成、自定义扩展、案例研究](ray-learning-path/09-高级专题/) | 6h |
 | 10 | [LLM Wiki 知识库构建 — Karpathy 方法论、编译器模式、三层架构、防幻觉](ray-learning-path/10-LLM-Wiki/) | 3h |
 
+### 9. [Kubernetes 学习路径](k8s-learning-path/)
+
+系统掌握 Kubernetes 容器编排，从本地 kind 集群到生产 Helm/GitOps 交付，覆盖工作负载、网络、存储、安全与可观测，末阶段衔接 vLLM 推理与 KubeRay 部署。
+
+| 阶段 | 内容 | 学时 |
+|------|------|------|
+| 00 | [入口 — 学习路线总览、环境搭建](k8s-learning-path/00-入口/) | 2h |
+| 01 | [架构与核心概念 — K8s 架构、Pod 与容器运行时](k8s-learning-path/01-架构与核心概念/) | 5h |
+| 02 | [工作负载 — Deployment、StatefulSet、Job/CronJob](k8s-learning-path/02-工作负载/) | 6h |
+| 03 | [服务与网络 — Service、Ingress、NetworkPolicy](k8s-learning-path/03-服务与网络/) | 6h |
+| 04 | [存储与配置 — ConfigMap/Secret、PV/PVC、卷挂载](k8s-learning-path/04-存储与配置/) | 5h |
+| 05 | [调度与弹性 — 亲和性、ResourceQuota、HPA/VPA](k8s-learning-path/05-调度与弹性/) | 6h |
+| 06 | [安全与治理 — RBAC、SecurityContext、多租户](k8s-learning-path/06-安全与治理/) | 5h |
+| 07 | [运维与可观测 — kubectl 调试、日志、Prometheus/Grafana](k8s-learning-path/07-运维与可观测/) | 5h |
+| 08 | [生态与交付 — Helm、Operator/CRD、GitOps/ArgoCD](k8s-learning-path/08-生态与交付/) | 6h |
+| 09 | [AI 工作负载实战 — 推理服务、vLLM 与 KubeRay](k8s-learning-path/09-AI工作负载实战/) | 4h |
+
 ---
 
 ## 学习顺序建议
@@ -173,10 +191,14 @@ flowchart TD
   base --> eng[推理引擎<br/>vLLM → vLLM-Omni]
   base --> agent[Agent 应用<br/>Agent → Hermes → OpenClaw]
   base --> tool[工具路线<br/>Claude Code]
+  base --> k8s[K8s 云原生<br/>可选部署前置]
   base --> ray[分布式基础设施<br/>Ray]
+  k8s --> ray
+  k8s --> eng
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
 - **Agent 方向**：LLM 基础 → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
 - **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
+- **云原生部署方向**：K8s 基础（本路径）→ Ray 08 KubeRay / vLLM 生产部署 / LLM 服务化部署章节
