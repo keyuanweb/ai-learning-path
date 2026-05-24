@@ -15,6 +15,7 @@ flowchart LR
   subgraph agentEco [Agent 生态]
     direction TB
     p4[Agent 框架]
+    p4b[Agent Harness]
     p5[Hermes Agent]
     p6[OpenClaw]
   end
@@ -181,6 +182,23 @@ flowchart LR
 | 08 | [生态与交付 — Helm、Operator/CRD、GitOps/ArgoCD](k8s-learning-path/08-生态与交付/) | 6h |
 | 09 | [AI 工作负载实战 — 推理服务、vLLM 与 KubeRay](k8s-learning-path/09-AI工作负载实战/) | 4h |
 
+### 10. [Agent Harness 学习路径](harness-learning-path/)
+
+系统掌握 Agent 工程兜底层（Harness）——上下文、工具、权限、沙箱、状态、观测、HITL 与上线检查，衔接本仓库 Agent/Hermes/OpenClaw 等路径。
+
+| 阶段 | 内容 | 学时 |
+|------|------|------|
+| 00 | [入口 — 路线总览、参考阅读、本仓库对照索引](harness-learning-path/00-入口/) | 1h |
+| 01 | [为什么需要 Harness — 裸 Agent 风险、判断准则](harness-learning-path/01-为什么需要Harness/) | 3h |
+| 02 | [架构全景 — 十一模块、执行循环](harness-learning-path/02-架构全景/) | 4h |
+| 03 | [上下文与指令 — 上下文管理、Prompt 约束](harness-learning-path/03-上下文与指令/) | 4h |
+| 04 | [工具与协议 — 工具注册、MCP 与 Function Call](harness-learning-path/04-工具与协议/) | 4h |
+| 05 | [安全执行 — 权限边界、Sandbox 沙箱](harness-learning-path/05-安全执行/) | 4h |
+| 06 | [状态与记忆 — 任务状态、Memory 系统](harness-learning-path/06-状态与记忆/) | 4h |
+| 07 | [可靠性与可观测 — 重试回滚、日志、评测](harness-learning-path/07-可靠性与可观测/) | 6h |
+| 08 | [人在回路 — Human Review](harness-learning-path/08-人在回路/) | 2h |
+| 10 | [生产落地 — 上线检查、落地路径](harness-learning-path/10-生产落地/) | 4h |
+
 ---
 
 ## 学习顺序建议
@@ -188,17 +206,20 @@ flowchart LR
 ```mermaid
 flowchart TD
   base[LLM 理论基础]
-  base --> eng[推理引擎<br/>vLLM → vLLM-Omni]
-  base --> agent[Agent 应用<br/>Agent → Hermes → OpenClaw]
-  base --> tool[工具路线<br/>Claude Code]
-  base --> k8s[K8s 云原生<br/>可选部署前置]
-  base --> ray[分布式基础设施<br/>Ray]
-  k8s --> ray
-  k8s --> eng
+  base --> eng["推理引擎<br/>vLLM 至 vLLM-Omni"]
+  base --> harnessNode[Agent Harness]
+  base --> agentNode["Agent 框架<br/>LangGraph"]
+  base --> toolNode["工具路线<br/>Claude Code"]
+  base --> k8sNode["K8s 云原生<br/>可选部署前置"]
+  base --> rayNode[Ray 分布式]
+  harnessNode --> agentNode
+  agentNode --> implNode["Hermes 与 OpenClaw"]
+  k8sNode --> rayNode
+  k8sNode --> eng
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
-- **Agent 方向**：LLM 基础 → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）
+- **Agent 方向**：LLM 基础 → **Harness（工程兜底）** → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
 - **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
 - **云原生部署方向**：K8s 基础（本路径）→ Ray 08 KubeRay / vLLM 生产部署 / LLM 服务化部署章节
