@@ -1,6 +1,6 @@
 # AI 学习路径合集
 
-AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理引擎源码、Agent 框架、多模态推理等方向。
+AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理引擎源码、Agent 框架与 Harness 工程化、多模态推理、云原生部署等方向。
 
 ## 学习路径总览
 
@@ -112,6 +112,7 @@ flowchart LR
 | [09-SDK与API开发接口](hermes-learning-path/09-SDK与API开发接口.md) | Python SDK、ACP/MCP协议、Plugin、Skills |
 | [10-多Agent协作模式](hermes-learning-path/10-多Agent协作模式.md) | delegate_task、子Agent隔离、Orchestrator嵌套 |
 | [11-Kanban看板系统](hermes-learning-path/11-Kanban看板系统.md) | SQLite 持久化任务调度、状态机、Dispatcher/Worker、fan-out/fan-in |
+
 > 源码位置：`code/hermes/`
 
 ### 6. [OpenClaw 源码学习](openclaw-learning-path/)
@@ -199,6 +200,8 @@ flowchart LR
 | 08 | [人在回路 — Human Review](harness-learning-path/08-人在回路/) | 2h |
 | 10 | [生产落地 — 上线检查、落地路径](harness-learning-path/10-生产落地/) | 4h |
 
+> 速记参考：[agent-harmess/](agent-harmess/)（四篇原始导图笔记：[稳定性](agent-harmess/没有%20Harness%20的%20Agent%20为什么不稳定.md)、[十一模块关系](agent-harmess/关系.md)、[八大模块速通](agent-harmess/八大模块速通.md)、[上线检查](agent-harmess/上线检查.md)；正式章节见本路径）
+
 ---
 
 ## 学习顺序建议
@@ -219,7 +222,7 @@ flowchart TD
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
-- **Agent 方向**：LLM 基础 → **Harness（工程兜底）** → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）
+- **Agent 方向**：LLM 基础 → **Harness（工程兜底）** → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）；速记可对照 [agent-harmess/](agent-harmess/)
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
 - **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
 - **云原生部署方向**：K8s 基础（本路径）→ Ray 08 KubeRay / vLLM 生产部署 / LLM 服务化部署章节
