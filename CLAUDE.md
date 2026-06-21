@@ -4,15 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 仓库概览
 
-这是 AI 学习路径文档合集，包含 7 个学习路径，全部内容为中文章节化 Markdown 文档。仓库本身没有构建/测试/lint 命令，是纯文档仓库。
+这是 AI 学习路径文档合集，包含 10 个学习路径，全部内容为中文章节化 Markdown 文档。仓库本身没有构建/测试/lint 命令，是纯文档仓库。
 
 ## 目录结构
 
 ```
-7 个学习路径目录/          每个路径按阶段分目录，每阶段含编号文档
-code/                    三个参考源码仓库（vllm, vllm-omni, hermes-agent），被 .gitignore 忽略
-README.md                学习路径总索引、对比表格、学习顺序建议
-.gitignore               忽略 code/、node_modules/、dist/、package*.json
+10 个学习路径目录/         每个路径按阶段分目录，每阶段含编号文档
+agent-harmess/            Harness 原始导图笔记（4篇），供 harness-learning-path 速记参考
+code/                     四个参考源码仓库（vllm, vllm-omni, hermes-agent, agency-agents-zh），被 .gitignore 忽略
+scripts/                  辅助脚本与工具（如 geo-video 视频生成提示词模板）
+README.md                 学习路径总索引、10条路径对比表格、学习顺序建议
+.gitignore                忽略 code/、node_modules/、dist/、package*.json、.claude/ 等
 ```
 
 ## 文档编写约定
@@ -33,12 +35,13 @@ README.md                学习路径总索引、对比表格、学习顺序建�
 4. 在 [README.md](README.md) 中：
    - 在全景图中添加新路径条目
    - 添加路径详情表格（阶段/内容/学时）
-   - 更新学习顺序建议部分的 ASCII 流程图
+   - 更新学习顺序建议部分的 Mermaid 流程图
 
 ## 引用代码目录
 
 - `code/vllm/` — vLLM v0.20.0 源码，供 [vllm-learning-path](vllm-learning-path/) 引用
 - `code/vllm-omni/` — vLLM-Omni 源码，供 [vllm-omni-learning-path](vllm-omni-learning-path/) 引用
 - `code/hermes-agent/` — Hermes Agent 源码，供 [hermes-learning-path](hermes-learning-path/) 引用
+- `code/agency-agents-zh/` — Agency Agents 中文参考源码
 
-这些目录已在 .gitignore 中排除，不纳入版本控制。文档通过相对路径引用其中的源文件。
+这些目录已在 .gitignore 中排除，不纳入版本控制。文档通过相对路径引用其中的源文件（README 中 Hermes 路径简写为 `code/hermes/`，实际目录为 `code/hermes-agent/`）。

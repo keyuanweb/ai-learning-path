@@ -89,7 +89,7 @@ flowchart LR
 | 02 | [LangGraph 核心 — StateGraph、条件分支、Checkpoint](agent-learning-path/02-图核心/) | 5~8h |
 | 03 | [Agent 实战 — Tool Calling、create_agent、HITL](agent-learning-path/03-Agent/) | 5~8h |
 | 04 | [Skill — SKILL.md 格式、Deep Agent、渐进式披露](agent-learning-path/04-Skill/) | 5~8h |
-| 05 | [RAG + Agent 融合 — Corrective RAG、Agentic RAG](agent-learning-path/05-RAG/) | 5~8h |
+| 05 | [RAG + Agent 融合 — Corrective RAG、Agentic RAG、Self-RAG、Graph RAG](agent-learning-path/05-RAG/) | 7~10h |
 | 06 | [多 Agent — Supervisor、Hierarchical、Swarm](agent-learning-path/06-多Agent/) | 8~12h |
 | 07 | [生产部署 — LangSmith、LangGraph Platform、安全](agent-learning-path/07-生产部署/) | 5~8h |
 | 08 | [工业级案例 — Kensho、Grab、Remote](agent-learning-path/08-案例/) | 3~5h |

@@ -206,5 +206,8 @@ final = synthesize(question, answers)  # Agent 汇总
 |------|------|
 | **Naive RAG** | 向量检索 + Prompt 拼接 |
 | **Advanced RAG** | 混合检索 + Rerank + 查询改写 |
+| **Corrective RAG** | 检索后评估文档质量，质量不足时纠正检索 |
 | **Agentic RAG** | Agent 拆解问题 + 评估检索质量 + 多步推理 |
+| **Self-RAG** | 模型自主判断检索需求 + 自我批判 + 按需修正 |
+| **Graph RAG** | 知识图谱构建 + 社区检测 + 分层摘要 |
 | **核心框架** | LangChain、LlamaIndex、RAGAS（评估） |
