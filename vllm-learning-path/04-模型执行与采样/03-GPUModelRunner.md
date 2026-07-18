@@ -118,3 +118,31 @@ class RequestState:
 - `block_tables` 和 `slot_mappings` 的语义 — 这是 PagedAttention 的核心寻址机制
 - CUDA graph 的作用：录制一次 graph，后续直接重放，减少 kernel launch 开销
 - InputBatch 是「所有请求的 token 拼成一个大 batch」——这是 GPU 高效执行的基础
+
+## 新特性预览（开发中）
+
+### Model Runner V2 (MRV2)
+
+**设计文档**：[`docs/design/model_runner_v2.md`](../../code/vllm/docs/design/model_runner_v2.md)
+
+MRV2 是对现有 GPUModelRunner 的彻底重写，解决 V1 的技术债务：
+
+| 改进点 | 描述 |
+|--------|------|
+| **Persistent Batch** | 持久化状态张量与逐步输入张量解耦；每个请求分配固定行，用 GPU gather 替代 CPU 重建 |
+| **Async-First** | 核心执行循环假定为纯 CUDA stream，无 CPU 同步点 |
+| **StagedWriteTensor** | 分阶段 GPU 写，消除异步数据竞争；用 pinned memory 技巧避免 barrier |
+| **GPU-Native Input Metadata** | 用 Triton kernel 在 GPU 侧构建输入元数据（UVA 寻址） |
+| **Triton-Native Sampler** | 采样在 Triton 中执行（Gumbel-max），替代 PyTorch eager 采样 |
+
+> ⚠️ MRV2 仍在开发中，API 和架构尚未稳定。当前默认仍使用 V1 GPUModelRunner。
+
+### Dual Batch Overlap (DBO)
+
+**设计文档**：[`docs/design/dbo.md`](../../code/vllm/docs/design/dbo.md)
+
+针对 MoE 模型的优化：将 batch 拆分为两个 micro-batch，用双 CPU 线程实现 all-to-all 通信与计算的重叠，降低 MoE dispatch/combine 的延迟开销。
+
+- 组件：`UBatchWrapper`、`UBatchContext`（[`vllm/v1/worker/gpu_ubatch_wrapper.py`](../../code/vllm/vllm/v1/worker/gpu_ubatch_wrapper.py)）
+- 前提：DP+EP 部署，DeepEP 后端
+- 开关：`--enable-dbo`、`--dbo-decode-token-threshold`、`--dbo-prefill-token-threshold`
