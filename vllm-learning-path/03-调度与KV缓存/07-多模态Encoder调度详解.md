@@ -241,7 +241,125 @@ Step N+1:
 
 ---
 
-## 6. 在 `schedule()` 两阶段中的调用位置
+## 6. 多图编码的执行顺序 — 跨请求批量合并
+
+调度器的 `_try_schedule_encoder_inputs()` 只负责**收集**本步需要编码的 item 列表（`encoder_inputs_to_schedule`），不做合并决策。真正的合并发生在 Worker 侧 `EncoderRunner.execute_mm_encoder()`。
+
+### 6.1 调度侧 vs 执行侧的分工
+
+```
+调度器 (Scheduler)                        Worker (EncoderRunner)
+─────────────────────                    ────────────────────────
+_try_schedule_encoder_inputs()           execute_mm_encoder()
+  ↓                                         ↓
+  收集: [img0, img1, img2, audio0]        group_and_batch_mm_kwargs()
+  ↓                                         ↓
+  scheduled_encoder_inputs =              groupby(modality) → 分组
+    {req_A: [0,1],    ← 两图             group_and_batch_mm_items() → 合并
+     req_B: [0],      ← 一图             _batch_mm_items() → 拼接 tensor
+     req_C: [0,1]}    ← 一图一音频          ↓
+                                          embed_multimodal(batch)
+```
+
+### 6.2 `group_and_batch_mm_kwargs()` 的三层合并
+
+```mermaid
+flowchart TD
+    Input["mm_kwargs = [(image, img0), (image, img1), (image, img2), (audio, aud0)]"]
+
+    Input --> Layer1
+
+    subgraph Layer1["第一层: groupby(modality)"]
+        G1["image 组: [img0, img1, img2]"]
+        G2["audio 组: [aud0]"]
+    end
+
+    G1 --> Layer2
+    G2 --> Layer2
+
+    subgraph Layer2["第二层: group_and_batch_mm_items()<br>按 field 结构二次分组"]
+        F1["image items 字段相同 → 可合并"]
+        F2["audio items 字段相同 → 可合并"]
+    end
+
+    F1 --> Layer3
+    F2 --> Layer3
+
+    subgraph Layer3["第三层: _batch_mm_items()<br>拼接为 batch tensor"]
+        B1["img0 + img1 + img2<br>→ batch_tensor(3, C, H, W)"]
+        B2["aud0 → batch_tensor(1, ...)"]
+    end
+
+    B1 --> Forward1["embed_multimodal(batch_images)<br>→ 1 次 forward"]
+    B2 --> Forward2["embed_multimodal(batch_audio)<br>→ 1 次 forward"]
+```
+
+**分组规则**（[`multimodal/utils.py:188-233`](../../code/vllm/vllm/multimodal/utils.py#L188-L233)）— 以下情况需要**分拆为不同 batch**：
+
+| 分拆条件 | 示例 |
+|---------|------|
+| 不同 modality | image ≠ audio → 不同 batch |
+| 不同 field 集合 | `{"pixel_values"}` ≠ `{"pixel_values", "image_sizes"}` → 不同 batch |
+| `MultiModalSharedField` 值不同 | shared_field={"aspect_ratio": "1:1"} ≠ {"aspect_ratio": "16:9"} |
+
+### 6.3 跨请求合并示例
+
+同一 step 中，3 个请求的 5 张图片合并为 1 次 encoder forward：
+
+```mermaid
+sequenceDiagram
+    participant S as Scheduler
+    participant ER as EncoderRunner
+    participant ViT as ViT Encoder
+
+    Note over S: Step N, 调度 3 个多模态请求
+
+    rect rgb(255, 245, 230)
+        Note over S: 阶段1 + 阶段2: _try_schedule_encoder_inputs()
+        S->>S: request A: 图片0 + 图片1 在 window 内
+        S->>S: request B: 图片0 在 window 内
+        S->>S: request C: 图片0 + 图片1 在 window 内
+        Note over S: scheduled_encoder_inputs = {<br>A: [0,1], B: [0], C: [0,1]}
+    end
+
+    rect rgb(240, 245, 255)
+        S->>ER: SchedulerOutput (含 scheduled_encoder_inputs)
+        ER->>ER: prepare_mm_inputs()<br>遍历所有请求, 收集 5 个 image items
+        ER->>ER: group_and_batch_mm_kwargs()<br>modality=image, field 相同 → 合并
+        Note over ER: 5 张图片 → 1 个 batch tensor
+        ER->>ViT: embed_multimodal(pixel_values=batch(5))
+        ViT-->>ER: 5 个 encoder outputs
+        ER->>ER: 缓存到 encoder_cache<br>(按 mm_hash 索引)
+    end
+
+    rect rgb(240, 255, 240)
+        Note over ER: gather_mm_embeddings() 阶段
+        ER->>ER: 各请求按 mm_hash 取回各自 embedding<br>拼接到 decoder input 中
+    end
+```
+
+### 6.4 多模态混合的编码轮次
+
+```python
+# execute_mm_encoder() 的外层 for 循环 — 每个 modality 组一次 forward
+encoder_outputs = []
+for modality, num_items, mm_kwargs_batch in group_and_batch_mm_kwargs(mm_kwargs, ...):
+    batch_outputs = self.model.embed_multimodal(**mm_kwargs_batch)
+    encoder_outputs.extend(batch_outputs)
+```
+
+| 入参 | 编码轮次 | 原因 |
+|------|---------|------|
+| 5 张图片（同请求或跨请求） | **1 次** | 同 modality + 同 field → 合并 batch |
+| 3 图片同 field + 2 图片不同 field | **2 次** | field 结构不兼容需分拆 |
+| 3 图片 + 2 音频 | **2 次** | 不同 modality → 必须分拆 |
+| 5 图片 + 0 音频 | **1 次** | 全部合并 |
+
+**核心结论**：多图编码在产品中**默认是批量并行**的，不是单进程逐张顺序执行。只有跨模态或 field 结构不兼容时才会拆分为多次 forward。
+
+---
+
+## 7. 在 `schedule()` 两阶段中的调用位置
 
 `_try_schedule_encoder_inputs()` 在 `schedule()` 的两个阶段都会调用：
 
@@ -278,7 +396,7 @@ flowchart TD
 
 ---
 
-## 7. 多模态 Chunked Prefill 特殊性
+## 8. 多模态 Chunked Prefill 特殊性
 
 ### 7.1 `disable_chunked_mm_input` 参数
 
@@ -335,7 +453,7 @@ sequenceDiagram
 
 ---
 
-## 8. EC Connector：远程 Encoder Cache
+## 9. EC Connector：远程 Encoder Cache
 
 EC Connector（Encoder Cache Connector）用于 **P/D 分离场景**——Prefill 节点的 Encoder 输出可以被 Decode 节点远程加载：
 
@@ -372,7 +490,7 @@ if self.ec_connector is not None and self.ec_connector.has_cache_item(item_ident
 
 ---
 
-## 9. 关键代码锚点
+## 10. 关键代码锚点
 
 | 关注点 | 源码位置 |
 |--------|---------|
@@ -394,5 +512,6 @@ if self.ec_connector is not None and self.ec_connector.has_cache_item(item_ident
 2. **回退保安全**：Encoder 不可用时，`num_new_tokens` 回退到图片之前——宁可少算，不可跨图
 3. **Encoder Cache 复用**：相同图片只编码一次，`mm_hash` 去重，FIFO 逐出
 4. **混合调度不阻塞**：多模态请求的 Encoder 瓶颈不影响纯文本 decode/prefill
-5. **EC Connector 远程加载**：P/D 分离时，远程 Encoder 输出不消耗本地 budget
-6. **Chunked MM Input 控制**：`disable_chunked_mm_input` 决定是否允许 decoder chunk 跨越多模态 item 边界
+5. **跨请求批量合并**：同模态 item 通过 `group_and_batch_mm_kwargs()` 合并为 batch tensor，一次 `embed_multimodal()` 完成；不按顺序逐个编码
+6. **EC Connector 远程加载**：P/D 分离时，远程 Encoder 输出不消耗本地 budget
+7. **Chunked MM Input 控制**：`disable_chunked_mm_input` 决定是否允许 decoder chunk 跨越多模态 item 边界
