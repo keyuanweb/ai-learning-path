@@ -366,17 +366,19 @@ for modality, num_items, mm_kwargs_batch in group_and_batch_mm_kwargs(mm_kwargs,
 ```mermaid
 flowchart TD
     subgraph Phase1["阶段1: RUNNING 请求"]
-        R1["for req in self.running"]
-        R1 --> R2["num_new_tokens 已计算"]
+        direction TB
+        R1["for req in self.running"] --> R2["num_new_tokens 已计算"]
         R2 --> R3["_try_schedule_encoder_inputs()"]
         R3 --> R4{"num_new_tokens == 0?"}
-        R4 -->|"是(被encoder回退)"| RSkip["continue 跳过本请求"]
-        R4 -->|"否"| RAlloc["继续 allocate_slots()"]
+        R4 -->|"是"| RSkip["continue"]
+        R4 -->|"否"| RAlloc["allocate_slots()"]
     end
 
+    Phase1 --> Phase2
+
     subgraph Phase2["阶段2: WAITING 请求"]
-        W1["for req in waiting/skipped_waiting"]
-        W1 --> W2["prefix cache 查询"]
+        direction TB
+        W1["for req in waiting/skipped_waiting"] --> W2["prefix cache 查询"]
         W2 --> W3["num_new_tokens = num_tokens - num_computed"]
         W3 --> W4["_try_schedule_encoder_inputs()"]
         W4 --> W5{"num_new_tokens == 0?"}
