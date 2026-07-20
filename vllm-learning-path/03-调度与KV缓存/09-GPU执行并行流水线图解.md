@@ -16,51 +16,48 @@ vLLM 达到极致推理吞吐的秘诀在于**把计算和数据加载完全重�
 
 ## 〇、核心直觉：计算掩盖加载（多 Step 流水线）
 
-vLLM 极致性能的本质是**计算永远不等待数据**。下面用流水时间线图，把时间切成多个窗口，直观展示每个窗口中计算（蓝）和数据加载（橙）如何并行——**橙色永远藏在蓝色下面，不额外占用时间**：
+vLLM 极致性能的本质是**计算永远不等待数据**。下面把时间纵向切成 5 个窗口，直观展示每个窗口里 🔵计算 和 🟠数据加载 的并行关系——**橙色永远藏在蓝色下面，不额外占用时间**：
 
 ```mermaid
-flowchart LR
-    subgraph T1["时间窗口 ①"]
-        direction TB
-        T1_cpu["CPU: schedule Step1"]
-        T1_s1["Step1: H2D InputBatch"]
+flowchart TB
+    subgraph T1["窗口①: 启动 Step1"]
+        direction LR
+        T1_cpu["CPU: sched S1"] --> T1_s1["S1: H2D"]
     end
 
-    subgraph T2["时间窗口 ②"]
-        direction TB
-        T2_cpu["CPU: schedule Step2"]
-        T2_s1["Step1: Model Forward"]
-        T2_s2["Step2: H2D InputBatch"]
+    T1 --> T2
+
+    subgraph T2["窗口②: Step1 前向 + Step2 准备"]
+        direction LR
+        T2_cpu["CPU: sched S2"] --> T2_s1["S1: Forward"] --> T2_s2["S2: H2D"]
     end
 
-    subgraph T3["时间窗口 ③ ← 掩盖发生"]
-        direction TB
-        T3_cpu["CPU: schedule Step3"]
-        T3_s1["Step1: Postprocess"]
-        T3_s1d["━━━━━━━━━━━━━━━━━"]
-        T3_LOAD["🟠 Step1 D2H → CPU"]
-        T3_s2["Step2: Model Forward"]
-        T3_s3["Step3: H2D InputBatch"]
-        T3_note["⬆ Step1 的 D2H 被 Step2 的 Forward 掩盖"]
+    T2 --> T3
+
+    subgraph T3["窗口③: Step2 前向 + Step3 准备  ← 🟠掩盖在此"]
+        direction LR
+        T3_s1["S1: Post"] --> T3_LOAD["🟠 S1 D2H"]
+        T3_s1 --> T3_s2["S2: Forward"]
+        T3_s2 --> T3_s3["S3: H2D"]
+        T3_cpu["CPU: sched S3"]
+        T3_note["← S1的D2H藏在S2的Forward下"]
     end
 
-    subgraph T4["时间窗口 ④ ← 掩盖发生"]
-        direction TB
-        T4_s1d["━━━━━━━━━━━━━━━━━"]
-        T4_LOAD["🟠 Step2 D2H → CPU"]
-        T4_s2["Step2: Postprocess"]
-        T4_s3["Step3: Model Forward"]
-        T4_note["⬆ Step2 的 D2H 被 Step3 的 Forward 掩盖"]
+    T3 --> T4
+
+    subgraph T4["窗口④: Step3 前向  ← 🟠掩盖在此"]
+        direction LR
+        T4_s2["S2: Post"] --> T4_LOAD["🟠 S2 D2H"]
+        T4_s2 --> T4_s3["S3: Forward"]
+        T4_note["← S2的D2H藏在S3的Forward下"]
     end
 
-    subgraph T5["时间窗口 ⑤"]
-        direction TB
-        T5_s3["Step3: Postprocess"]
-        T5_s3d["━━━━━━━━━━━━━━━━━"]
-        T5_LOAD["🟠 Step3 D2H → CPU"]
-    end
+    T4 --> T5
 
-    T1 --> T2 --> T3 --> T4 --> T5
+    subgraph T5["窗口⑤: 收尾"]
+        direction LR
+        T5_s3["S3: Post"] --> T5_LOAD["🟠 S3 D2H"]
+    end
 
     style T1 fill:#f8f9fa,stroke:#adb5bd
     style T2 fill:#f8f9fa,stroke:#adb5bd
@@ -82,19 +79,15 @@ flowchart LR
     style T3_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
     style T4_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
     style T5_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style T3_s1d fill:#fff,stroke:#fff
-    style T4_s1d fill:#fff,stroke:#fff
-    style T5_s3d fill:#fff,stroke:#fff
-    style T3_note fill:#fff3cd,stroke:none,stroke-dasharray: 3 3
-    style T4_note fill:#fff3cd,stroke:none,stroke-dasharray: 3 3
+    style T3_note fill:#fff3cd,stroke:none
+    style T4_note fill:#fff3cd,stroke:none
 ```
 
 > **看图说话**：
-> - 时间从左到右流过 5 个窗口，每个窗口中的节点从上到下按启动先后排列
-> - 窗口 ③ 中：🟠 Step1 的 D2H（数据搬回 CPU）和 🔵 Step2 的 Forward 在**同一时间窗口**——加载藏在计算背后
-> - 窗口 ④ 中：🟠 Step2 的 D2H 又藏在 🔵 Step3 的 Forward 背后——规律重复
-> - **CPU 永远提前**：窗口 ① 调度 Step1，窗口 ② 调度 Step2，窗口 ③ 调度 Step3，调度开销不占 GPU 时间
-> - 每个橙色块（数据加载）上下都有 `━━━` 分隔线，视觉上清楚标识它被同窗口的蓝色块（计算）掩盖
+> - 窗口③：🟠 S1 的 D2H 和 🔵 S2 的 Forward 同在一个窗口——**加载被计算掩盖**
+> - 窗口④：🟠 S2 的 D2H 又和 🔵 S3 的 Forward 同在一个窗口——**规律重复**
+> - CPU 永远提前：窗口①调 S1、②调 S2、③调 S3，调度不占 GPU 时间
+> - 每个 Step 的 D2H 拖尾都塞进了下一个 Step 的前向计算窗口
 
 ### 关键对比：有无掩盖的差异
 
