@@ -14,6 +14,80 @@ vLLM 达到极致推理吞吐的秘诀在于**把计算和数据加载完全重�
 
 阅读前建议先看过 [08-调度与批量执行图解.md](08-调度与批量执行图解.md)。
 
+## 〇、核心直觉：计算掩盖加载（多 Step 流水线）
+
+vLLM 极致性能的本质是**计算永远不等待数据**。下面这个 Gantt 时间线图展示连续 3 个 step 中，计算（蓝）如何把数据加载（橙）完全"吞"掉：
+
+```mermaid
+gantt
+    title 跨 Step 计算掩盖加载时间线
+    dateFormat X
+    axisFormat %s
+
+    section CPU 调度
+    Step1 schedule()               :s1, 0, 2
+    Step2 schedule()               :s2, 2, 4
+    Step3 schedule()               :s3, 4, 6
+
+    section 🔵 Step1 计算
+    H2D InputBatch                 :h2d1, 2, 3
+    Model Forward + Sample         :fw1, 3, 6
+    Postprocess + Speculator       :pp1, 6, 8
+
+    section 🟠 Step1 数据加载
+    D2H token_ids + logprobs → CPU :d2h1, 6, 8
+
+    section 🔵 Step2 计算
+    H2D InputBatch                 :h2d2, 4, 5
+    Model Forward + Sample         :fw2, 6, 9
+    Postprocess + Speculator       :pp2, 9, 11
+
+    section 🟠 Step2 数据加载
+    D2H token_ids + logprobs → CPU :d2h2, 9, 11
+
+    section 🔵 Step3 计算
+    H2D InputBatch                 :h2d3, 6, 7
+    Model Forward + Sample         :fw3, 9, 12
+    Postprocess + Speculator       :pp3, 12, 14
+
+    section 🟠 Step3 数据加载
+    D2H token_ids + logprobs → CPU :d2h3, 12, 14
+```
+
+> **看图说话**：
+> - 每一行的橙色块（数据加载）永远藏在下一行蓝色块（计算）的下方——数据搬运完全不占用额外时间
+> - CPU 调度永远提前一步，Step1 Forward 还在跑时 Step2/Step3 的调度和 H2D 已经完成了
+> - D2H 拷贝与 Postprocess/Speculator 在同一时段内并行，各自在不同 CUDA Stream 上
+
+### 关键对比：有无掩盖的差异
+
+```mermaid
+flowchart TB
+    subgraph without["❌ 无掩盖（同步模式，算完等拷完再算下一步）"]
+        direction LR
+        wa["Step1<br/>Forward"] --> wb["Step1<br/>D2H Copy"] --> wc["Step2<br/>Forward"] --> wd["Step2<br/>D2H Copy"] --> we["Step3<br/>Forward"]
+    end
+
+    subgraph with["✅ 有掩盖（vLLM 异步模式）"]
+        direction LR
+        va["Step1 Forward<br/>━━━━━━━━━━━━━━"]
+        vb["Step1 D2H Copy<br/>  ─ ─ ─ ─ ─ ─（藏在下面）"]
+        vc["Step2 Forward<br/>        ━━━━━━━━━━━━━━"]
+        vd["Step2 D2H Copy<br/>          ─ ─ ─ ─ ─ ─（藏在下面）"]
+        ve["Step3 Forward<br/>                  ━━━━━━━━━━━━━━"]
+    end
+
+    without -->|"耗时: 3×Fwd + 2×Copy"| result_bad["总耗时 = 计算 + 加载<br/>加载暴露在关键路径上"]
+    with -->|"耗时: 3×Fwd<br/>（Copy 被掩盖）"| result_good["总耗时 ≈ 纯计算<br/>加载完全隐藏"]
+
+    style without fill:#f8d7da,stroke:#721c24
+    style with fill:#d4edda,stroke:#155724
+    style result_bad fill:#f8d7da,stroke:#721c24
+    style result_good fill:#d4edda,stroke:#155724
+```
+
+---
+
 ## 一、一张图看懂：GPU 时间线并行全景
 
 一个推理 step 中，计算（蓝色）和数据加载（橙色）在两条 CUDA Stream 上并行推进：
