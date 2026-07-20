@@ -16,78 +16,65 @@ vLLM 达到极致推理吞吐的秘诀在于**把计算和数据加载完全重�
 
 ## 〇、核心直觉：计算掩盖加载（多 Step 流水线）
 
-vLLM 极致性能的本质是**计算永远不等待数据**。下面把时间纵向切成 5 个窗口，直观展示每个窗口里 🔵计算 和 🟠数据加载 的并行关系——**橙色永远藏在蓝色下面，不额外占用时间**：
+vLLM 极致性能的本质是**计算永远不等待数据**。下图一条蓝色主线（GPU 计算）贯穿 3 个 Step，橙色 D2H 块挂在旁边——**每次橙色都藏在下一步的蓝色 Forward 期间，不单独占用时间线**：
 
 ```mermaid
 flowchart TB
-    subgraph T1["窗口①: 启动 Step1"]
-        direction LR
-        T1_cpu["CPU: sched S1"] --> T1_s1["S1: H2D"]
-    end
+    cpu1["① CPU sched S1"]
+    cpu2["② CPU sched S2"]
+    cpu3["③ CPU sched S3"]
 
-    T1 --> T2
+    s1_h2d["S1 H2D"]
+    s1_fwd["S1 Forward"]
+    s1_post["S1 Post"]
+    s1_load["🟠 S1 D2H（掩盖）"]
 
-    subgraph T2["窗口②: Step1 前向 + Step2 准备"]
-        direction LR
-        T2_cpu["CPU: sched S2"] --> T2_s1["S1: Forward"] --> T2_s2["S2: H2D"]
-    end
+    s2_h2d["S2 H2D"]
+    s2_fwd["S2 Forward"]
+    s2_post["S2 Post"]
+    s2_load["🟠 S2 D2H（掩盖）"]
 
-    T2 --> T3
+    s3_h2d["S3 H2D"]
+    s3_fwd["S3 Forward"]
+    s3_post["S3 Post"]
+    s3_load["🟠 S3 D2H"]
 
-    subgraph T3["窗口③: Step2 前向 + Step3 准备  ← 🟠掩盖在此"]
-        direction LR
-        T3_s1["S1: Post"] --> T3_LOAD["🟠 S1 D2H"]
-        T3_s1 --> T3_s2["S2: Forward"]
-        T3_s2 --> T3_s3["S3: H2D"]
-        T3_cpu["CPU: sched S3"]
-        T3_note["← S1的D2H藏在S2的Forward下"]
-    end
+    cpu1 --> s1_h2d
+    cpu2 --> s2_h2d
+    cpu3 --> s3_h2d
 
-    T3 --> T4
+    s1_h2d --> s1_fwd --> s1_post
+    s1_post --> s2_h2d --> s2_fwd --> s2_post
+    s2_post --> s3_h2d --> s3_fwd --> s3_post
 
-    subgraph T4["窗口④: Step3 前向  ← 🟠掩盖在此"]
-        direction LR
-        T4_s2["S2: Post"] --> T4_LOAD["🟠 S2 D2H"]
-        T4_s2 --> T4_s3["S3: Forward"]
-        T4_note["← S2的D2H藏在S3的Forward下"]
-    end
+    s1_post -.-> s1_load
+    s1_load -.->|"← 藏在 S2 Forward 期间"| s2_fwd
+    s2_post -.-> s2_load
+    s2_load -.->|"← 藏在 S3 Forward 期间"| s3_fwd
+    s3_post -.-> s3_load
 
-    T4 --> T5
-
-    subgraph T5["窗口⑤: 收尾"]
-        direction LR
-        T5_s3["S3: Post"] --> T5_LOAD["🟠 S3 D2H"]
-    end
-
-    style T1 fill:#f8f9fa,stroke:#adb5bd
-    style T2 fill:#f8f9fa,stroke:#adb5bd
-    style T3 fill:#f8f9fa,stroke:#adb5bd
-    style T4 fill:#f8f9fa,stroke:#adb5bd
-    style T5 fill:#f8f9fa,stroke:#adb5bd
-    style T1_cpu fill:#e8daef,stroke:#7d3c98
-    style T2_cpu fill:#e8daef,stroke:#7d3c98
-    style T3_cpu fill:#e8daef,stroke:#7d3c98
-    style T1_s1 fill:#d1ecf1,stroke:#0c5460
-    style T2_s1 fill:#d1ecf1,stroke:#0c5460
-    style T3_s1 fill:#d1ecf1,stroke:#0c5460
-    style T2_s2 fill:#d1ecf1,stroke:#0c5460
-    style T3_s2 fill:#d1ecf1,stroke:#0c5460
-    style T4_s2 fill:#d1ecf1,stroke:#0c5460
-    style T3_s3 fill:#d1ecf1,stroke:#0c5460
-    style T4_s3 fill:#d1ecf1,stroke:#0c5460
-    style T5_s3 fill:#d1ecf1,stroke:#0c5460
-    style T3_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style T4_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style T5_LOAD fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style T3_note fill:#fff3cd,stroke:none
-    style T4_note fill:#fff3cd,stroke:none
+    style cpu1 fill:#e8daef,stroke:#7d3c98
+    style cpu2 fill:#e8daef,stroke:#7d3c98
+    style cpu3 fill:#e8daef,stroke:#7d3c98
+    style s1_h2d fill:#d1ecf1,stroke:#0c5460
+    style s1_fwd fill:#d1ecf1,stroke:#0c5460
+    style s1_post fill:#d1ecf1,stroke:#0c5460
+    style s2_h2d fill:#d1ecf1,stroke:#0c5460
+    style s2_fwd fill:#d1ecf1,stroke:#0c5460
+    style s2_post fill:#d1ecf1,stroke:#0c5460
+    style s3_h2d fill:#d1ecf1,stroke:#0c5460
+    style s3_fwd fill:#d1ecf1,stroke:#0c5460
+    style s3_post fill:#d1ecf1,stroke:#0c5460
+    style s1_load fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style s2_load fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style s3_load fill:#fff3cd,stroke:#ffc107,stroke-width:2px
 ```
 
 > **看图说话**：
-> - 窗口③：🟠 S1 的 D2H 和 🔵 S2 的 Forward 同在一个窗口——**加载被计算掩盖**
-> - 窗口④：🟠 S2 的 D2H 又和 🔵 S3 的 Forward 同在一个窗口——**规律重复**
-> - CPU 永远提前：窗口①调 S1、②调 S2、③调 S3，调度不占 GPU 时间
-> - 每个 Step 的 D2H 拖尾都塞进了下一个 Step 的前向计算窗口
+> - 🔵 蓝色实线 = GPU 计算链（主路径），3 个 Step 连成一条流水线
+> - 🟠 橙色虚线 = D2H 数据加载，挂在计算链旁边
+> - S1 的 D2H 指向 S2 Forward，箭头"← 藏在 S2 Forward 期间"——加载和下一步计算**同时发生**
+> - 如果去掉掩盖，时间线会变成：Fwd → 等 D2H → Fwd → 等 D2H → ……加载暴露在关键路径上
 
 ### 关键对比：有无掩盖的差异
 
