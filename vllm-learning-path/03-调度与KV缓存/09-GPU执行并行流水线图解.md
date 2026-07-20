@@ -16,48 +16,72 @@ vLLM 达到极致推理吞吐的秘诀在于**把计算和数据加载完全重�
 
 ## 〇、核心直觉：计算掩盖加载（多 Step 流水线）
 
-vLLM 极致性能的本质是**计算永远不等待数据**。下面这个 Gantt 时间线图展示连续 3 个 step 中，计算（蓝）如何把数据加载（橙）完全"吞"掉：
+vLLM 极致性能的本质是**计算永远不等待数据**。下面用流水线时间线图展示连续 3 个 step 中，计算（蓝色）如何把数据加载（橙色）完全"吞"掉：
 
 ```mermaid
-gantt
-    title 跨 Step 计算掩盖加载时间线
-    dateFormat X
-    axisFormat %s
+flowchart TB
+    subgraph timeline["时间轴从左到右 →→→"]
+        direction TB
 
-    section CPU 调度
-    Step1 schedule()               :s1, 0, 2
-    Step2 schedule()               :s2, 2, 4
-    Step3 schedule()               :s3, 4, 6
+        subgraph row_cpu["⚪ CPU 调度（永远提前一步）"]
+            direction LR
+            c1["Step1<br/>schedule()"] --> c2["Step2<br/>schedule()"] --> c3["Step3<br/>schedule()"]
+        end
 
-    section 🔵 Step1 计算
-    H2D InputBatch                 :h2d1, 2, 3
-    Model Forward + Sample         :fw1, 3, 6
-    Postprocess + Speculator       :pp1, 6, 8
+        subgraph row_s1c["🔵 GPU Step1 — 计算"]
+            direction LR
+            s1a["H2D<br/>InputBatch"] --> s1b["Model Forward<br/>+ Sample"] --> s1c["Postprocess<br/>+ Speculator"]
+        end
 
-    section 🟠 Step1 数据加载
-    D2H token_ids + logprobs → CPU :d2h1, 6, 8
+        subgraph row_s1d["🟠 GPU Step1 — 数据加载（被 Step2 计算掩盖 ↓）"]
+            direction LR
+            s1d1["D2H: token_ids → CPU"] --> s1d2["D2H: logprobs → CPU"]
+        end
 
-    section 🔵 Step2 计算
-    H2D InputBatch                 :h2d2, 4, 5
-    Model Forward + Sample         :fw2, 6, 9
-    Postprocess + Speculator       :pp2, 9, 11
+        subgraph row_s2c["🔵 GPU Step2 — 计算"]
+            direction LR
+            s2a["H2D<br/>InputBatch"] --> s2b["Model Forward<br/>+ Sample"] --> s2c["Postprocess<br/>+ Speculator"]
+        end
 
-    section 🟠 Step2 数据加载
-    D2H token_ids + logprobs → CPU :d2h2, 9, 11
+        subgraph row_s2d["🟠 GPU Step2 — 数据加载（被 Step3 计算掩盖 ↓）"]
+            direction LR
+            s2d1["D2H: token_ids → CPU"] --> s2d2["D2H: logprobs → CPU"]
+        end
 
-    section 🔵 Step3 计算
-    H2D InputBatch                 :h2d3, 6, 7
-    Model Forward + Sample         :fw3, 9, 12
-    Postprocess + Speculator       :pp3, 12, 14
+        subgraph row_s3c["🔵 GPU Step3 — 计算"]
+            direction LR
+            s3a["H2D<br/>InputBatch"] --> s3b["Model Forward<br/>+ Sample"] --> s3c["Postprocess<br/>+ Speculator"]
+        end
 
-    section 🟠 Step3 数据加载
-    D2H token_ids + logprobs → CPU :d2h3, 12, 14
+        subgraph row_s3d["🟠 GPU Step3 — 数据加载（后续 Step 掩盖 ↓）"]
+            direction LR
+            s3d1["D2H: token_ids → CPU"] --> s3d2["D2H: logprobs → CPU"]
+        end
+    end
+
+    row_cpu -.-> row_s1c
+    c1 -.->|"提前调度"| s1a
+    c2 -.->|"提前调度"| s2a
+    c3 -.->|"提前调度"| s3a
+    s1c -.->|"采样完成即触发"| s1d1
+    s2c -.->|"采样完成即触发"| s2d1
+    s3c -.->|"采样完成即触发"| s3d1
+
+    style row_cpu fill:#e8daef,stroke:#7d3c98
+    style row_s1c fill:#d1ecf1,stroke:#0c5460,stroke-width:2px
+    style row_s2c fill:#d1ecf1,stroke:#0c5460,stroke-width:2px
+    style row_s3c fill:#d1ecf1,stroke:#0c5460,stroke-width:2px
+    style row_s1d fill:#fff3cd,stroke:#ffc107
+    style row_s2d fill:#fff3cd,stroke:#ffc107
+    style row_s3d fill:#fff3cd,stroke:#ffc107
+    style timeline fill:#f8f9fa,stroke:#ccc
 ```
 
 > **看图说话**：
-> - 每一行的橙色块（数据加载）永远藏在下一行蓝色块（计算）的下方——数据搬运完全不占用额外时间
-> - CPU 调度永远提前一步，Step1 Forward 还在跑时 Step2/Step3 的调度和 H2D 已经完成了
-> - D2H 拷贝与 Postprocess/Speculator 在同一时段内并行，各自在不同 CUDA Stream 上
+> - 每个 Step 的橙色行（D2H 数据加载）永远不会单独占用时间——它总是发生在下一个 Step 的蓝色计算行运行期间
+> - CPU 调度永远提前一步：Step1 Forward 还在 GPU 上跑时，Step2/Step3 的 schedule() 已经在 CPU 上完成了
+> - Step1 的 D2H 与 Step2 的 Forward 同时发生，Step2 的 D2H 与 Step3 的 Forward 同时发生——**加载被计算掩盖**
+> - 每条 CUDA Stream 独立推进，通过 Event 同步，互不阻塞
 
 ### 关键对比：有无掩盖的差异
 
