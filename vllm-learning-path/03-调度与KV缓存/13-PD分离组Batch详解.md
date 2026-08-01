@@ -4,408 +4,295 @@
 
 ---
 
-## 一、P/D 双视角并行时间线
+## 一、先看全景：两个 Batch 长什么样
 
-```
-配置:
-  P 节点: max_scheduled_tokens=8192, max_seqs=4
-  D 节点: max_scheduled_tokens=512,  max_seqs=8
-  KV 传输: NixlPullConnector (RDMA READ)
-
-请求流:
-  req_X: prompt=4000t → 先到 P 做 Prefill, 再转发到 D 做 Decode
-  req_Y: prompt=3000t → 同上
-  req_Z: prompt=10t   → 同上
-```
-
-```
-时间 ─────────────────────────────────────────────────────────────────────►
-
-P 侧 (kv_producer)
-┌──────────────────────────────────────────────────────────────────────────┐
-│ Step P0          Step P1          Step P2          Step P3              │
-│                                                                          │
-│ waiting:[]       waiting:[Y,Z]    waiting:[Z]       waiting:[]           │
-│ running:[]       running:[X]      running:[X,Y]     running:[]          │
-│                  X:prefill 1024t  X:prefill 2976t                       │
-│ batch: 空         batch: [X]       Y:prefill 1024t   batch: 空           │
-│                  tokens:1024      batch:[X,Y]                            │
-│                                   tokens:4000                            │
-│                                                                          │
-│ 收到 X(4000t)    收到 Y(3000t)    X:prefill完成!    Y:prefill完成!       │
-│ 入 waiting       入 waiting       → request_finished → request_finished  │
-│                                   → kv_transfer_    → kv_transfer_       │
-│                                     params 返回       params 返回        │
-│                                     给 API Server      给 API Server     │
-└──────────────────────────────────────────────────────────────────────────┘
-         │                │                │                │
-         │   kv_transfer  │                │   X 的 KV     │   Y 的 KV
-         │   _params      │                │   blocks 就绪  │   blocks 就绪
-         ▼                ▼                ▼                ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│ Step D0          Step D1          Step D2          Step D3              │
-│                                                                          │
-│ waiting:[]       waiting:[X]      waiting:[]       waiting:[Y]           │
-│ skipped:[]       skipped:[]       skipped:[]       skipped:[]           │
-│ running:[]       running:[Z]      running:[X,Z]    running:[X,Y,Z]      │
-│                                  X:1t Decode      X:1t Decode            │
-│ batch: 空         batch:[Z]       batch:[X,Z]      Y:1t Decode           │
-│                  Z:prefill 10t   Z:1t Decode       Z:1t Decode           │
-│                  tokens:10       tokens:2           batch:[X,Y,Z]        │
-│                                                    tokens:3              │
-│                                                                          │
-│ 收到 Z(10t)      收到 X(kv_trans  X:KV加载完成     收到 Y(kv_trans       │
-│ (本地请求)       fer_params)     → finished_       fer_params)           │
-│ 入 waiting       → 识别为远程     recving          → 识别为远程           │
-│                   Prefill        → 提升→WAITING    Prefill               │
-│                  → WAITING_FOR   → 正常入batch    → WAITING_FOR          │
-│                    _REMOTE_KVS                     _REMOTE_KVS           │
-│                  Z:prefill完成!                    → (下步加载)           │
-└──────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 二、P 侧 Batch 详解
-
-P 侧的 batch 特征是 **token 量大、请求数少**。
-
-```mermaid
-flowchart TB
-    subgraph P_FLOW["P 侧 Scheduler.schedule() 每次调用"]
-        direction TB
-        
-        subgraph P_PHASE1["阶段一: 调度 running (继续未完成的 Prefill)"]
-            R1["遍历 running 中的请求<br/>全部是 Prefill chunk"]
-            R2["每个请求分配 num_new_tokens<br/>= min(剩余prefill, long_threshold, budget)"]
-            R3["大的 Prefill 被 chunked<br/>= budget 杀手"]
-        end
-
-        subgraph P_PHASE2["阶段二: 调度 waiting (新请求入列)"]
-            W1["检查 kv_transfer_params"]
-            W2{"do_remote_decode?"}
-            W2 -->|"Yes (D转发来)"| W3["作为普通 Prefill 处理<br/>正常查 prefix cache, allocate"]
-            W2 -->|"No (本地请求)"| W3
-            W3 --> W4["allocate_slots()"]
-            W4 -->|"成功"| W5["加入 running<br/>status=RUNNING"]
-            W4 -->|"失败"| W6["抢占/停止取新请求"]
-        end
-    end
-
-    subgraph P_FINISH["请求完成时"]
-        F1["request_finished(req, block_ids)"]
-        F2["delay_free_blocks = True<br/>KV blocks 不释放!"]
-        F3["生成 kv_transfer_params:<br/>do_remote_prefill=True<br/>remote_block_ids=[...]<br/>remote_engine_id='P-0'<br/>remote_host/port"]
-        F4["_reqs_need_send[req_id] = 过期时间<br/>(Pull 模式)<br/>或 _finished_request_blocks<br/>(Push 模式)"]
-    end
-
-    P_PHASE1 --> P_PHASE2
-    P_FINISH --> F1 --> F2 --> F3 --> F4
-
-    style P_PHASE1 fill:#e3f2fd,stroke:#1565c0
-    style P_PHASE2 fill:#bbdefb,stroke:#1976d2
-    style P_FINISH fill:#fff9c4,stroke:#f9a825
-```
-
-**P 侧 batch 示例（Step P2 时刻）：**
-
-```
-┌────────────────────────────────────────────────────────────┐
-│ P 侧 Step P2                                               │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  running (调度前): [X(1024/4000), Y(0/3000)]               │
-│                                                            │
-│  阶段一:                                                   │
-│    X: num_new = 4000-1024 = 2976                          │
-│       clip: min(2976, 8192, 2048) = 2048                  │
-│       allocate(2048): 成功 → budget = 8192-2048 = 6144    │
-│                                                            │
-│    Y: num_new = 3000 (全新开始)                            │
-│       clip: min(3000, 6144, 2048) = 2048                  │
-│       allocate(2048): 成功 → budget = 6144-2048 = 4096    │
-│                                                            │
-│  scheduled: [X(2048t P), Y(2048t P)]                      │
-│  total_tokens: 4096                                        │
-│  batch_size: 2 个请求                                      │
-│                                                            │
-│  对比 D 侧同 step:                                          │
-│    D 侧 total_tokens: ~2-3 (多个 Decode 请求各 1 token)    │
-│    D 侧 batch_size: 可能 8 个 (max_seqs=8)                 │
-└────────────────────────────────────────────────────────────┘
-```
-
-**P 侧 batch 特点：**
-
-| 特征 | 值 | 原因 |
-|------|-----|------|
-| 每步 token 量 | 大 (1024~4096) | Prefill 是计算密集型 |
-| 并发请求数 | 少 (1~4) | Token budget 被少数大请求吃满 |
-| 请求类型 | 几乎全是 Prefill chunk | P 的职责就是做 Prefill |
-| KV 来源 | 本地计算 | P 自己计算 KV, 不需要拉取 |
-| 请求完成时 | blocks 不释放 | 等待 D 侧 RDMA 读取 |
-| `connector` 操作 | `request_finished()` 时注册 send | 准备被 D 拉取 |
-
----
-
-## 三、D 侧 Batch 详解
-
-D 侧的 batch 特征是 **token 量小、并发数高、有异步 KV 加载中间态**。
-
-```mermaid
-flowchart TB
-    subgraph D_FLOW["D 侧 Scheduler.schedule() 每次调用"]
-        direction TB
-
-        subgraph D_PHASE1["阶段一: 调度 running (Decode)"]
-            DR1["遍历 running 中的请求<br/>每个只需 1 token"]
-            DR2["token_budget 消耗极慢<br/>几百个请求才用满 budget"]
-        end
-
-        subgraph D_PHASE2["阶段二: 调度 waiting"]
-            DW1["检查请求状态"]
-            DW2{"状态是 WAITING_FOR<br/>_REMOTE_KVS?"}
-            
-            DW2 -->|"是"| DW3["_try_promote_blocked<br/>_waiting_request()"]
-            DW3 --> DW3A{"finished_recving<br/>信号已到达?"}
-            DW3A -->|"Yes"| DW3B["cache_blocks()<br/>提升为 WAITING"]
-            DW3A -->|"No"| DW3C["移到 skipped_waiting<br/>继续等待"]
-            
-            DW2 -->|"否(WAITING)"| DW4["get_num_new_matched_tokens()"]
-            DW4 --> DW5{"kv_transfer_params<br/>do_remote_prefill?"}
-            DW5 -->|"Yes"| DW6["load_kv_async=True<br/>分配 blocks, 不进 Forward<br/>→ WAITING_FOR_REMOTE_KVS"]
-            DW5 -->|"No (本地请求)"| DW7["正常 allocate + 入 running"]
-        end
-    end
-
-    subgraph D_AFTER["每个 Step 执行后"]
-        A1["Worker: start_load_kv()<br/>RDMA 拉取 KV"]
-        A2["Worker: get_finished()<br/>→ finished_recving"]
-        A3["Scheduler: 记录到<br/>finished_recving_kv_req_ids"]
-        A4["下次 schedule() 时<br/>提升回 WAITING"]
-    end
-
-    D_PHASE1 --> D_PHASE2
-    DW6 --> A1 --> A2 --> A3 --> A4
-
-    style D_PHASE1 fill:#e8f5e9,stroke:#2e7d32
-    style D_PHASE2 fill:#c8e6c9,stroke:#388e3c
-    style DW6 fill:#fff9c4,stroke:#f9a825
-    style D_AFTER fill:#b3e5fc,stroke:#0288d1
-```
-
-**D 侧 batch 示例（Step D2 时刻 —— X 的 KV 刚加载完）：**
-
-```
-┌────────────────────────────────────────────────────────────┐
-│ D 侧 Step D2                                               │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  调度前状态:                                                │
-│    running: [Z]            (Z 已完成 prefill, 在 decode)    │
-│    skipped_waiting: [X]    (X 在等 KV 加载)                │
-│    finished_recving_kv_req_ids: {X}  ← Worker 刚完成!      │
-│                                                            │
-│  阶段一:                                                   │
-│    Z: num_new=1 → budget=512-1=511                        │
-│                                                            │
-│  阶段二:                                                   │
-│    X (WAITING_FOR_REMOTE_KVS):                            │
-│      → _try_promote: X 在 finished_recving 中!            │
-│      → cache_blocks(X, 4000)  # 缓存远程加载的 KV         │
-│      → X.status = WAITING                                 │
-│      → 重新参与调度:                                       │
-│        num_computed=4000 (KV已就绪)                        │
-│        num_new=4001-4000=1                                │
-│        → 加入 running, 开始 Decode!                       │
-│                                                            │
-│  当前步 batch:                                             │
-│    scheduled_cached: [Z(1t D), X(1t D)]                   │
-│    total_tokens: 2                                         │
-│    batch_size: 2                                           │
-│                                                            │
-│  对比 P 侧同 step:                                          │
-│    P 侧: X 正在跑 2048t Prefill chunk                      │
-│    D 侧: X 刚完成 KV 加载, 开始 1t Decode                  │
-│    → P 和 D 的 batch 容量差了 1000 倍!                     │
-└────────────────────────────────────────────────────────────┘
-```
-
-**D 侧 batch 特点：**
-
-| 特征 | 值 | 原因 |
-|------|-----|------|
-| 每步 token 量 | 极小 (1 token/请求) | Decode 每次只生成 1 token |
-| 并发请求数 | 多 (可达 8~64) | Token 轻量, 受 max_seqs 限制 |
-| 请求类型 | 几乎全是 Decode | D 可以用 P 的 KV, 自己只解码 |
-| KV 来源 | RDMA 从 P 拉取 | 远程 Prefill 场景 |
-| 特殊状态 | `WAITING_FOR_REMOTE_KVS` | PD 分离独有的异步加载状态 |
-| `connector` 操作 | `get_num_new_matched_tokens()`<br/>`update_state_after_alloc()` | 识别远程 Prefill, 准备 recv |
-
----
-
-## 四、P/D Batch 的核心差异对比
+同一个请求 X（prompt=4000t），在 P 和 D 两侧的 batch 形态完全不同：
 
 ```mermaid
 flowchart LR
-    subgraph P_BATCH["⚡ P 侧典型 Batch"]
+    subgraph P_BLOCK["⚡ P 侧 Step P2 的 Batch"]
         direction TB
-        P_ITEM1["req_X: Prefill 2048 tokens<br/>████████████████████"]
-        P_ITEM2["req_Y: Prefill 2048 tokens<br/>████████████████████"]
-        P_SUM["total: 4096 tokens / 2 个请求<br/>token 密度: 极高"]
+        PB1["<table><tr><td>req_X</td><td>████████████████████████████████████████████████</td><td>2048t Prefill</td></tr><tr><td>req_Y</td><td>████████████████████████████████████████████████</td><td>2048t Prefill</td></tr></table>"]
+        PB2["2 个请求 · 4096 tokens<br/>token_budget 吃掉 50%"]
     end
 
-    subgraph D_BATCH["🔄 D 侧典型 Batch"]
+    subgraph D_BLOCK["🔄 D 侧 Step D2 的 Batch（同一时刻）"]
         direction TB
-        D_ITEM1["req_A: Decode 1t ■"]
-        D_ITEM2["req_B: Decode 1t ■"]
-        D_ITEM3["req_C: Decode 1t ■"]
-        D_ITEM4["req_D: Decode 1t ■"]
-        D_ITEM5["req_E: Decode 1t ■"]
-        D_ITEM6["req_F: Decode 1t ■"]
-        D_ITEM7["req_G: Decode 1t ■"]
-        D_ITEM8["req_H: Decode 1t ■"]
-        D_SUM["total: 8 tokens / 8 个请求<br/>token 密度: 极低"]
+        DB1["<table><tr><td>req_A</td><td>█</td><td>1t Decode</td></tr><tr><td>req_B</td><td>█</td><td>1t Decode</td></tr><tr><td>req_C</td><td>█</td><td>1t Decode</td></tr><tr><td>req_D</td><td>█</td><td>1t Decode</td></tr><tr><td>req_E</td><td>█</td><td>1t Decode</td></tr><tr><td>req_F</td><td>█</td><td>1t Decode</td></tr><tr><td>req_G</td><td>█</td><td>1t Decode</td></tr><tr><td>req_H</td><td>█</td><td>1t Decode</td></tr></table>"]
+        DB2["8 个请求 · 8 tokens<br/>token_budget 几乎没动"]
     end
 
-    style P_BATCH fill:#e3f2fd,stroke:#1565c0
-    style D_BATCH fill:#fff3e0,stroke:#e65100
+    P_BLOCK -->|"差距 500 倍"| D_BLOCK
+
+    style P_BLOCK fill:#e3f2fd,stroke:#1565c0
+    style D_BLOCK fill:#fff3e0,stroke:#e65100
 ```
 
-```
-                 P 侧 Batch                    D 侧 Batch
-                ┌──────────┐                 ┌──────────┐
-                │ ████████ │ 2048t           │ ■ 1t     │
-                │ ████████ │                 │ ■ 1t     │
-                │ ████████ │ 2048t           │ ■ 1t     │
-                │ ████████ │                 │ ■ 1t     │
-                └──────────┘                 │ ■ 1t     │
-                                             │ ■ 1t     │
-                 少请求、大Token               │ ■ 1t     │
-                 计算密集型                    │ ■ 1t     │
-                                             └──────────┘
-
-                                             多请求、小Token
-                                             访存密集型
-```
+**一句话理解：P 是把 token_budget 当饭吃（每个请求吃几千），D 是 token_budget 当空气（每个请求吃 1）。**
 
 ---
 
-## 五、D 侧 WAITING_FOR_REMOTE_KVS 的 Batch 影响
+## 二、P/D 双线并行时间线
 
-这是 PD 分离组 Batch 最特殊的地方——**异步 KV 加载不消耗 token_budget**。
+下面这张图展示 P 和 D 两个节点**同时**各自调度，同一个请求如何在两侧流转：
+
+```mermaid
+gantt
+    title P/D 双线时间线（配置: P max_tokens=8192 D max_tokens=512）
+    dateFormat X
+    axisFormat %s
+
+    section P-⚡req_X(4000t)
+    WAITING              :px1, 0, 1
+    Prefill chunk 1024t  :px2, 1, 3
+    Prefill chunk 2976t  :px3, 3, 5
+    完成→kv_transfer_params :milestone, px4, 5, 0
+
+    section P-⚡req_Y(3000t)
+    WAITING              :py1, 1, 3
+    Prefill chunk 2048t  :py2, 3, 5
+    Prefill chunk 952t   :py3, 5, 7
+    完成→kv_transfer_params :milestone, py4, 7, 0
+
+    section P-⚡req_Z(10t)
+    WAITING              :pz1, 2, 3
+    Prefill+完成         :pz2, 3, 4
+    完成→kv_transfer_params :milestone, pz3, 4, 0
+
+    section D-🔄req_Z(本地)
+    WAITING              :dz1, 0, 1
+    Prefill 10t          :dz2, 1, 2
+    Decode               :dz3, 2, 9
+
+    section D-🔄req_X(远程KV)
+    WAITING_FOR_REMOTE_KVS :dx1, 3, 6
+    KV加载中              :crit, dx2, 3, 6
+    Decode               :dx3, 6, 12
+
+    section D-🔄req_Y(远程KV)
+    WAITING_FOR_REMOTE_KVS :dy1, 5, 8
+    KV加载中              :crit, dy2, 5, 8
+    Decode               :dy3, 8, 14
+```
+
+**关键观察：**
+- P 侧：请求大部分时间在**跑 Prefill**（长条），完成后立刻释放线程
+- D 侧：请求大部分时间在**跑 Decode**（细长条），开头有一个 `WAITING_FOR_REMOTE_KVS` 的 KV 加载间隙
+- P 和 D 是**各自独立调度**的，时间轴没有锁步关系
+
+---
+
+## 三、焦点图：一个请求在 D 侧如何入 Batch
+
+这是 PD 分离最核心的机制——远程 KV 加载期间**分配 blocks 但不消耗 token_budget，不跑 Forward**。
 
 ```mermaid
 sequenceDiagram
+    participant Q as D-Waiting队列
     participant S as D-Scheduler
-    participant KC as D-KVConnector
-    participant W as D-Worker
-    participant P as P-Worker
+    participant KC as KVConnector
+    participant W as D-Worker(GPU)
 
-    Note over S: Step N
+    Note over Q,S: === Step N: 发现远程 Prefill 请求 ===
 
-    S->>KC: get_num_new_matched_tokens(req_X)
-    KC-->>S: (4000, load_kv_async=True)
+    Q->>S: 取出 req_X (kv_transfer_params.do_remote_prefill=True)
 
-    S->>S: allocate_slots(外部4000t, delay_cache=True)
-    Note over S: 分配 blocks 但消耗 0 token_budget!<br/>因为不需要本地 Forward 计算这 4000t
+    S->>KC: ① 查远程 KV: get_num_new_matched_tokens()
+    KC-->>S: 返回 (4000t 可加载, load_kv_async=True)
 
-    S->>KC: update_state_after_alloc()
-    KC->>KC: _reqs_need_recv[req_X] = (req, blocks)
+    rect rgb(255, 243, 224)
+        Note over S: ② 关键决策：load_kv_async=True
+        S->>S: allocate_slots(外部4000t, delay_cache=True)
+        Note right of S: 分配 KV blocks ✓<br/>消耗 token_budget ✗<br/>加入 running ✗
+        S->>KC: update_state_after_alloc()
+        S->>S: req_X → WAITING_FOR_REMOTE_KVS
+        Note right of S: 移到 skipped_waiting<br/>继续取下一个 waiting 请求
+    end
 
-    S->>S: req_X.status = WAITING_FOR_REMOTE_KVS
-    Note over S: req_X 不加入 running, 不消耗 budget
+    Note over S,W: === Forward 执行 ===
 
-    S->>S: 继续调度其他 waiting 请求
+    S->>W: SchedulerOutput (含 kv_connector_metadata)
+    W->>W: start_load_kv() → RDMA 拉取 KV
 
-    Note over S,W: ... Step N 的 Forward 执行 ...
+    Note over S,W: === Step N+1: KV 还在加载中 ===
+    S->>S: req_X 仍在 WAITING_FOR_REMOTE_KVS<br/>→ 跳过, 留在 skipped_waiting
 
-    W->>KC: start_load_kv(meta.reqs_to_recv)
-    W->>P: NIXL RDMA READ KV blocks
-    P-->>W: KV Data
+    Note over S,W: === Step N+2: KV 加载完成 ===
+    W-->>S: KVConnectorOutput.finished_recving = {req_X}
 
-    Note over S,W: Step N+1
+    Note over S,W: === Step N+3: 提升入 Batch ===
+    S->>S: ③ _try_promote(req_X)
+    Note right of S: finished_recving 匹配!<br/>cache_blocks(req_X, 4000)
+    S->>S: req_X → WAITING (重新排队)
+    S->>S: num_computed=4000, num_new=1<br/>→ allocate(1t) → RUNNING ✓
 
-    W->>S: KVConnectorOutput.finished_recving = {req_X}
-    S->>S: finished_recving_kv_req_ids.add(req_X)
+    rect rgb(200, 230, 201)
+        Note over S: ④ 自此正常 Decode<br/>每步 1 token, 直到 max_tokens
+    end
+```
 
-    Note over S: Step N+2
+**核心洞察：步骤②中，4000 tokens 的外部 KV 不占 token_budget。这意味着 D 可以在等 req_X 加载的同时，继续调度其他请求。**
 
-    S->>S: _try_promote(req_X)
-    S->>S: cache_blocks(req_X, 4000)
-    S->>S: req_X.status = WAITING
-    S->>S: num_new = 1 (只需 Decode 1 token)
-    S->>S: allocate(1) → 加入 running!
+---
 
-    Note over S: req_X 从 WAITING_FOR_REMOTE_KVS<br/>提升到 RUNNING 全过程:<br/>需等待 2~N 个 Step (取决于 RDMA 延迟)<br/>但期间不占用 token_budget<br/>允许其他请求正常 Decode
+## 四、焦点图：P 侧请求完成后发生了什么
+
+```mermaid
+sequenceDiagram
+    participant S as P-Scheduler
+    participant KC as P-KVConnector
+    participant Out as EngineCoreOutput
+    participant API as API Server
+
+    Note over S: req_X 的最后一个 Prefill chunk 执行完毕
+
+    S->>S: update_from_output(): req_X.num_computed == 4000 ✓
+
+    rect rgb(255, 243, 224)
+        Note over S,KC: Prefill 完成 → 不释放 KV blocks!
+        S->>KC: request_finished(req_X, block_ids)
+        KC->>KC: delay_free_blocks = True
+        Note right of KC: KV blocks 保留在 GPU<br/>等待 D 来 RDMA 读取
+        KC-->>S: kv_transfer_params = {<br/>  do_remote_prefill: True,<br/>  remote_block_ids: [5,6,7,...],<br/>  remote_engine_id: "P-0",<br/>  remote_host: "10.0.0.1",<br/>  remote_port: 14579<br/>}
+    end
+
+    S->>Out: EngineCoreOutput (含 kv_transfer_params)
+    Out->>API: 返回给 API Server
+    API->>API: 将 kv_transfer_params 注入新 EngineCoreRequest<br/>路由到 D 节点
+
+    Note over KC: 30 秒 lease 超时后<br/>如果 D 没来读, blocks 自动释放
 ```
 
 ---
 
-## 六、完整 P→D Batch 时序对照
+## 五、P 和 D 的调度决策树对比
 
-```
-时间 ────────────────────────────────────────────────────────────────────────►
+```mermaid
+flowchart TB
+    subgraph P_DECISION["⚡ P 侧: 每个 waiting 请求的处理"]
+        direction TB
+        PA["取出 waiting 队首请求"] --> PB{"kv_transfer_params<br/>中有 do_remote_decode?"}
+        PB -->|"Yes (D转发来)"| PC["和普通请求一样处理<br/>查 prefix cache → allocate → RUNNING"]
+        PB -->|"No (本地请求)"| PC
+        PC --> PD{"allocate_slots() 成功?"}
+        PD -->|"Yes"| PE["→ RUNNING<br/>加入 batch 跑 Prefill"]
+        PD -->|"No"| PF["→ 抢占或停止取新请求<br/>KV Cache 满了"]
+    end
 
-API Server:
-  │ 收到 X    │ 收到 Y  │ X 的 kv_transfer  │ Y 的 kv_transfer  │
-  │           │         │ _params 返回       │ _params 返回       │
-  │           │         │ → 路由到 D          │ → 路由到 D         │
-  ▼           ▼         ▼                    ▼
-  
-P 侧:
-Step P0      P1        P2                  P3                  P4
-────────────┬─────────┬───────────────────┬───────────────────┬─────────────
-batch:      batch:    batch:              batch:              batch:
-空           [X]       [X(2048t P)         [Y(2048t P)        空
-                       Y(2048t P)]         W(1t D)←(双向)
-            X:prefill  X+Y:prefill大块     Y:prefill大块       
-            1024t      total:4096t         total:2049t
-                                          
-            X 长请求    X 完成!→kv_transfer
-            chunked     Y 继续chunked     Y 完成!→kv_transfer
+    subgraph D_DECISION["🔄 D 侧: 每个 waiting 请求的处理"]
+        direction TB
+        DA["取出 waiting 队首请求"] --> DB{"状态是 WAITING_FOR<br/>_REMOTE_KVS?"}
+        DB -->|"Yes (KV加载中)"| DC{"finished_recving<br/>信号到了?"}
+        DC -->|"Yes"| DD["→ 提升为 WAITING<br/>重新参与调度"]
+        DC -->|"No"| DE["→ 留在 skipped_waiting<br/>不占 token_budget"]
+        DB -->|"No (正常 WAITING)"| DF{"kv_transfer_params<br/>中有 do_remote_prefill?"}
+        DF -->|"Yes"| DG["→ WAITING_FOR_REMOTE_KVS<br/>分配 blocks, 不进 Forward<br/>不消耗 token_budget!"]
+        DF -->|"No"| DH["→ 正常 allocate → RUNNING"]
+    end
 
-D 侧:
-Step D0      D1        D2                  D3                  D4
-────────────┬─────────┬───────────────────┬───────────────────┬─────────────
-batch:      batch:    batch:              batch:              batch:
-空           [Z]       [X(1t D)            [X(1t D)            [X(1t D)
-                       Z(1t D)]            Y(1t D)             Y(1t D)
-            Z:prefill                       Z(1t D)]            Z(1t D)
-            10t       X: KV加载完成!        Y: KV加载完成!       W(1t D)]
-                      从 WAITING_FOR       从 WAITING_FOR       
-                      _REMOTE_KVS 提升     _REMOTE_KVS 提升   稳态 Decode
-            Z 短请求   Z:转Decode                               
-            快速完成                                          
+    style P_DECISION fill:#e3f2fd,stroke:#1565c0
+    style D_DECISION fill:#fff3e0,stroke:#e65100
+    style DG fill:#ffcc80,stroke:#e65100
 ```
 
 ---
 
-## 七、核心结论
+## 六、Batch 组成可视化：P 侧 vs D 侧
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                                                                 │
-│   P 侧 Batch = 「算力优先」                                      │
-│   ───────────                                                    │
-│   • 少数大 Prefill chunk 占满 token budget                       │
-│   • 完成后的 KV blocks 不释放, 等 D 来拉                          │
-│   • 像一个「KV 工厂」: 批量生产 KV, 按需发货                      │
-│                                                                 │
-│   D 侧 Batch = 「并发优先」                                      │
-│   ───────────                                                    │
-│   • 大量 1-token Decode 请求并行                                  │
-│   • 新请求的 KV 通过 RDMA 异步加载, 不占 token budget              │
-│   • WAITING_FOR_REMOTE_KVS 是「免预算等待区」                     │
-│   • 像一个「KV 消费者」: 收货后只做轻量 Decode                    │
-│                                                                 │
-│   关键洞察:                                                      │
-│   ────────                                                      │
-│   token_budget 在 P 侧是稀缺资源 (被 Prefill 快速消耗)            │
-│   token_budget 在 D 侧几乎用不完 (Decode 每个请求只消耗 1)        │
-│   → 这就是 PD 分离的根本价值:                                     │
-│     P 可以独立扩容应对 Prefill 突发                               │
-│     D 可以独立扩容应对高并发 Decode                               │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+                          P 侧 Batch                          D 侧 Batch
+                       (token_budget=8192)                 (token_budget=512)
+                      
+    token 用量                          token 用量
+    8192 ┬                              512 ┬
+         │                                  │
+    6144 ┤ ░░░░░░░░░░░░░░░░                 │
+         │ ░░░░░░░░░░░░░░░░              384 ┤ ░░░░░░░░░░░░░░░░░░░
+    4096 ┤ ░░░░░░░░░░░░░░░░                 │ ░░░░░░░░░░░░░░░░░░░
+         │ ░░░  req_Y   ░░░                 │ ░░ 未使用  ░░░░░░░░
+    2048 ┤ ░░░  2048t   ░░░              256 ┤ ░░░░░░░░░░░░░░░░░░░
+         │ ░░░░░░░░░░░░░░░░                 │ ░░░░░░░░░░░░░░░░░░░
+       0 └─███──────────███─             128 ┤ ░░░░░░░░░░░░░░░░░░░
+           req_X 2048t                       │ ░░░░░░░░░░░░░░░░░░░
+                                             │ ░░░░░░░░░░░░░░░░░░░
+         batch: 2 个请求                     0 └─█─█─█─█─█─█─█─█──
+         用掉 4096/8192 (50%)                   A B C D E F G H
+                                                 各 1t Decode
+                                             
+                                             batch: 8 个请求
+                                             用掉 8/512 (1.5%)
 ```
+
+---
+
+## 七、同一请求 X 在 P 和 D 的生命周期对照
+
+```mermaid
+flowchart TB
+    subgraph LIFE["req_X(4000t) 完整生命旅程"]
+        direction LR
+
+        subgraph STAGE1["① 到达 P 侧"]
+            S1A["API Server 路由到 P"]
+            S1B["P: 入 waiting 队列"]
+            S1C["P: schedule() → Prefill chunk"]
+            S1D["P: 多次 chunk 直到 4000t 完成"]
+        end
+
+        subgraph STAGE2["② KV 交接"]
+            S2A["P: request_finished()"]
+            S2B["P: 生成 kv_transfer_params"]
+            S2C["API Server: 路由到 D"]
+            S2D["D: 收到请求, 识别 do_remote_prefill"]
+        end
+
+        subgraph STAGE3["③ D 侧异步加载"]
+            S3A["D: WAITING_FOR_REMOTE_KVS"]
+            S3B["D: RDMA 拉取 P 的 KV"]
+            S3C["D: 加载完成 → finished_recving"]
+        end
+
+        subgraph STAGE4["④ D 侧 Decode"]
+            S4A["D: 提升为 WAITING → RUNNING"]
+            S4B["D: 每步 1 token Decode"]
+            S4C["D: 流式返回给用户"]
+        end
+
+        STAGE1 --> STAGE2 --> STAGE3 --> STAGE4
+    end
+
+    style STAGE1 fill:#e3f2fd,stroke:#1565c0
+    style STAGE2 fill:#fff9c4,stroke:#f9a825
+    style STAGE3 fill:#ffcc80,stroke:#e65100
+    style STAGE4 fill:#c8e6c9,stroke:#388e3c
+```
+
+---
+
+## 八、核心结论
+
+```mermaid
+flowchart LR
+    subgraph P_SUMMARY["⚡ P 侧 Batch = 算力优先"]
+        direction TB
+        PS1["少数请求（1~4个）"]
+        PS2["每个请求消耗大量 token<br/>(1000~4000t Prefill chunk)"]
+        PS3["token_budget 是瓶颈"]
+        PS4["请求完成后 KV blocks 不释放<br/>等 D 来 RDMA 读取"]
+        PS1 --> PS2 --> PS3 --> PS4
+    end
+
+    subgraph D_SUMMARY["🔄 D 侧 Batch = 并发优先"]
+        direction TB
+        DS1["大量请求（8~64个）"]
+        DS2["每个请求消耗 1 token<br/>(Decode 每步生成一个 token)"]
+        DS3["token_budget 几乎用不完"]
+        DS4["远程 KV 异步加载不占 budget<br/>WAITING_FOR_REMOTE_KVS 是免算等待区"]
+        DS1 --> DS2 --> DS3 --> DS4
+    end
+
+    style P_SUMMARY fill:#e3f2fd,stroke:#1565c0
+    style D_SUMMARY fill:#fff3e0,stroke:#e65100
+```
+
+**这就是 PD 分离的根本价值：P 和 D 各自按自己的节奏组 batch，互不干扰。P 可以独立扩容应对 Prefill 突发，D 可以独立扩容应对高并发 Decode。**
