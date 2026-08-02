@@ -222,8 +222,9 @@ box("lf4", 960, 1025, 270, 75, "PD EC Interaction:\nP: produces encoder outputs,
 # Modes
 box("lf5", 1270, 1025, 280, 75, "Encoder Modes:\n- disable_chunked_mm_input: don't split\n  MM item across steps (roll back)\n- Encoder-Decoder: all inputs at pos=0\n- Decoder-only(VLM): MM items inline\n- EC Connector: remote cache for PD", fill="#FFE0B2", fc="#E65100", fs=10, align="left")
 
-# Edge from D scheduler to lifecycle
-edge("d2life", "ds6", "lf4", "#E65100", ex=0.5, ey=1, enx=0.5, eny=0, pts=[[1125,835],[1095,835],[1095,1015]])
+# Edge from D scheduler to lifecycle - route around ecXfer to the RIGHT
+edge("d2life", "ds6", "lf4", "#E65100", ex=0.5, ey=1, enx=0.5, eny=0,
+     pts=[[1125,836],[1415,836],[1415,1015]])
 
 # ============================================================
 # STATE MACHINE: MM Request States
@@ -238,7 +239,7 @@ box("sm4", 1120, 1268, 180, 38, "MM Item Loaded Async\n(from remote EC cache)", 
 
 edge("sm1e", "sm1", "sm2", "#1976D2", ex=1, ey=0.5, enx=0, eny=0.5)
 edge("sm2e", "sm2", "sm3", "#388E3C", ex=1, ey=0.5, enx=0, eny=0.5)
-edge("sm1r", "sm1", "sm4", "#E65100", ex=0.5, ey=1, enx=0, eny=0.5, pts=[[440,1310],[440,1330],[1170,1330],[1170,1287]])
+edge("sm1r", "sm1", "sm4", "#E65100", ex=0.5, ey=1, enx=0, eny=0.5, pts=[[440,1310],[440,1330],[1120,1330],[1120,1287]])
 edge("sm4r", "sm4", "sm3", "#388E3C", ex=0, ey=0.5, enx=0.5, eny=1, pts=[[1090,1287],[1090,1310],[950,1310],[950,1306]])
 
 text("sm1L", 525,1273, 14,14, "调度", fs=9)
