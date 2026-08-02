@@ -69,8 +69,8 @@ box("encBudget", 720, 75, 280, 50, "Encoder Compute Budget:\nmax_num_encoder_inp
 box("encCache", 1050, 75, 280, 50, "Encoder Cache:\nencoder_cache_size (max tokens)\nCached mm_hash → embedding reference", fill="#E1BEE7", fc="#7B1FA2", fs=10)
 box("ecRole", 1380, 75, 430, 50, "EC Connector (PD): is_ec_producer (P: runs encoder, sends)\nis_ec_consumer (D: receives encoder outputs, loads async)", fill="#E1BEE7", fc="#7B1FA2", fs=10, align="left")
 
-# CN - fs=16, wrapped to 2 lines
-text("cnReq", 60, 125, 1740, 52, "多模态请求携带mm_features(图片/视频/音频)，每个feature有唯一hash标识、\n在序列中的位置、embedding数量；调度时需检查编码器计算预算和缓存空间", fs=16, fc="#6A1B9A", align="left")
+# CN - fs=12, wrapped to 2 lines
+text("cnReq", 60, 125, 1740, 52, "多模态请求携带mm_features(图片/视频/音频)，每个feature有唯一hash标识、\n在序列中的位置、embedding数量；调度时需检查编码器计算预算和缓存空间", fs=12, fc="#6A1B9A", align="left")
 
 # ============================================================
 # MAIN CONTAINERS: P-side and D-side
@@ -93,7 +93,7 @@ box("p2", 55, 328, 180, 38, "_try_schedule_encoder_inputs()\nFind MM items in to
 diamond("p3", 90, 393, 150, 52, "Budget OK?\nCache space?", fill="#FFF9C4", fc="#F9A825", fs=10)
 box("p4", 55, 476, 180, 44, "Run Encoder Forward\n(produce embeddings)\n→ save to local cache", fill="#A5D6A7", fc="#388E3C", fs=10)
 
-text("cnPenc", 50, 538, 400, 50, "P节点负责运行视觉/音频编码器\n→产生embedding→存入EncoderCache\n→通过EC Connector传输给D", fs=16, fc="#283593", align="left")
+text("cnPenc", 50, 538, 400, 50, "P节点负责运行视觉/音频编码器\n→产生embedding→存入EncoderCache\n→通过EC Connector传输给D", fs=12, fc="#283593", align="left")
 
 # EC Connector on P side
 container("ecPBox", 485, 228, 420, 340, "#E0F2F1", "#00695C", dashed=True)
@@ -104,7 +104,7 @@ box("ecP2", 505, 328, 185, 38, "request_finished():\nmark for async send to D", 
 box("ecP3", 505, 393, 185, 38, "Worker: save_ec_layer()\n→ transfer via shared mem", fill="#80CBC4", fc="#004D40", fs=10)
 box("ecP4", 505, 476, 185, 44, "get_finished():\nreport finished_sending\n→ free encoder cache", fill="#80CBC4", fc="#004D40", fs=10)
 
-text("cnEcP", 500, 538, 400, 50, "P侧编码器完成后→EC Connector\n异步传输encoder outputs到D\n→类似KV Transfer但传输的是encoder embeddings", fs=16, fc="#004D40", align="left")
+text("cnEcP", 500, 538, 400, 50, "P侧编码器完成后→EC Connector\n异步传输encoder outputs到D\n→类似KV Transfer但传输的是encoder embeddings", fs=12, fc="#004D40", align="left")
 
 # P edges
 edge("p1e", "p1", "p2", "#3949AB", ex=0.5, ey=1, enx=0.5, eny=0)
@@ -138,8 +138,8 @@ edge("ps1e", "ps1", "ps2", "#2E7D32", ex=0.5, ey=1, enx=0.5, eny=0)
 edge("ps2y", "ps2", "ps3", "#2E7D32", ex=0.5, ey=1, enx=0.5, eny=0)
 text("ps2yL", 160, 768, 14, 14, "Y", fs=9, fc="#2E7D32")
 
-# CN - fs=16
-text("cnPs", 55, 865, 830, 75, "多模态请求调度时需额外检查:\n①token窗口内是否有mm_features ②encoder cache是否已缓存(命中则跳过)\n③EC Connector远端缓存(有则异步加载) ④encoder compute budget是否充足\n不足则裁剪num_new_tokens到MM item之前", fs=16, fc="#1B5E20", align="left")
+# CN - fs=12
+text("cnPs", 55, 865, 830, 75, "多模态请求调度时需额外检查:\n①token窗口内是否有mm_features ②encoder cache是否已缓存(命中则跳过)\n③EC Connector远端缓存(有则异步加载) ④encoder compute budget是否充足\n不足则裁剪num_new_tokens到MM item之前", fs=12, fc="#1B5E20", align="left")
 
 # ============================================================
 # D-SIDE: EC Consumer + Scheduler
@@ -181,8 +181,8 @@ text("ds5L", 1185, 676, 14, 14, "Y", fs=9, fc="#2E7D32")
 edge("ds5nL", "ds5", "ds5n", "#C62828", ex=0.5, ey=1, enx=0.5, eny=0)
 text("ds5nT", 1120, 726, 14, 14, "N", fs=9, fc="#C62828")
 
-# CN D-side - fs=16
-text("cnDs", 985, 860, 820, 75, "多模态在D侧调度时额外检查:\n①本地EncoderCache是否命中(已处理过)\n②EC Connector远端是否有缓存(P已编码好的)\n③encoder budget是否充足；任一不满足→裁剪num_new_tokens暂缓调度", fs=16, fc="#1B5E20", align="left")
+# CN D-side - fs=12
+text("cnDs", 985, 860, 820, 75, "多模态在D侧调度时额外检查:\n①本地EncoderCache是否命中(已处理过)\n②EC Connector远端是否有缓存(P已编码好的)\n③encoder budget是否充足；任一不满足→裁剪num_new_tokens暂缓调度", fs=12, fc="#1B5E20", align="left")
 
 # ============================================================
 # CROSS: EC Transfer Channel (between P and D)
@@ -199,7 +199,7 @@ edge("ecXe1", "ecX1", "ecX2", "#00695C", ex=1, ey=0.5, enx=0, eny=0.5)
 edge("ecXe2", "ecX1", "ecX3", "#00695C", ex=1, ey=0.25, enx=0, eny=0.5, pts=[[695,1007],[735,1007],[735,1020]])
 edge("ecXe3", "ecX2", "ecX4", "#00695C", ex=1, ey=0.5, enx=0, eny=0.5)
 
-text("cnEcX", 480, 1050, 900, 50, "类似KV Transfer但传输的是encoder embeddings而非KV cache\nP侧运行编码器产生embedding→通过EC Connector传给D\nD侧调度时检查远端缓存(ECConnector.has_cache_item)，有则异步加载", fs=16, fc="#004D40", align="left")
+text("cnEcX", 480, 1050, 900, 50, "类似KV Transfer但传输的是encoder embeddings而非KV cache\nP侧运行编码器产生embedding→通过EC Connector传给D\nD侧调度时检查远端缓存(ECConnector.has_cache_item)，有则异步加载", fs=12, fc="#004D40", align="left")
 
 # ============================================================
 # BOTTOM: Encoder Cache & Budget Lifecycle
