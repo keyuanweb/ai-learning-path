@@ -1,182 +1,643 @@
-<mxfile host="app.diagrams.net" modified="2026-08-02" agent="draw.io">
-  <diagram name="PD-Scheduler" id="pds">
-    <mxGraphModel dx="1800" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1860" pageHeight="1900">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-<mxCell id="t0" value="PD Separation - Scheduler + DP Selection + KV Notification Flow" style="text;html=1;fontSize=22;fontStyle=1;fontColor=#1A237E;align=center" vertex="1" parent="1"><mxGeometry x="500" y="5" width="860" height="32" as="geometry"/></mxCell>
-<mxCell id="dpBox" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="20" y="45" width="1820" height="125" as="geometry"/></mxCell>
-<mxCell id="dpT" value="Request Entry &amp; DP Load Balancing (score = waiting x 4 + running)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#7B1FA2;align=center" vertex="1" parent="1"><mxGeometry x="750" y="48" width="400" height="20" as="geometry"/></mxCell>
-<mxCell id="api" value="API Server&#xa;(Front-end)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" vertex="1" parent="1"><mxGeometry x="60" y="75" width="150" height="40" as="geometry"/></mxCell>
-<mxCell id="dpC" value="DPCoordinator&#xa;Stats: [waiting, running] per DP" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" vertex="1" parent="1"><mxGeometry x="260" y="75" width="200" height="40" as="geometry"/></mxCell>
-<mxCell id="lb" value="DP LB: min(score) per request&#xa;score = waiting x 4 + running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" vertex="1" parent="1"><mxGeometry x="510" y="75" width="250" height="40" as="geometry"/></mxCell>
-<mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="api" target="dpC"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="dpC" target="lb"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="pDp" value="P-side DP chosen&#xa;→ route to kv_producer" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontSize=10;fontColor=#1565C0;align=center" vertex="1" parent="1"><mxGeometry x="830" y="72" width="180" height="48" as="geometry"/></mxCell>
-<mxCell id="dDp" value="D-side DP chosen&#xa;→ route to kv_consumer" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontSize=10;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1050" y="72" width="180" height="48" as="geometry"/></mxCell>
-<mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="lb" target="pDp"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="lb" target="dDp"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="790" y="95"/><mxPoint x="1020" y="95"/></Array></mxGeometry></mxCell>
-<mxCell id="lbNote" value="External LB mode: no stats, front-end&#xa;routes by its own policy (e.g. round-robin)" style="text;html=1;fontSize=9;fontColor=#7B1FA2;align=left" vertex="1" parent="1"><mxGeometry x="1280" y="78" width="300" height="36" as="geometry"/></mxCell>
-<mxCell id="cnDp" value="中文说明: 前端API Server根据DPCoordinator发布的各DP实例[waiting, running]统计，计算 score=waitingx4+running，选最小score的DP路由请求" style="text;html=1;fontSize=8;fontColor=#6A1B9A;align=left" vertex="1" parent="1"><mxGeometry x="1290" y="118" width="540" height="16" as="geometry"/></mxCell>
-<mxCell id="Pbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="20" y="185" width="910" height="1380" as="geometry"/></mxCell>
-<mxCell id="Dbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="950" y="185" width="890" height="1380" as="geometry"/></mxCell>
-<mxCell id="Ptt" value="Prefill Node (kv_producer)" style="text;html=1;fontSize=17;fontStyle=1;fontColor=#1565C0;align=center" vertex="1" parent="1"><mxGeometry x="170" y="193" width="260" height="26" as="geometry"/></mxCell>
-<mxCell id="Dtt" value="Decode Node (kv_consumer)" style="text;html=1;fontSize=17;fontStyle=1;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1080" y="193" width="280" height="26" as="geometry"/></mxCell>
-<mxCell id="cnPtt" value="P节点职责: 接收请求→Prefill分块计算→KV Cache Transfer到D节点→释放KV块  |  token_budget=8192, 大块prefill" style="text;html=1;fontSize=8;fontColor=#1565C0;align=left" vertex="1" parent="1"><mxGeometry x="60" y="222" width="400" height="16" as="geometry"/></mxCell>
-<mxCell id="cnDtt" value="D节点职责: 接收P传来的KV→Decode逐token生成(每步1token)→返回结果  |  token_budget=512, 很少耗尽" style="text;html=1;fontSize=8;fontColor=#E65100;align=left" vertex="1" parent="1"><mxGeometry x="970" y="222" width="500" height="16" as="geometry"/></mxCell>
-<mxCell id="p0" value="schedule()  token_budget=8192" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontColor=#1976D2;align=center" vertex="1" parent="1"><mxGeometry x="220" y="235" width="360" height="44" as="geometry"/></mxCell>
-<mxCell id="p1" value="PAUSED_ALL?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="320" y="310" width="155" height="52" as="geometry"/></mxCell>
-<mxCell id="p1y" value="Return Empty" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="520" y="315" width="95" height="42" as="geometry"/></mxCell>
-<mxCell id="p1L1" value="Yes" style="text;html=1;fontSize=10;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="485" y="320" width="22" height="14" as="geometry"/></mxCell>
-<mxCell id="pp1bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8EAF6;strokeColor=#3949AB;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="40" y="395" width="420" height="390" as="geometry"/></mxCell>
-<mxCell id="pp1t" value="Phase 1: RUNNING (prefill requests)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#3949AB;align=center" vertex="1" parent="1"><mxGeometry x="55" y="400" width="220" height="20" as="geometry"/></mxCell>
-<mxCell id="cnPh1" value="阶段1中文: 遍历正在运行的prefill请求，跳过不需要新块的，计算num_new，分配KV块，成功→进入scheduled；失败→抢占" style="text;html=1;fontSize=7.5;fontColor=#283593;align=left" vertex="1" parent="1"><mxGeometry x="55" y="418" width="380" height="14" as="geometry"/></mxCell>
-<mxCell id="p2" value="Iterate self.running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C5CAE9;fontColor=#3949AB;align=center" vertex="1" parent="1"><mxGeometry x="140" y="432" width="185" height="34" as="geometry"/></mxCell>
-<mxCell id="p3" value="Skip?&#xa;max_tokens? eligible?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="140" y="492" width="185" height="66" as="geometry"/></mxCell>
-<mxCell id="p3y" value="Skip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E0E0E0;fontSize=10;fontColor=#9E9E9E;align=center" vertex="1" parent="1"><mxGeometry x="370" y="508" width="68" height="32" as="geometry"/></mxCell>
-<mxCell id="p3L1" value="Yes" style="text;html=1;fontSize=9;fontColor=#9E9E9E;align=center" vertex="1" parent="1"><mxGeometry x="335" y="518" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="p4" value="num_new = tokens_with_spec - computed,&#xa;clip threshold/budget/maxlen" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C5CAE9;fontSize=10;fontColor=#3949AB;align=center" vertex="1" parent="1"><mxGeometry x="70" y="588" width="290" height="54" as="geometry"/></mxCell>
-<mxCell id="p4L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="275" y="565" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="p5" value="allocate_slots()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="145" y="670" width="142" height="36" as="geometry"/></mxCell>
-<mxCell id="p6" value="Success?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=10;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="150" y="735" width="120" height="46" as="geometry"/></mxCell>
-<mxCell id="pp2bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="40" y="805" width="375" height="565" as="geometry"/></mxCell>
-<mxCell id="pp2t" value="Phase 2: WAITING requests" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="55" y="810" width="220" height="20" as="geometry"/></mxCell>
-<mxCell id="cnPh2" value="阶段2中文: 从等待队列取请求→检查本地PrefixCache+远端KV→计算num_new→分配KV块→成功则加入running；失败则break" style="text;html=1;fontSize=7.5;fontColor=#1B5E20;align=left" vertex="1" parent="1"><mxGeometry x="55" y="828" width="360" height="14" as="geometry"/></mxCell>
-<mxCell id="p7" value="Add to scheduled_running,&#xa;budget -= tokens" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=9;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="845" width="210" height="42" as="geometry"/></mxCell>
-<mxCell id="p7L1" value="Yes" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="225" y="785" width="15" height="14" as="geometry"/></mxCell>
-<mxCell id="p8" value="waiting non-empty &amp;&#xa;budget&gt;0 &amp; running&lt;max_seqs" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="920" width="230" height="54" as="geometry"/></mxCell>
-<mxCell id="p9" value="peek request" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="1005" width="170" height="36" as="geometry"/></mxCell>
-<mxCell id="p10" value="Check:&#xa;1.Local PrefixCache&#xa;2.Remote KV(PD)&#xa;num_computed=local+remote" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="1075" width="245" height="84" as="geometry"/></mxCell>
-<mxCell id="p11" value="num_new = tokens - computed, clip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="1190" width="225" height="36" as="geometry"/></mxCell>
-<mxCell id="p12" value="allocate_slots()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="85" y="1258" width="140" height="36" as="geometry"/></mxCell>
-<mxCell id="p13y" value="OK: add to running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="55" y="1325" width="155" height="36" as="geometry"/></mxCell>
-<mxCell id="p13n" value="Fail: break" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="275" y="1260" width="95" height="32" as="geometry"/></mxCell>
-<mxCell id="p13L1" value="Y" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="150" y="1305" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="p13L2" value="N" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="242" y="1240" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="prebx_p" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="485" y="700" width="420" height="390" as="geometry"/></mxCell>
-<mxCell id="pret_p" value="Preemption (theoretical on P, KV full)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="580" y="706" width="250" height="20" as="geometry"/></mxCell>
-<mxCell id="cnPret_p" value="P侧抢占(极少): KV仅在prefill分块期间暂存，完成后立即transfer释放" style="text;html=1;fontSize=7.5;fontColor=#C62828;align=left" vertex="1" parent="1"><mxGeometry x="505" y="728" width="380" height="14" as="geometry"/></mxCell>
-<mxCell id="pr0_p" value="FCFS or Priority?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="600" y="738" width="155" height="52" as="geometry"/></mxCell>
-<mxCell id="pr1_p" value="FCFS: running.pop()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="505" y="815" width="145" height="46" as="geometry"/></mxCell>
-<mxCell id="pr2_p" value="Priority:&#xa;max(running, ...)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="760" y="812" width="145" height="50" as="geometry"/></mxCell>
-<mxCell id="pr3_p" value="Result: free blocks, num_computed=0,&#xa;PREEMPTED, prepend waiting" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="505" y="890" width="400" height="65" as="geometry"/></mxCell>
-<mxCell id="pr4_p" value="Is current?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="630" y="980" width="140" height="45" as="geometry"/></mxCell>
-<mxCell id="pr5_p" value="break" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="505" y="1050" width="140" height="35" as="geometry"/></mxCell>
-<mxCell id="pr6_p" value="retry allocate" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="760" y="1050" width="140" height="35" as="geometry"/></mxCell>
-<mxCell id="pr5L1_p" value="Y" style="text;html=1;fontSize=9;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="512" y="1010" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="pr6L1_p" value="N" style="text;html=1;fontSize=9;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="845" y="1010" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="psum" value="P-Scheduler: Prefill chunked at threshold.&#xa;KV transferred to D after prefill complete.&#xa;Preemption rare: KV released after each transfer." style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E3F2FD;fontSize=10;fontColor=#1565C0;align=left" vertex="1" parent="1"><mxGeometry x="485" y="1355" width="415" height="55" as="geometry"/></mxCell>
-<mxCell id="p0e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p0" target="p1"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p1e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="p1" target="p1y"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p2e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p1" target="p2"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p2L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="445" y="388" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="p3e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p2" target="p3"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p3e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="p3" target="p3y"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p4e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p3" target="p4"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p5e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p4" target="p5"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p6e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p5" target="p6"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p7e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=1;entryY=0.5" edge="1" parent="1" source="p6" target="p7"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="270" y="780"/><mxPoint x="270" y="866"/></Array></mxGeometry></mxCell>
-<mxCell id="pr0e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=2;exitX=1;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="p6" target="pr0_p"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="758"/><mxPoint x="310" y="720"/><mxPoint x="678" y="720"/></Array></mxGeometry></mxCell>
-<mxCell id="pr0L1_p" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="365" y="725" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="pr1e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="pr0_p" target="pr1_p"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="560" y="764"/><mxPoint x="560" y="800"/><mxPoint x="578" y="800"/></Array></mxGeometry></mxCell>
-<mxCell id="pr2e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="pr0_p" target="pr2_p"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="780" y="764"/><mxPoint x="780" y="797"/><mxPoint x="833" y="797"/></Array></mxGeometry></mxCell>
-<mxCell id="pr1L1_p" value="FCFS" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="518" y="780" width="35" height="14" as="geometry"/></mxCell>
-<mxCell id="pr2L1_p" value="Pri" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="810" y="780" width="20" height="14" as="geometry"/></mxCell>
-<mxCell id="pr3e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.25;entryY=0" edge="1" parent="1" source="pr1_p" target="pr3_p"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="pr3e2_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.75;entryY=0" edge="1" parent="1" source="pr2_p" target="pr3_p"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="pr4e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="pr3_p" target="pr4_p"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="pr5e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="pr4_p" target="pr5_p"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="590" y="1002"/><mxPoint x="590" y="1030"/><mxPoint x="575" y="1030"/></Array></mxGeometry></mxCell>
-<mxCell id="pr6e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.2;exitX=1;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="pr4_p" target="pr6_p"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="810" y="1002"/><mxPoint x="810" y="1030"/><mxPoint x="830" y="1030"/></Array></mxGeometry></mxCell>
-<mxCell id="prx_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.2;dashed=1;exitX=0.5;exitY=1;entryX=1;entryY=0.5" edge="1" parent="1" source="pr6_p" target="p5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="830" y="1105"/><mxPoint x="915" y="1105"/><mxPoint x="915" y="688"/><mxPoint x="307" y="688"/></Array></mxGeometry></mxCell>
-<mxCell id="prxL1_p" value="retry" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="865" y="1113" width="28" height="14" as="geometry"/></mxCell>
-<mxCell id="p8e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="p7" target="p8"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="30" y="866"/><mxPoint x="30" y="910"/><mxPoint x="170" y="910"/></Array></mxGeometry></mxCell>
-<mxCell id="p9e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p8" target="p9"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p10e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p9" target="p10"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p11e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p10" target="p11"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p12e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p11" target="p12"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p13e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="p12" target="p13y"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="p13e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="p12" target="p13n"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d0" value="schedule()  token_budget=512 (rarely exhausted)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontColor=#F57F17;align=center" vertex="1" parent="1"><mxGeometry x="1150" y="235" width="360" height="44" as="geometry"/></mxCell>
-<mxCell id="dp1bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFF8E1;strokeColor=#F57F17;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="970" y="310" width="850" height="125" as="geometry"/></mxCell>
-<mxCell id="dp1t" value="Phase 1: RUNNING (all Decode, 1 token/req)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="985" y="315" width="320" height="20" as="geometry"/></mxCell>
-<mxCell id="cnDph1" value="D-阶段1中文: 所有RUNNING请求都是Decode，每请求只需1个新token的KV块，token_budget=512几乎不会耗尽，直接分配即可" style="text;html=1;fontSize=7.5;fontColor=#E65100;align=left" vertex="1" parent="1"><mxGeometry x="985" y="333" width="800" height="14" as="geometry"/></mxCell>
-<mxCell id="d1" value="Iterate: num_new=1, allocate(1,lookahead),&#xa;budget -= 1" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontSize=10;fontColor=#F57F17;align=center" vertex="1" parent="1"><mxGeometry x="1120" y="345" width="350" height="55" as="geometry"/></mxCell>
-<mxCell id="dp2bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="970" y="460" width="860" height="925" as="geometry"/></mxCell>
-<mxCell id="dp2t" value="Phase 2: WAITING (PD-specific async KV load + local)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="985" y="465" width="400" height="20" as="geometry"/></mxCell>
-<mxCell id="cnDph2" value="D-阶段2中文: 先检查WAITING_FOR_REMOTE_KVS(等finished_recving→promote); 再检查do_remote_prefill(有→PD async路径→WAITING_FOR_REMOTE_KVS不消耗budget; 无→本地PrefixCache路径)" style="text;html=1;fontSize=7.5;fontColor=#1B5E20;align=left" vertex="1" parent="1"><mxGeometry x="985" y="482" width="830" height="16" as="geometry"/></mxCell>
-<mxCell id="d2" value="peek from waiting/&#xa;skipped_waiting" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="1190" y="498" width="250" height="40" as="geometry"/></mxCell>
-<mxCell id="d3" value="Status is&#xa;WAITING_FOR_REMOTE_KVS?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="1200" y="568" width="210" height="78" as="geometry"/></mxCell>
-<mxCell id="d4" value="finished_recving?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="1460" y="568" width="155" height="62" as="geometry"/></mxCell>
-<mxCell id="d4L1" value="Yes(KV wait)" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1420" y="590" width="65" height="14" as="geometry"/></mxCell>
-<mxCell id="d5" value="Promote:&#xa;cache_blocks()&#xa;-&gt; WAITING" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="1660" y="558" width="130" height="65" as="geometry"/></mxCell>
-<mxCell id="d6" value="Blocked:&#xa;skip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=10;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="1730" y="660" width="100" height="42" as="geometry"/></mxCell>
-<mxCell id="d5L1" value="Y" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="1620" y="590" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="d6L1" value="N" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#F57F17;align=center" vertex="1" parent="1"><mxGeometry x="1550" y="640" width="14" height="14" as="geometry"/></mxCell>
-<mxCell id="d7" value="kv_transfer_params&#xa;has do_remote_prefill?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="1200" y="678" width="210" height="80" as="geometry"/></mxCell>
-<mxCell id="d7L1" value="No(normal WAITING)" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="1285" y="665" width="110" height="14" as="geometry"/></mxCell>
-<mxCell id="d8" value="PD async:&#xa;get_num_new_matched_tokens()&#xa;-&gt; async=True, allocate(ext_tokens,&#xa;delay_cache=True)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCC80;fontSize=10;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1460" y="678" width="270" height="78" as="geometry"/></mxCell>
-<mxCell id="d8L1" value="Yes" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1420" y="710" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="d9" value="Enter wait:&#xa;WAITING_FOR_REMOTE_KVS&#xa;num_computed=ext_tokens,&#xa;NOT consume token_budget!" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCC80;fontSize=10;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="1460" y="792" width="270" height="62" as="geometry"/></mxCell>
-<mxCell id="d10" value="Normal(local):&#xa;PrefixCache, allocate&#xa;num_new=tokens-computed&#xa;-&gt;running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="990" y="805" width="235" height="62" as="geometry"/></mxCell>
-<mxCell id="d10L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" vertex="1" parent="1"><mxGeometry x="985" y="715" width="18" height="14" as="geometry"/></mxCell>
-<mxCell id="dend" value="Build SchedulerOutput +&#xa;kv_connector_metadata" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontColor=#F57F17;align=center" vertex="1" parent="1"><mxGeometry x="1240" y="1180" width="270" height="52" as="geometry"/></mxCell>
-<mxCell id="dsum" value="D-Scheduler: WAITING_FOR_REMOTE_KVS: no forward pass, no budget consumed.&#xa;Promote on finished_recving signal from Worker. Heartbeat 5s / lease 30s to P.&#xa;KV load failure: recompute (reset num_computed) or fail_immediately.&#xa;Budget rarely exhausted (1 token/req)." style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF3E0;fontSize=10;fontColor=#E65100;align=left" vertex="1" parent="1"><mxGeometry x="990" y="1270" width="560" height="85" as="geometry"/></mxCell>
-<mxCell id="d0e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="d0" target="d1"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d2e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="d1" target="d2"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d4e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="d3" target="d4"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d7e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="d3" target="d7"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d5e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="d4" target="d5"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d6e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="d4" target="d6"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1537" y="650"/><mxPoint x="1780" y="650"/></Array></mxGeometry></mxCell>
-<mxCell id="d8e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="d7" target="d8"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="d10e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" edge="1" parent="1" source="d7" target="d10"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1160" y="718"/><mxPoint x="1160" y="790"/><mxPoint x="1107" y="790"/></Array></mxGeometry></mxCell>
-<mxCell id="d9e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="d8" target="d9"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="dende1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.25;entryY=0" edge="1" parent="1" source="d10" target="dend"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1107" y="900"/><mxPoint x="1310" y="900"/></Array></mxGeometry></mxCell>
-<mxCell id="dende2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.75;entryY=0" edge="1" parent="1" source="d9" target="dend"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1595" y="900"/><mxPoint x="1442" y="900"/></Array></mxGeometry></mxCell>
-<mxCell id="dendeL" value="after async load" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#F57F17;align=center" vertex="1" parent="1"><mxGeometry x="1460" y="905" width="85" height="14" as="geometry"/></mxCell>
-<mxCell id="kvBox" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E0F2F1;strokeColor=#00695C;strokeWidth=1.5;" vertex="1" parent="1"><mxGeometry x="430" y="1115" width="520" height="230" as="geometry"/></mxCell>
-<mxCell id="kvT" value="KV Transfer &amp; D-side Notification Flow" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#00695C;align=center" vertex="1" parent="1"><mxGeometry x="550" y="1120" width="300" height="20" as="geometry"/></mxCell>
-<mxCell id="cnKv" value="KV传输中文: P完成prefill→request_finished()→KV通过RDMA/NIXL传输到D→D Worker收到后发finished_recving信号→D Scheduler下一轮调度时promote到WAITING→RUNNING开始decode" style="text;html=1;fontSize=7.5;fontColor=#004D40;align=left" vertex="1" parent="1"><mxGeometry x="445" y="1138" width="490" height="14" as="geometry"/></mxCell>
-<mxCell id="kv1" value="P: Prefill complete&#xa;_connector_finished()&#xa;-&gt; request_finished()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" vertex="1" parent="1"><mxGeometry x="445" y="1150" width="220" height="48" as="geometry"/></mxCell>
-<mxCell id="kv2" value="KV Transfer&#xa;(RDMA/NIXL)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#80CBC4;fontSize=9;fontColor=#004D40;align=center" vertex="1" parent="1"><mxGeometry x="685" y="1148" width="110" height="25" as="geometry"/></mxCell>
-<mxCell id="kv3" value="Metadata Sync&#xa;(ZMQ/API Server)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#80CBC4;fontSize=9;fontColor=#004D40;align=center" vertex="1" parent="1"><mxGeometry x="805" y="1148" width="130" height="25" as="geometry"/></mxCell>
-<mxCell id="kv4" value="D Worker: start_load_kv()&#xa;-&gt; wait_for_layer_load()&#xa;-&gt; finished_recving signal" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" vertex="1" parent="1"><mxGeometry x="685" y="1190" width="250" height="52" as="geometry"/></mxCell>
-<mxCell id="kv5" value="D Scheduler:&#xa;_update_from_kv_xfer_finished()&#xa;-&gt; finished_recving_kv_req_ids.add()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" vertex="1" parent="1"><mxGeometry x="685" y="1260" width="250" height="48" as="geometry"/></mxCell>
-<mxCell id="kv6" value="" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=none;fontSize=1;fontColor=none;align=center" vertex="1" parent="1"><mxGeometry x="685" y="1325" width="250" height="12" as="geometry"/></mxCell>
-<mxCell id="kv6t" value="Next schedule(): promote to WAITING → RUNNING" style="text;html=1;fontSize=10;fontStyle=1;fontColor=#00695C;align=center" vertex="1" parent="1"><mxGeometry x="685" y="1315" width="250" height="20" as="geometry"/></mxCell>
-<mxCell id="kve1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="kv1" target="kv2"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="kve2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.25;entryX=0;entryY=0.5" edge="1" parent="1" source="kv1" target="kv3"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="680" y="1162"/><mxPoint x="800" y="1162"/><mxPoint x="800" y="1160"/></Array></mxGeometry></mxCell>
-<mxCell id="kve3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.25;entryY=0" edge="1" parent="1" source="kv2" target="kv4"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="kve4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.75;entryY=0" edge="1" parent="1" source="kv3" target="kv4"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="kve5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="kv4" target="kv5"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="hb" value="Heartbeat: D→P, 5s interval, 30s lease" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFECB3;fontSize=9;fontColor=#E65100;align=center" vertex="1" parent="1"><mxGeometry x="445" y="1325" width="200" height="20" as="geometry"/></mxCell>
-<mxCell id="hbe" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;entryX=0.5;entryY=1" edge="1" parent="1" source="hb" target="kv1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="430" y="1335"/><mxPoint x="430" y="1200"/></Array></mxGeometry></mxCell>
-<mxCell id="p2kv" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="p13y" target="kv1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="250" y="1343"/><mxPoint x="400" y="1343"/><mxPoint x="400" y="1174"/><mxPoint x="435" y="1174"/></Array></mxGeometry></mxCell>
-<mxCell id="prebx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;dashed=1;" vertex="1" parent="1"><mxGeometry x="970" y="1370" width="850" height="180" as="geometry"/></mxCell>
-<mxCell id="pret" value="Preemption (D-side: KV full, main scenario)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="1270" y="1375" width="300" height="20" as="geometry"/></mxCell>
-<mxCell id="cnPret" value="D侧抢占(主要): 每个decode请求持有全部历史KV，每步+1token持续增长直到EOS；KV满时allocate_slots()失败→选受害者(FCFS pop最后/ Priority max优先级最低)→释放块,num_computed=0→放回waiting头部" style="text;html=1;fontSize=7.5;fontColor=#C62828;align=left" vertex="1" parent="1"><mxGeometry x="990" y="1390" width="830" height="14" as="geometry"/></mxCell>
-<mxCell id="preNote" value="D-side Preemption Flow (same as P):&#xa;allocate_slots() fails for RUNNING decode request -&gt; select victim (FCFS pop last / Priority max)&#xa;-&gt; _preempt_request(): free blocks, num_computed=0, PREEMPTED, prepend waiting&#xa;-&gt; retry allocate; if victim == self -&gt; break (cannot schedule)&#xa;D-side preemption is common: each decode req holds all historical KV, growing 1t/step until EOS.&#xa;P-side preemption is rare: KV held only during prefill chunk, released after transfer to D." style="text;html=1;fontSize=9;fontColor=#C62828;align=left" vertex="1" parent="1"><mxGeometry x="990" y="1405" width="830" height="140" as="geometry"/></mxCell>
-<mxCell id="smbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=2;" vertex="1" parent="1"><mxGeometry x="400" y="1570" width="600" height="195" as="geometry"/></mxCell>
-<mxCell id="smt" value="Request State Machine (请求状态机)" style="text;html=1;fontSize=14;fontStyle=1;align=center" vertex="1" parent="1"><mxGeometry x="580" y="1575" width="220" height="22" as="geometry"/></mxCell>
-<mxCell id="smw" value="WAITING&#xa;(等待调度)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontStyle=1;fontColor=#F9A825;align=center" vertex="1" parent="1"><mxGeometry x="420" y="1608" width="120" height="42" as="geometry"/></mxCell>
-<mxCell id="smr" value="RUNNING&#xa;(正在执行)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontStyle=1;fontColor=#388E3C;align=center" vertex="1" parent="1"><mxGeometry x="650" y="1608" width="120" height="42" as="geometry"/></mxCell>
-<mxCell id="smf" value="FINISHED&#xa;(已完成)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E0E0E0;fontStyle=1;fontColor=#9E9E9E;align=center" vertex="1" parent="1"><mxGeometry x="870" y="1608" width="100" height="42" as="geometry"/></mxCell>
-<mxCell id="smkv" value="WAITING_FOR&#xa;_REMOTE_KVS&#xa;(等待远端KV)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontSize=8;fontStyle=1;fontColor=#1976D2;align=center" vertex="1" parent="1"><mxGeometry x="420" y="1680" width="170" height="42" as="geometry"/></mxCell>
-<mxCell id="smp" value="PREEMPTED&#xa;(被抢占)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontStyle=1;fontColor=#C62828;align=center" vertex="1" parent="1"><mxGeometry x="650" y="1680" width="120" height="42" as="geometry"/></mxCell>
-<mxCell id="sme1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="smw" target="smr"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="sme6" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" parent="1" source="smr" target="smf"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="sme2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="smr" target="smp"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="sme4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="smw" target="smkv"><mxGeometry relative="1" as="geometry"></mxGeometry></mxCell>
-<mxCell id="sme3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=1" edge="1" parent="1" source="smp" target="smw"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="610" y="1701"/><mxPoint x="610" y="1745"/><mxPoint x="385" y="1745"/><mxPoint x="385" y="1650"/><mxPoint x="480" y="1650"/></Array></mxGeometry></mxCell>
-<mxCell id="sme5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=1;entryY=0.5" edge="1" parent="1" source="smkv" target="smw"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="610" y="1701"/><mxPoint x="610" y="1629"/></Array></mxGeometry></mxCell>
-<mxCell id="sme1L" value="调度" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="575" y="1613" width="42" height="14" as="geometry"/></mxCell>
-<mxCell id="sme6L" value="完成" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="775" y="1613" width="30" height="14" as="geometry"/></mxCell>
-<mxCell id="sme2L" value="KV满" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="720" y="1648" width="38" height="14" as="geometry"/></mxCell>
-<mxCell id="sme4L" value="远端prefill" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="505" y="1658" width="65" height="14" as="geometry"/></mxCell>
-<mxCell id="sme3L" value="回到队首" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="402" y="1735" width="65" height="14" as="geometry"/></mxCell>
-<mxCell id="sme5L" value="KV就绪" style="text;html=1;fontSize=9;align=center" vertex="1" parent="1"><mxGeometry x="618" y="1665" width="42" height="14" as="geometry"/></mxCell>
-<mxCell id="dp2p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="pDp" target="p0"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="920" y="180"/><mxPoint x="450" y="180"/><mxPoint x="400" y="225"/></Array></mxGeometry></mxCell>
-<mxCell id="dp2d" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" edge="1" parent="1" source="dDp" target="d0"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1140" y="180"/><mxPoint x="1330" y="180"/><mxPoint x="1330" y="225"/></Array></mxGeometry></mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="PD-Scheduler" id="pds">
+        <mxGraphModel dx="1824" dy="1416" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1860" pageHeight="1900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t0" value="PD Separation - Scheduler + DP Selection + KV Notification Flow" style="text;html=1;fontSize=22;fontStyle=1;fontColor=#1A237E;align=center" parent="1" vertex="1">
+                    <mxGeometry x="500" y="5" width="860" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="dpBox" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="45" width="1820" height="125" as="geometry"/>
+                </mxCell>
+                <mxCell id="dpT" value="Request Entry &amp; DP Load Balancing (score = waiting x 4 + running)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#7B1FA2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="750" y="48" width="400" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="api" value="API Server&#xa;(Front-end)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="60" y="75" width="150" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="dpC" value="DPCoordinator&#xa;Stats: [waiting, running] per DP" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="260" y="75" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lb" value="DP LB: min(score) per request&#xa;score = waiting x 4 + running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E1BEE7;fontSize=10;fontColor=#7B1FA2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="510" y="75" width="250" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="api" target="dpC" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="dpC" target="lb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pDp" value="P-side DP chosen&#xa;→ route to kv_producer" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontSize=10;fontColor=#1565C0;align=center" parent="1" vertex="1">
+                    <mxGeometry x="830" y="72" width="180" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="dDp" value="D-side DP chosen&#xa;→ route to kv_consumer" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontSize=10;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="72" width="180" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="lb" target="pDp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="lb" target="dDp" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="790" y="95"/>
+                            <mxPoint x="1020" y="95"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lbNote" value="External LB mode: no stats, front-end&#xa;routes by its own policy (e.g. round-robin)" style="text;html=1;fontSize=9;fontColor=#7B1FA2;align=left" parent="1" vertex="1">
+                    <mxGeometry x="1280" y="78" width="300" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnDp" value="中文说明: 前端API Server根据DPCoordinator发布的各DP实例[waiting, running]统计，计算 score=waitingx4+running，选最小score的DP路由请求" style="text;html=1;fontSize=8;fontColor=#6A1B9A;align=left" parent="1" vertex="1">
+                    <mxGeometry x="1290" y="118" width="540" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="185" width="910" height="1380" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="185" width="890" height="1380" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ptt" value="Prefill Node (kv_producer)" style="text;html=1;fontSize=17;fontStyle=1;fontColor=#1565C0;align=center" parent="1" vertex="1">
+                    <mxGeometry x="170" y="193" width="260" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dtt" value="Decode Node (kv_consumer)" style="text;html=1;fontSize=17;fontStyle=1;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="193" width="280" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnPtt" value="P节点职责: 接收请求→Prefill分块计算→KV Cache Transfer到D节点→释放KV块  |  token_budget=8192, 大块prefill" style="text;html=1;fontSize=8;fontColor=#1565C0;align=left" parent="1" vertex="1">
+                    <mxGeometry x="60" y="222" width="400" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnDtt" value="D节点职责: 接收P传来的KV→Decode逐token生成(每步1token)→返回结果  |  token_budget=512, 很少耗尽" style="text;html=1;fontSize=8;fontColor=#E65100;align=left" parent="1" vertex="1">
+                    <mxGeometry x="970" y="222" width="500" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0" value="schedule()  token_budget=8192" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontColor=#1976D2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="220" y="235" width="360" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1" value="PAUSED_ALL?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="320" y="310" width="155" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1y" value="Return Empty" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="520" y="315" width="95" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1L1" value="Yes" style="text;html=1;fontSize=10;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="485" y="320" width="22" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pp1bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8EAF6;strokeColor=#3949AB;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="395" width="420" height="390" as="geometry"/>
+                </mxCell>
+                <mxCell id="pp1t" value="Phase 1: RUNNING (prefill requests)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#3949AB;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="400" width="220" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnPh1" value="阶段1中文: 遍历正在运行的prefill请求，跳过不需要新块的，计算num_new，分配KV块，成功→进入scheduled；失败→抢占" style="text;html=1;fontSize=7.5;fontColor=#283593;align=left" parent="1" vertex="1">
+                    <mxGeometry x="55" y="418" width="380" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2" value="Iterate self.running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C5CAE9;fontColor=#3949AB;align=center" parent="1" vertex="1">
+                    <mxGeometry x="140" y="432" width="185" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3" value="Skip?&#xa;max_tokens? eligible?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="140" y="492" width="185" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3y" value="Skip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E0E0E0;fontSize=10;fontColor=#9E9E9E;align=center" parent="1" vertex="1">
+                    <mxGeometry x="370" y="508" width="68" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3L1" value="Yes" style="text;html=1;fontSize=9;fontColor=#9E9E9E;align=center" parent="1" vertex="1">
+                    <mxGeometry x="335" y="518" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p4" value="num_new = tokens_with_spec - computed,&#xa;clip threshold/budget/maxlen" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C5CAE9;fontSize=10;fontColor=#3949AB;align=center" parent="1" vertex="1">
+                    <mxGeometry x="70" y="588" width="290" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="p4L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="275" y="565" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p5" value="allocate_slots()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="145" y="670" width="142" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="p6" value="Success?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=10;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="150" y="735" width="120" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="pp2bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="805" width="375" height="565" as="geometry"/>
+                </mxCell>
+                <mxCell id="pp2t" value="Phase 2: WAITING requests" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="810" width="220" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnPh2" value="阶段2中文: 从等待队列取请求→检查本地PrefixCache+远端KV→计算num_new→分配KV块→成功则加入running；失败则break" style="text;html=1;fontSize=7.5;fontColor=#1B5E20;align=left" parent="1" vertex="1">
+                    <mxGeometry x="55" y="828" width="360" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p7" value="Add to scheduled_running,&#xa;budget -= tokens" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=9;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="845" width="210" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="p7L1" value="Yes" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="225" y="785" width="15" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p8" value="waiting non-empty &amp;&#xa;budget&gt;0 &amp; running&lt;max_seqs" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="920" width="230" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="p9" value="peek request" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1005" width="170" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="p10" value="Check:&#xa;1.Local PrefixCache&#xa;2.Remote KV(PD)&#xa;num_computed=local+remote" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1075" width="245" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="p11" value="num_new = tokens - computed, clip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1190" width="225" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="p12" value="allocate_slots()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="85" y="1258" width="140" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13y" value="OK: add to running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1325" width="155" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13n" value="Fail: break" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="275" y="1260" width="95" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13L1" value="Y" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="150" y="1305" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13L2" value="N" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="242" y="1240" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="prebx_p" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="485" y="700" width="420" height="390" as="geometry"/>
+                </mxCell>
+                <mxCell id="pret_p" value="Preemption (theoretical on P, KV full)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="580" y="706" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnPret_p" value="P侧抢占(极少): KV仅在prefill分块期间暂存，完成后立即transfer释放" style="text;html=1;fontSize=7.5;fontColor=#C62828;align=left" parent="1" vertex="1">
+                    <mxGeometry x="505" y="728" width="380" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr0_p" value="FCFS or Priority?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="600" y="738" width="155" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr1_p" value="FCFS: running.pop()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="505" y="815" width="145" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr2_p" value="Priority:&#xa;max(running, ...)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="760" y="812" width="145" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr3_p" value="Result: free blocks, num_computed=0,&#xa;PREEMPTED, prepend waiting" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="505" y="890" width="400" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr4_p" value="Is current?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="630" y="980" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr5_p" value="break" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="505" y="1050" width="140" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr6_p" value="retry allocate" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="760" y="1050" width="140" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr5L1_p" value="Y" style="text;html=1;fontSize=9;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="512" y="1010" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr6L1_p" value="N" style="text;html=1;fontSize=9;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="845" y="1010" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="psum" value="P-Scheduler: Prefill chunked at threshold.&#xa;KV transferred to D after prefill complete.&#xa;Preemption rare: KV released after each transfer." style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E3F2FD;fontSize=10;fontColor=#1565C0;align=left" parent="1" vertex="1">
+                    <mxGeometry x="485" y="1355" width="415" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p0" target="p1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="p1" target="p1y" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p1" target="p2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="445" y="388" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p2" target="p3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="p3" target="p3y" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p4e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3949AB;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p3" target="p4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p5e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p4" target="p5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p6e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p5" target="p6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p7e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=1;entryY=0.5" parent="1" source="p6" target="p7" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="270" y="780"/>
+                            <mxPoint x="270" y="866"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pr0e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=2;exitX=1;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="p6" target="pr0_p" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="310" y="758"/>
+                            <mxPoint x="310" y="720"/>
+                            <mxPoint x="678" y="720"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pr0L1_p" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="365" y="725" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr1e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="pr0_p" target="pr1_p" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="560" y="764"/>
+                            <mxPoint x="560" y="800"/>
+                            <mxPoint x="578" y="800"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pr2e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="pr0_p" target="pr2_p" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="780" y="764"/>
+                            <mxPoint x="780" y="797"/>
+                            <mxPoint x="833" y="797"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pr1L1_p" value="FCFS" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="518" y="780" width="35" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr2L1_p" value="Pri" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="810" y="780" width="20" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr3e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.25;entryY=0" parent="1" source="pr1_p" target="pr3_p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr3e2_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.75;entryY=0" parent="1" source="pr2_p" target="pr3_p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr4e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="pr3_p" target="pr4_p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pr5e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.2;exitX=0;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="pr4_p" target="pr5_p" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="590" y="1002"/>
+                            <mxPoint x="590" y="1030"/>
+                            <mxPoint x="575" y="1030"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pr6e1_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.2;exitX=1;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="pr4_p" target="pr6_p" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="810" y="1002"/>
+                            <mxPoint x="810" y="1030"/>
+                            <mxPoint x="830" y="1030"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="prx_p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.2;dashed=1;exitX=0.5;exitY=1;entryX=1;entryY=0.5" parent="1" source="pr6_p" target="p5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="1105"/>
+                            <mxPoint x="915" y="1105"/>
+                            <mxPoint x="915" y="688"/>
+                            <mxPoint x="307" y="688"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="prxL1_p" value="retry" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="865" y="1113" width="28" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p8e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="p7" target="p8" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="30" y="866"/>
+                            <mxPoint x="30" y="910"/>
+                            <mxPoint x="170" y="910"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p9e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p8" target="p9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p10e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p9" target="p10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p11e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p10" target="p11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p12e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p11" target="p12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="p12" target="p13y" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p13e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="p12" target="p13n" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d0" value="schedule()  token_budget=512 (rarely exhausted)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontColor=#F57F17;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="235" width="360" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp1bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFF8E1;strokeColor=#F57F17;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="310" width="850" height="125" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp1t" value="Phase 1: RUNNING (all Decode, 1 token/req)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="985" y="315" width="320" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnDph1" value="D-阶段1中文: 所有RUNNING请求都是Decode，每请求只需1个新token的KV块，token_budget=512几乎不会耗尽，直接分配即可" style="text;html=1;fontSize=7.5;fontColor=#E65100;align=left" parent="1" vertex="1">
+                    <mxGeometry x="985" y="333" width="800" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d1" value="Iterate: num_new=1, allocate(1,lookahead),&#xa;budget -= 1" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontSize=10;fontColor=#F57F17;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="345" width="350" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp2bx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="460" width="860" height="925" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp2t" value="Phase 2: WAITING (PD-specific async KV load + local)" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="985" y="465" width="400" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnDph2" value="D-阶段2中文: 先检查WAITING_FOR_REMOTE_KVS(等finished_recving→promote); 再检查do_remote_prefill(有→PD async路径→WAITING_FOR_REMOTE_KVS不消耗budget; 无→本地PrefixCache路径)" style="text;html=1;fontSize=7.5;fontColor=#1B5E20;align=left" parent="1" vertex="1">
+                    <mxGeometry x="985" y="482" width="830" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="d2" value="peek from waiting/&#xa;skipped_waiting" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1190" y="498" width="250" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="d3" value="Status is&#xa;WAITING_FOR_REMOTE_KVS?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="568" width="210" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="d4" value="finished_recving?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1460" y="568" width="155" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="d4L1" value="Yes(KV wait)" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1420" y="590" width="65" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d5" value="Promote:&#xa;cache_blocks()&#xa;-&gt; WAITING" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#A5D6A7;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1660" y="558" width="130" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="d6" value="Blocked:&#xa;skip" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=10;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1730" y="660" width="100" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="d5L1" value="Y" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1620" y="590" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d6L1" value="N" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#F57F17;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1550" y="640" width="14" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d7" value="kv_transfer_params&#xa;has do_remote_prefill?" style="rhombus;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontSize=9;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="678" width="210" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="d7L1" value="No(normal WAITING)" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1285" y="665" width="110" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d8" value="PD async:&#xa;get_num_new_matched_tokens()&#xa;-&gt; async=True, allocate(ext_tokens,&#xa;delay_cache=True)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCC80;fontSize=10;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1460" y="678" width="270" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="d8L1" value="Yes" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1420" y="710" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="d9" value="Enter wait:&#xa;WAITING_FOR_REMOTE_KVS&#xa;num_computed=ext_tokens,&#xa;NOT consume token_budget!" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCC80;fontSize=10;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1460" y="792" width="270" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="d10" value="Normal(local):&#xa;PrefixCache, allocate&#xa;num_new=tokens-computed&#xa;-&gt;running" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontSize=10;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="990" y="805" width="235" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="d10L1" value="No" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#2E7D32;align=center" parent="1" vertex="1">
+                    <mxGeometry x="985" y="715" width="18" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="dend" value="Build SchedulerOutput +&#xa;kv_connector_metadata" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFE0B2;fontColor=#F57F17;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="1180" width="270" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="dsum" value="D-Scheduler: WAITING_FOR_REMOTE_KVS: no forward pass, no budget consumed.&#xa;Promote on finished_recving signal from Worker. Heartbeat 5s / lease 30s to P.&#xa;KV load failure: recompute (reset num_computed) or fail_immediately.&#xa;Budget rarely exhausted (1 token/req)." style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF3E0;fontSize=10;fontColor=#E65100;align=left" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="1258" width="560" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="d0e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="d0" target="d1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d2e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="d1" target="d2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d4e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="d3" target="d4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d7e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="d3" target="d7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d5e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="d4" target="d5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d6e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="d4" target="d6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1537" y="650"/>
+                            <mxPoint x="1780" y="650"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d8e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="d7" target="d8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d10e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=0" parent="1" source="d7" target="d10" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1160" y="718"/>
+                            <mxPoint x="1160" y="790"/>
+                            <mxPoint x="1107" y="790"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d9e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="d8" target="d9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dende1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.25;entryY=0" parent="1" source="d10" target="dend" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1107" y="900"/>
+                            <mxPoint x="1310" y="900"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dende2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.75;entryY=0" parent="1" source="d9" target="dend" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1595" y="900"/>
+                            <mxPoint x="1442" y="900"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dendeL" value="after async load" style="text;html=1;fontSize=9;fontStyle=1;fontColor=#F57F17;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1460" y="905" width="85" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="kvBox" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#E0F2F1;strokeColor=#00695C;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="1115" width="520" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="kvT" value="KV Transfer &amp; D-side Notification Flow" style="text;html=1;fontSize=13;fontStyle=1;fontColor=#00695C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="550" y="1120" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnKv" value="KV传输中文: P完成prefill→request_finished()→KV通过RDMA/NIXL传输到D→D Worker收到后发finished_recving信号→D Scheduler下一轮调度时promote到WAITING→RUNNING开始decode" style="text;html=1;fontSize=7.5;fontColor=#004D40;align=left" parent="1" vertex="1">
+                    <mxGeometry x="445" y="1138" width="490" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv1" value="P: Prefill complete&#xa;_connector_finished()&#xa;-&gt; request_finished()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="445" y="1150" width="220" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv2" value="KV Transfer&#xa;(RDMA/NIXL)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#80CBC4;fontSize=9;fontColor=#004D40;align=center" parent="1" vertex="1">
+                    <mxGeometry x="685" y="1148" width="110" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv3" value="Metadata Sync&#xa;(ZMQ/API Server)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#80CBC4;fontSize=9;fontColor=#004D40;align=center" parent="1" vertex="1">
+                    <mxGeometry x="805" y="1148" width="130" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv4" value="D Worker: start_load_kv()&#xa;-&gt; wait_for_layer_load()&#xa;-&gt; finished_recving signal" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="685" y="1190" width="250" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv5" value="D Scheduler:&#xa;_update_from_kv_xfer_finished()&#xa;-&gt; finished_recving_kv_req_ids.add()" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#B2DFDB;fontSize=10;fontColor=#00695C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="685" y="1260" width="250" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv6" value="" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=none;fontSize=1;fontColor=none;align=center" parent="1" vertex="1">
+                    <mxGeometry x="685" y="1325" width="250" height="12" as="geometry"/>
+                </mxCell>
+                <mxCell id="kv6t" value="Next schedule(): promote to WAITING → RUNNING" style="text;html=1;fontSize=10;fontStyle=1;fontColor=#00695C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="685" y="1315" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="kve1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="kv1" target="kv2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="kve2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.25;entryX=0;entryY=0.5" parent="1" source="kv1" target="kv3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="680" y="1162"/>
+                            <mxPoint x="800" y="1162"/>
+                            <mxPoint x="800" y="1160"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="kve3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.25;entryY=0" parent="1" source="kv2" target="kv4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="kve4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.75;entryY=0" parent="1" source="kv3" target="kv4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="kve5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="kv4" target="kv5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="hb" value="Heartbeat: D→P, 5s interval, 30s lease" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFECB3;fontSize=9;fontColor=#E65100;align=center" parent="1" vertex="1">
+                    <mxGeometry x="445" y="1325" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="hbe" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;entryX=0.5;entryY=1" parent="1" source="hb" target="kv1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="430" y="1335"/>
+                            <mxPoint x="430" y="1200"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p2kv" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#00695C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="p13y" target="kv1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="250" y="1343"/>
+                            <mxPoint x="400" y="1343"/>
+                            <mxPoint x="400" y="1174"/>
+                            <mxPoint x="435" y="1174"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="prebx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="1370" width="850" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="pret" value="Preemption (D-side: KV full, main scenario)" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="1270" y="1375" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cnPret" value="D侧抢占(主要): 每个decode请求持有全部历史KV，每步+1token持续增长直到EOS；KV满时allocate_slots()失败→选受害者(FCFS pop最后/ Priority max优先级最低)→释放块,num_computed=0→放回waiting头部" style="text;html=1;fontSize=7.5;fontColor=#C62828;align=left" parent="1" vertex="1">
+                    <mxGeometry x="990" y="1390" width="830" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="preNote" value="D-side Preemption Flow (same as P):&#xa;allocate_slots() fails for RUNNING decode request -&gt; select victim (FCFS pop last / Priority max)&#xa;-&gt; _preempt_request(): free blocks, num_computed=0, PREEMPTED, prepend waiting&#xa;-&gt; retry allocate; if victim == self -&gt; break (cannot schedule)&#xa;D-side preemption is common: each decode req holds all historical KV, growing 1t/step until EOS.&#xa;P-side preemption is rare: KV held only during prefill chunk, released after transfer to D." style="text;html=1;fontSize=9;fontColor=#C62828;align=left" parent="1" vertex="1">
+                    <mxGeometry x="990" y="1405" width="830" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="smbx" value="" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="1570" width="600" height="195" as="geometry"/>
+                </mxCell>
+                <mxCell id="smt" value="Request State Machine (请求状态机)" style="text;html=1;fontSize=14;fontStyle=1;align=center" parent="1" vertex="1">
+                    <mxGeometry x="580" y="1575" width="220" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="smw" value="WAITING&#xa;(等待调度)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFF9C4;fontStyle=1;fontColor=#F9A825;align=center" parent="1" vertex="1">
+                    <mxGeometry x="420" y="1608" width="120" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="smr" value="RUNNING&#xa;(正在执行)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#C8E6C9;fontStyle=1;fontColor=#388E3C;align=center" parent="1" vertex="1">
+                    <mxGeometry x="650" y="1608" width="120" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="smf" value="FINISHED&#xa;(已完成)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#E0E0E0;fontStyle=1;fontColor=#9E9E9E;align=center" parent="1" vertex="1">
+                    <mxGeometry x="870" y="1608" width="100" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="smkv" value="WAITING_FOR&#xa;_REMOTE_KVS&#xa;(等待远端KV)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#BBDEFB;fontSize=8;fontStyle=1;fontColor=#1976D2;align=center" parent="1" vertex="1">
+                    <mxGeometry x="420" y="1680" width="170" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="smp" value="PREEMPTED&#xa;(被抢占)" style="rounded=1;html=1;whiteSpace=wrap;;fillColor=#FFCDD2;fontSize=10;fontStyle=1;fontColor=#C62828;align=center" parent="1" vertex="1">
+                    <mxGeometry x="650" y="1680" width="120" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="smw" target="smr" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme6" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="smr" target="smf" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="smr" target="smp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="smw" target="smkv" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=0.5;entryY=1" parent="1" source="smp" target="smw" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="610" y="1701"/>
+                            <mxPoint x="610" y="1745"/>
+                            <mxPoint x="385" y="1745"/>
+                            <mxPoint x="385" y="1650"/>
+                            <mxPoint x="480" y="1650"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="sme5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=1;entryY=0.5" parent="1" source="smkv" target="smw" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="610" y="1701"/>
+                            <mxPoint x="610" y="1629"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="sme1L" value="调度" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="575" y="1613" width="42" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme6L" value="完成" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="775" y="1613" width="30" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme2L" value="KV满" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="720" y="1648" width="38" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme4L" value="远端prefill" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="505" y="1658" width="65" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme3L" value="回到队首" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="402" y="1735" width="65" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="sme5L" value="KV就绪" style="text;html=1;fontSize=9;align=center" parent="1" vertex="1">
+                    <mxGeometry x="618" y="1665" width="42" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp2p" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="pDp" target="p0" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="920" y="180"/>
+                            <mxPoint x="450" y="180"/>
+                            <mxPoint x="400" y="225"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dp2d" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0" parent="1" source="dDp" target="d0" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1140" y="180"/>
+                            <mxPoint x="1330" y="180"/>
+                            <mxPoint x="1330" y="225"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
