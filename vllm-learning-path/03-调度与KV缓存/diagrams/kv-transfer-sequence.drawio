@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net" modified="2026-08-01" agent="draw.io">
+  <diagram name="KV Transfer Seq" id="kv-seq">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1050">
+      <root><mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="t" value="KV 传输时序图 — 从握手到 RDMA 到心跳" style="text;html=1;fontSize=22;fontColor=#1a237e;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="350" y="10" width="700" height="36" as="geometry" /></mxCell>
+
+        
+        <mxCell id="Lp_s" value="P-Scheduler" style="rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="60" y="65" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="Lp_w" value="P-Worker (GPU)" style="rounded=1;fillColor=#BBDEFB;strokeColor=#1565C0;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="240" y="65" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="Lz_p" value="ZMQ/侧通道" style="rounded=1;fillColor=#E1BEE7;strokeColor=#8E24AA;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="420" y="65" width="110" height="36" as="geometry" /></mxCell>
+        <mxCell id="Ln" value="NIXL/RDMA" style="rounded=1;fillColor=#FFCC80;strokeColor=#E65100;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="570" y="65" width="110" height="36" as="geometry" /></mxCell>
+        <mxCell id="Ld_s" value="D-Scheduler" style="rounded=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="720" y="65" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="Ld_w" value="D-Worker (GPU)" style="rounded=1;fillColor=#FFF8E1;strokeColor=#E65100;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="900" y="65" width="140" height="36" as="geometry" /></mxCell>
+        <mxCell id="Lapi" value="API Server" style="rounded=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;fontSize=12;fontStyle=1;align=center;overflow=fill;" parent="1" vertex="1"><mxGeometry x="1080" y="65" width="120" height="36" as="geometry" /></mxCell>
+
+        
+        <mxCell id="vl1" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="101" as="sourcePoint" /><mxPoint x="130" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl2" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="310" y="101" as="sourcePoint" /><mxPoint x="310" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl3" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="101" as="sourcePoint" /><mxPoint x="475" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl4" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="625" y="101" as="sourcePoint" /><mxPoint x="625" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl5" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="101" as="sourcePoint" /><mxPoint x="790" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl6" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="101" as="sourcePoint" /><mxPoint x="970" y="990" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="vl7" style="endArrow=none;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;dashPattern=4 4;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1140" y="101" as="sourcePoint" /><mxPoint x="1140" y="990" as="targetPoint" /></mxGeometry></mxCell>
+
+        
+        <mxCell id="ph1" value="阶段一: Prefill 完成, 生成 kv_transfer_params" style="rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="60" y="115" width="1140" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="a1" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="145" as="sourcePoint" /><mxPoint x="130" y="175" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="a1L" value="1. request_finished(req, block_ids)" style="text;html=1;fontSize=10;fillColor=#E3F2FD;fontColor=#1565C0;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="140" y="153" width="200" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="a2" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="185" as="sourcePoint" /><mxPoint x="130" y="215" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="a2L" value="2. delay_free_blocks = True, _reqs_need_send[req_id]=过期时间" style="text;html=1;fontSize=10;fillColor=#E3F2FD;fontColor=#1565C0;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="140" y="193" width="330" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="a3" style="endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="130" y="230" as="sourcePoint" /><mxPoint x="1136" y="230" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="a3L" value="3. kv_transfer_params: {do_remote_prefill, remote_block_ids, remote_host/port...}" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#2E7D32;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="400" y="215" width="450" height="24" as="geometry" /></mxCell>
+
+        
+        <mxCell id="ph2" value="阶段二: API Server 路由到 D, D 侧识别远程 Prefill" style="rounded=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="60" y="260" width="1140" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="b1" style="endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1140" y="290" as="sourcePoint" /><mxPoint x="786" y="290" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="b1L" value="4. API 注入 kv_transfer_params → D add_request()" style="text;html=1;fontSize=10;fillColor=#E8F5E9;fontColor=#2E7D32;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="850" y="283" width="290" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="b2" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="305" as="sourcePoint" /><mxPoint x="790" y="335" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="b2L" value="5. get_num_new_matched_tokens() → (4000t, load_kv_async=True)" style="text;html=1;fontSize=10;fillColor=#FFF3E0;fontColor=#E65100;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="140" y="321" width="370" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="b3" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="345" as="sourcePoint" /><mxPoint x="790" y="375" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="b3L" value="6. allocate_slots(外部tokens) → WAITING_FOR_REMOTE_KVS (不占 budget!)" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#E65100;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="140" y="361" width="400" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="b4" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="390" as="sourcePoint" /><mxPoint x="966" y="390" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="b4L" value="7. build_connector_meta() → NixlConnectorMetadata → SchedulerOutput" style="text;html=1;fontSize=10;fillColor=#FFF3E0;fontColor=#E65100;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="850" y="383" width="380" height="24" as="geometry" /></mxCell>
+
+        
+        <mxCell id="ph3" value="阶段三: ZMQ 侧通道握手 + Agent 注册" style="rounded=1;fillColor=#E1BEE7;strokeColor=#8E24AA;fontSize=12;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="60" y="420" width="1140" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="c1" style="endArrow=classic;html=1;strokeColor=#8E24AA;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="450" as="sourcePoint" /><mxPoint x="471" y="450" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="c1L" value="8. D Worker → ZMQ: 发送 GET_META_MSG 请求" style="text;html=1;fontSize=10;fillColor=#E1BEE7;fontColor=#8E24AA;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="600" y="443" width="280" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="c2" style="endArrow=classic;html=1;strokeColor=#8E24AA;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="475" y="470" as="sourcePoint" /><mxPoint x="966" y="470" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="c2L" value="9. ZMQ → D: 返回 NixlHandshakePayload (含 NixlAgentMetadata)" style="text;html=1;fontSize=10;fillColor=#E1BEE7;fontColor=#8E24AA;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="600" y="471" width="360" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="c3" style="endArrow=classic;html=1;strokeColor=#8E24AA;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="490" as="sourcePoint" /><mxPoint x="970" y="520" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="c3L" value="10. 两阶段解码: compat_hash 校验 → 解码 NixlAgentMetadata" style="text;html=1;fontSize=10;fillColor=#E1BEE7;fontColor=#8E24AA;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="980" y="513" width="350" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="c4" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="535" as="sourcePoint" /><mxPoint x="621" y="535" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="c4L" value="11. NIXL: add_remote_agent(metadata) + 计算 TPMapping" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#BF360C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="700" y="536" width="320" height="24" as="geometry" /></mxCell>
+
+        
+        <mxCell id="ph4" value="阶段四: RDMA 数据面传输 (Pull 模式)" style="rounded=1;fillColor=#FFCC80;strokeColor=#E65100;fontSize=12;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="60" y="565" width="1140" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="d1" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="595" as="sourcePoint" /><mxPoint x="970" y="625" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="d1L" value="12. _compute_desc_ids: 逻辑 block_id → NIXL descriptor index" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#BF360C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="980" y="603" width="350" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="d2" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=3;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="640" as="sourcePoint" /><mxPoint x="621" y="640" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="d2L" value="13. make_prepped_xfer(READ) + transfer() → 异步 RDMA READ" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#BF360C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="700" y="625" width="330" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="d3" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=3;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="625" y="660" as="sourcePoint" /><mxPoint x="306" y="660" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="d3L" value="14. NIXL 从 P GPU 读取 KV blocks → D GPU (零拷贝)" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#BF360C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="400" y="645" width="330" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="d4" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="680" as="sourcePoint" /><mxPoint x="970" y="710" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="d4L" value="15. check_xfer_state(handle): DONE → 传输完成" style="text;html=1;fontSize=10;fillColor=#FFCC80;fontColor=#BF360C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="980" y="688" width="260" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="d5" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="725" as="sourcePoint" /><mxPoint x="786" y="725" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="d5L" value="16. get_finished() → finished_recving → Scheduler 记录" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#388E3C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="850" y="710" width="330" height="24" as="geometry" /></mxCell>
+
+        
+        <mxCell id="ph5" value="阶段五: 提升请求 + 心跳续租" style="rounded=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=12;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1"><mxGeometry x="60" y="760" width="1140" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="e1" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="790" y="790" as="sourcePoint" /><mxPoint x="790" y="820" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="e1L" value="17. _try_promote() → cache_blocks() → WAITING → RUNNING" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#388E3C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="140" y="798" width="330" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="e2" style="endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;dashed=1;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="970" y="850" as="sourcePoint" /><mxPoint x="306" y="850" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="e2L" value="18. 心跳: D Worker send_notif(HB:req_ids) → P Worker, 每 5s 续租" style="text;html=1;fontSize=10;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="450" y="835" width="380" height="24" as="geometry" /></mxCell>
+
+        <mxCell id="e3" style="endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;dashed=1;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="310" y="875" as="sourcePoint" /><mxPoint x="310" y="905" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="e3L" value="19. P Worker: _handle_heartbeat() → 续租 _reqs_to_send" style="text;html=1;fontSize=10;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="320" y="883" width="310" height="24" as="geometry" /></mxCell>
+
+        
+        <mxCell id="sum" value="" style="rounded=1;fillColor=#FFF9C4;strokeColor=#F9A825;strokeWidth=2;" parent="1" vertex="1"><mxGeometry x="60" y="940" width="1140" height="54" as="geometry" /></mxCell>
+        <mxCell id="sumL" value="P 侧: request_finished→kv_transfer_params → API→D → handshake(ZMQ)→RDMA READ→finished_recving→_try_promote→Decode → 心跳续租" style="text;html=1;fontSize=11;fillColor=none;fontColor=#333;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1"><mxGeometry x="80" y="950" width="1100" height="25" as="geometry" /></mxCell>
+
+      </root></mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,181 @@
+<mxfile host="65bd71144e">
+    <diagram name="PagedAttention" id="d">
+        <mxGraphModel dx="1180" dy="916" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="950" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="vLLM PagedAttention - KV Cache 分页管理机制" style="text;html=1;verticalAlign=middle;fontSize=22;fontColor=#1a237e;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="10" width="900" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="phys" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="130" width="480" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="pt" value="GPU 显存 - 物理 KV Blocks (Non-contiguous)" style="text;html=1;verticalAlign=middle;fontSize=14;fontColor=#1565C0;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="135" width="420" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb0" value="Block 0&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="185" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb1" value="Block 1&#xa;KV(16t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#1565C0;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="185" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb2" value="Block 2&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="185" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb3" value="Block 3&#xa;KV(16t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#1565C0;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="185" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb4" value="Block 4&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="245" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb5" value="Block 5&#xa;KV(16t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#1565C0;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="245" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb6" value="Block 6&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="245" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb7" value="Block 7&#xa;KV(16t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#1565C0;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="245" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb8" value="Block 8&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="310" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pb9" value="Block 9&#xa;Free" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="310" width="80" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="pl1" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#1565C0;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="385" width="20" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pl1t" value="已分配 (req_A)" style="text;html=1;verticalAlign=middle;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="315" y="385" width="100" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pl2" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="385" width="20" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pl2t" value="Free Block" style="text;html=1;verticalAlign=middle;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="385" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="pn" value="物理地址非连续, 通过 Block Table 映射为逻辑连续" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#616161;align=left;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="420" width="420" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="btb" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="130" width="280" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="btt" value="Block Table (per request)" style="text;html=1;verticalAlign=middle;fontSize=14;fontColor=#E65100;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="135" width="220" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="bt0" value="Logical 0 -&gt; Physical 1" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=10;align=center;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="180" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="bt1" value="Logical 1 -&gt; Physical 3" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=10;align=center;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="225" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="bt2" value="Logical 2 -&gt; Physical 5" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=10;align=center;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="270" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="bt3" value="Logical 3 -&gt; Physical 7" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=10;align=center;fontColor=#E65100;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="315" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="btn" value="逻辑连续, 物理分散&#xa;类似 OS 虚拟内存页表" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#E65100;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="375" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lvb" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="130" width="380" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="lvt" value="请求视角 - 逻辑连续 KV Cache" style="text;html=1;verticalAlign=middle;fontSize=14;fontColor=#2E7D32;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="135" width="320" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="lv0" value="Token 0-15  KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="180" width="320" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="lv1" value="Token 16-31  KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="225" width="320" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="lv2" value="Token 32-47  KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="270" width="320" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="lv3" value="Token 48-63  KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;align=center;fontColor=#1B5E20;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="315" width="320" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="lvn" value="模型视角: KV Cache 是连续的大数组&#xa;物理实现用 Block Table 映射到 GPU 页" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#2E7D32;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1110" y="375" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="kfb" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="550" width="1200" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="kft" value="PagedAttention 核心特性" style="text;html=1;verticalAlign=middle;fontSize=16;fontColor=#F57F00;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="555" width="300" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="kf0" value="&lt;b&gt;1. 零内存浪费: Block粒度分配, 无碎片&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="595" width="270" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="kf1" value="&lt;b&gt;2. 灵活共享: 多请求共享prefix, Copy-on-Write&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="595" width="270" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="kf2" value="&lt;b&gt;3. 动态扩缩: Decode仅1Block, Prefill按需&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="595" width="270" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="kf3" value="4. 高效抢占: 释放BlockTable即释放显存" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="595" width="270" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="kf5" value="&lt;b&gt;5. OS虚拟内存类比: Block=物理页框, BlockTable=页表, GPU显存=物理内存&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="680" width="800" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="cmpb" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="770" width="1200" height="145" as="geometry"/>
+                </mxCell>
+                <mxCell id="cmpt" value="对比传统方案" style="text;html=1;verticalAlign=middle;fontSize=16;fontColor=#333;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="775" width="200" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="ch0" value="" style="text;html=1;verticalAlign=middle;fontSize=12;fontColor=#00014D;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="805" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="ch1" value="传统预分配max_len" style="text;html=1;verticalAlign=middle;fontSize=12;fontColor=#C62828;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="805" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="ch2" value="PagedAttention" style="text;html=1;verticalAlign=middle;fontSize=12;fontColor=#2E7D32;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="805" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="ch3" value="提升" style="text;html=1;verticalAlign=middle;fontSize=12;fontColor=#1565C0;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="805" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr0l" value="显存浪费率" style="text;html=1;verticalAlign=middle;fontSize=11;color=#333;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="830" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr0v1" value="~80%" style="text;html=1;verticalAlign=middle;fontSize=11;color=#C62828;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="830" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr0v2" value="~4%" style="text;html=1;verticalAlign=middle;fontSize=11;color=#2E7D32;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="830" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr0v3" value="20x" style="text;html=1;verticalAlign=middle;fontSize=11;color=#1565C0;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="830" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr1l" value="并发请求数" style="text;html=1;verticalAlign=middle;fontSize=11;color=#333;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="854" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr1v1" value="受显存限制" style="text;html=1;verticalAlign=middle;fontSize=11;color=#C62828;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="854" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr1v2" value="4x 更多" style="text;html=1;verticalAlign=middle;fontSize=11;color=#2E7D32;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="854" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr1v3" value="4x" style="text;html=1;verticalAlign=middle;fontSize=11;color=#1565C0;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="854" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr2l" value="Prefix 共享" style="text;html=1;verticalAlign=middle;fontSize=11;color=#333;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="878" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr2v1" value="不支持" style="text;html=1;verticalAlign=middle;fontSize=11;color=#C62828;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="878" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr2v2" value="Copy-on-Write" style="text;html=1;verticalAlign=middle;fontSize=11;color=#2E7D32;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="878" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr2v3" value="原生支持" style="text;html=1;verticalAlign=middle;fontSize=11;color=#1565C0;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1120" y="878" width="200" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

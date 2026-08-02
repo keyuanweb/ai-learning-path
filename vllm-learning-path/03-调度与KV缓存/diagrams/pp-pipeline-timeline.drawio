@@ -1,0 +1,422 @@
+<mxfile host="65bd71144e">
+    <diagram name="PP Pipeline Timeline" id="pp">
+        <mxGraphModel dx="1180" dy="916" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1150" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="PD 分离 — Prefill PP 流水线 GPU 时序详图" style="text;html=1;verticalAlign=middle;fontSize=22;fontColor=#1a237e;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="8" width="900" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="cfg" value="PP=4 | MicroBatch=4 | chunk=1024t | Compute=1 unit, P2P=0.3 unit, KV Save=0.2 unit" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#616161;align=center;fillColor=#FAFAFA;strokeColor=#BDBDBD;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="42" width="1100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="TL" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FAFAFA;strokeColor=#9E9E9E;strokeWidth=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="75" width="1920" height="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="T0" value="T0" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T2" value="T2" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T4" value="T4" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T6" value="T6" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T8" value="T8" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T10" value="T10" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T12" value="T12" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T14" value="T14" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1420" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T16" value="T16" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1600" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="T18" value="T18" style="text;html=1;verticalAlign=middle;fontSize=8;fontColor=#999;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1780" y="85" width="80" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="ST0" value="GPU0&lt;br&gt;Stage0&lt;br&gt;L0-7" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="120" width="95" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="ST1" value="GPU1&lt;br&gt;Stage1&lt;br&gt;L8-15" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=10;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="235" width="95" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="ST2" value="GPU2&lt;br&gt;Stage2&lt;br&gt;L16-23" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#64B5F6;strokeColor=#1565C0;fontSize=10;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="350" width="95" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="ST3" value="GPU3&lt;br&gt;Stage3&lt;br&gt;L24-31" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#42A5F5;strokeColor=#1565C0;fontSize=10;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="465" width="95" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0c0" value="MB0 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="125" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0s0" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="235" y="125" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0k0" value="Save KV0" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="158" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0c1" value="MB1 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="125" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0s1" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="505" y="125" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0k1" value="Save KV1" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="158" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0c2" value="MB2 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="125" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0s2" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="775" y="125" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0k2" value="Save KV2" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="158" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0c3" value="MB3 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="125" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G0s3" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1045" y="125" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1r0" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="245" y="240" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1c0" value="MB0 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="268" y="240" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1s0" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="343" y="240" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1k0" value="Save KV0" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="268" y="273" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1r1" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="515" y="240" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1c1" value="MB1 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="538" y="240" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1s1" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="613" y="240" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1k1" value="Save KV1" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="538" y="273" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1r2" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="785" y="240" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1c2" value="MB2 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="808" y="240" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1s2" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="883" y="240" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1k2" value="Save KV2" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="808" y="273" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1r3" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1055" y="240" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1c3" value="MB3 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1078" y="240" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G1s3" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1153" y="240" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2r0" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="335" y="355" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2c0" value="MB0 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="358" y="355" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2s0" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="433" y="355" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2k0" value="Save KV0" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="358" y="388" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2r1" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="605" y="355" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2c1" value="MB1 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="628" y="355" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2s1" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="703" y="355" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2k1" value="Save KV1" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="628" y="388" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2r2" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="875" y="355" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2c2" value="MB2 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="898" y="355" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G2s2" value="Send" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="973" y="355" width="22" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3r0" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="470" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3c0" value="MB0 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="448" y="470" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3k0" value="Save KV0" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="448" y="503" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3r1" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="695" y="470" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3c1" value="MB1 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="718" y="470" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3k1" value="Save KV1" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=8;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="718" y="503" width="45" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3r2" value="Recv" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=7;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="965" y="470" width="20" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="G3c2" value="MB2 Compute" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="988" y="470" width="70" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2p0" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="170" y="167"/>
+                            <mxPoint x="170" y="233"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p2p0L" value="P2P激活传输" style="text;html=1;verticalAlign=middle;fontSize=8;fillColor=#FFF8E1;fontColor=#F57F17;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="175" y="188" width="60" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2p1" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="170" y="282"/>
+                            <mxPoint x="170" y="348"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p2p1L" value="P2P激活传输" style="text;html=1;verticalAlign=middle;fontSize=8;fillColor=#FFF8E1;fontColor=#F57F17;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="175" y="303" width="60" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2p2" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="170" y="397"/>
+                            <mxPoint x="170" y="463"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p2p2L" value="P2P激活传输" style="text;html=1;verticalAlign=middle;fontSize=8;fillColor=#FFF8E1;fontColor=#F57F17;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="175" y="418" width="60" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="warm" value="Warmup&lt;br&gt;T0-T3" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=9;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="555" width="65" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="stdy" value="Steady State&lt;br&gt;T3-T9" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="555" width="85" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="cool" value="Cool-down&lt;br&gt;T9-T13" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=9;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="990" y="555" width="75" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="util" value="GPU利用率: Warmup 25-75% | Steady ~90% | Cool-down 75-25% | KV Save占用~15%额外时间" style="text;html=1;verticalAlign=middle;fontSize=10;fillColor=#C8E6C9;fontColor=#2E7D32;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="590" width="1100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="KVs" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFF9C4;strokeColor=#F9A825;strokeWidth=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="625" width="1920" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="KVt" value="KV 传输 — 每个 PP Stage 独立通过 RDMA 传到 D 节点对应 Stage" style="text;html=1;verticalAlign=middle;fontSize=14;fontColor=#F57F00;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="630" width="900" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="KVs0" value="S0 KV" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#333;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="655" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kp0" value="P: save_kv_layer()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="653" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kn0" value="RDMA READ" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="653" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kd0" value="D: wait_for_layer_load()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#388E3C;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="653" width="160" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ka0" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="663"/>
+                            <mxPoint x="336" y="663"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Kb0" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="663"/>
+                            <mxPoint x="446" y="663"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="KVs1" value="S1 KV" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#333;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="695" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kp1" value="P: save_kv_layer()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="693" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kn1" value="RDMA READ" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="693" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kd1" value="D: wait_for_layer_load()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#388E3C;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="693" width="160" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ka1" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="703"/>
+                            <mxPoint x="336" y="703"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Kb1" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="703"/>
+                            <mxPoint x="446" y="703"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="KVs2" value="S2 KV" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#333;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="735" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kp2" value="P: save_kv_layer()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="733" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kn2" value="RDMA READ" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="733" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kd2" value="D: wait_for_layer_load()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#388E3C;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="733" width="160" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ka2" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="743"/>
+                            <mxPoint x="336" y="743"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Kb2" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="743"/>
+                            <mxPoint x="446" y="743"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="KVs3" value="S3 KV" style="text;html=1;verticalAlign=middle;fontSize=10;fontColor=#333;fontStyle=1;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="775" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kp3" value="P: save_kv_layer()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="773" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kn3" value="RDMA READ" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=9;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="773" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Kd3" value="D: wait_for_layer_load()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#388E3C;strokeColor=#333;fontSize=9;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="773" width="160" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ka3" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="783"/>
+                            <mxPoint x="336" y="783"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="Kb3" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="783"/>
+                            <mxPoint x="446" y="783"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="KVn" value="关键: P侧Stage_i在Attention后立即save_kv_layer(); RDMA异步传输与下一MB计算重叠; D侧在Forward前wait_for_layer_load()" style="text;html=1;verticalAlign=middle;fontSize=11;fillColor=#FFF9C4;fontColor=#F57F00;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="810" width="1400" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="LG" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FAFAFA;strokeColor=#BDBDBD;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1420" y="75" width="550" height="525" as="geometry"/>
+                </mxCell>
+                <mxCell id="L0" value="深蓝 = GPU Compute (Forward)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#1976D2;strokeColor=#333;fontSize=10;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="130" width="300" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L1" value="橙色 = P2P Send/Recv (激活传输)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F57F17;strokeColor=#333;fontSize=10;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="164" width="300" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L2" value="浅橙 = KV Save/Load/ RDMA" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCC80;strokeColor=#333;fontSize=10;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="198" width="300" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L3" value="绿色 = D侧 KV 加载" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#388E3C;strokeColor=#333;fontSize=10;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="232" width="300" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L4" value="红色 = 气泡 (GPU空闲等待)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#FFCDD2;strokeColor=#333;fontSize=10;align=center;fontColor=#333;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="266" width="300" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N0l" value="粗估单次Forward耗时" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="320" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N0v" value="~10-30ms (chunk=1024t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="320" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N1l" value="P2P传输耗时" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="354" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N1v" value="~0.1-1ms (NVLink 900GB/s)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="354" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N2l" value="KV Save耗时" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="388" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N2v" value="~0.5-2ms (写HBM)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="388" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N3l" value="RDMA传输耗时" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E8F5E9;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="422" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N3v" value="~0.5-5ms (IB 200GB/s)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E8F5E9;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="422" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N4l" value="总Prefill延迟" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F3E5F5;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="456" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N4v" value="~PP×(Forward+P2P+KV)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F3E5F5;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="456" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N5l" value="稳态吞吐" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F3E5F5;strokeColor=#BDBDBD;fontSize=10;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="490" width="240" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="N5v" value="~PP×单Stage吞吐" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#F3E5F5;strokeColor=#BDBDBD;fontSize=10;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1680" y="490" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="SUM" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;verticalAlign=middle;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="865" width="1920" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="SUMt" value="数据流: Input Tokenized → GPU0(L0-7)→P2P→GPU1(L8-15)→P2P→GPU2(L16-23)→P2P→GPU3(L24-31) → KV(每Stage独立输出)→RDMA→D节点各Stage加载" style="text;html=1;verticalAlign=middle;fontSize=12;fontColor=#1565C0;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="870" width="1820" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

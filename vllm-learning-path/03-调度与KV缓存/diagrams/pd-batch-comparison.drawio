@@ -1,0 +1,240 @@
+<mxfile host="65bd71144e">
+    <diagram name="PD Batch" id="pd-batch">
+        <mxGraphModel dx="1254" dy="974" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="PD 分离组 Batch 全景图" style="text;html=1;fontSize=24;fontColor=#1a237e;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="10" width="500" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pb" value="" style="rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="60" width="500" height="614" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pt" value="P 侧 Batch: 算力优先" style="text;html=1;fontSize=18;fontColor=#1565C0;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="65" width="300" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="PSb" value="" style="rounded=1;fillColor=#BBDEFB;strokeColor=#1976D2;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="110" width="460" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="PSt" value="P 调度流程" style="text;html=1;fontSize=14;fontColor=#1565C0;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="115" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="PWQ" value="Waiting Queue&lt;br&gt;req_X(4000t)&lt;br&gt;req_Y(3000t)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="145" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa1" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;" parent="1" source="PWQ" target="PSCH" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=1;curved=0;strokeWidth=2;strokeColor=#1565C0;" parent="1" source="PSCH" target="PWRK" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="380" y="182" as="sourcePoint"/>
+                        <mxPoint x="130" y="234" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="450" y="173"/>
+                            <mxPoint x="450" y="230"/>
+                            <mxPoint x="130" y="230"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PSCH" value="P-Scheduler&lt;br&gt;查 prefix cache&lt;br&gt;allocate_slots()&lt;br&gt;(do_remote_decode 一样处理)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="140" width="150" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="PWRK" value="GPU Forward&lt;br&gt;Prefill chunk&lt;br&gt;(大块 token)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="295" width="120" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="PBV" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="260" width="260" height="125" as="geometry"/>
+                </mxCell>
+                <mxCell id="PBVt" value="典型 Batch" style="text;html=1;fontSize=11;fontColor=#333;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="255" y="263" width="80" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="PBV1" value="req_X: 2048t Prefill" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#1565C0;fontColor=#FFFFFF;fontSize=10;verticalAlign=middle;align=left;spacingLeft=6;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="288" width="240" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="PBV2" value="req_Y: 2048t Prefill" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#1976D2;fontColor=#FFFFFF;fontSize=10;verticalAlign=middle;align=left;spacingLeft=6;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="316" width="240" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="PBV3" value="只用掉 4096/8192 tokens (50%) · 仅 2 个请求" style="text;html=1;fontSize=9;fillColor=none;fontColor=#1565C0;fontStyle=1;verticalAlign=middle;align=center;overflow=fill;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="356" width="240" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pdone" value="Prefill 完成后&lt;br&gt;request_finished()&lt;br&gt;delay_free_blocks = True&lt;br&gt;生成 kv_transfer_params" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="448" width="460" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="PKVb" value="KV Blocks 保留在 GPU&lt;br&gt;等待 D 来 RDMA 读取 (30s 租约)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="560" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="Db" value="" style="rounded=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="60" width="550" height="614" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dt" value="D 侧 Batch: 并发优先" style="text;html=1;fontSize=18;fontColor=#E65100;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="725" y="65" width="300" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSb" value="" style="rounded=1;fillColor=#FFF8E1;strokeColor=#F57F17;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="110" width="510" height="314" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSt" value="D 调度流程" style="text;html=1;fontSize=14;fontColor=#E65100;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="635" y="115" width="100" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="DWQ" value="Waiting Queue&lt;br&gt;req_X (远程KV)&lt;br&gt;req_A (本地)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="145" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da1" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" source="DWQ" target="DSCH" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSCH" value="D-Scheduler&lt;br&gt;get_num_new_matched_tokens()&lt;br&gt;识别远程 Prefill" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="830" y="140" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DD1T" value="do_remote_prefill?" style="text;html=1;fontSize=10;fillColor=#FFF3E0;fontColor=#E65100;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="785" y="216" width="130" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da1r" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.3;exitY=1;entryX=0.5;entryY=0;" parent="1" source="DSCH" target="DASYNC" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="210"/>
+                            <mxPoint x="780" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DASYNC" value="远程 Prefill 路径&lt;br&gt;allocate_slots(外部tokens)&lt;br&gt;不消耗 token_budget!&lt;br&gt;WAITING_FOR_REMOTE_KVS" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="240" width="220" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="DKVL" value="KV 异步加载&lt;br&gt;start_load_kv()&lt;br&gt;RDMA READ" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="340" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da2" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" source="DASYNC" target="DKVL" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="700" y="320"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DPROM" value="加载完成&lt;br&gt;finished_recving&lt;br&gt;_try_promote()&lt;br&gt;WAITING → RUNNING" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="330" width="170" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da3" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;" parent="1" source="DKVL" target="DPROM" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da1n" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.7;exitY=1;entryX=0.5;entryY=0;rounded=0;curved=1;" parent="1" source="DSCH" target="DNORM" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1020" y="210"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DNORM" value="本地请求&lt;br&gt;正常 allocate&lt;br&gt;→ RUNNING" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="240" width="90" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DBV" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;" parent="1" vertex="1">
+                    <mxGeometry x="625" y="480" width="470" height="94" as="geometry"/>
+                </mxCell>
+                <mxCell id="DBVt" value="典型 Batch (Step D2)" style="text;html=1;fontSize=11;fontColor=#333;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="480" width="160" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="DBV1" value="req_A:1t  req_B:1t  req_C:1t  req_D:1t  req_E:1t  req_F:1t  req_G:1t  req_H:1t" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E65100;fontColor=#FFFFFF;fontSize=10;verticalAlign=middle;align=center;overflow=fill;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="511" width="440" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="DBV2" value="只用掉 8/512 tokens (1.5%) · 8 个请求并发 · token_budget 几乎用不完" style="text;html=1;fontSize=9;fillColor=none;fontColor=#E65100;fontStyle=1;verticalAlign=middle;align=center;overflow=fill;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="539" width="440" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSKW" value="skipped_waiting&lt;br&gt;req_X: WAITING_FOR_REMOTE_KVS&lt;br&gt;(KV 加载中, 不占 budget)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="625" y="590" width="255" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da4" style="endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="DSKW" target="DASYNC" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da4T" value="KV 加载完成后提升" style="text;html=1;fontSize=9;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="675" y="440" width="145" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="PWRK" target="Pdone" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="Pdone" target="PKVb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da3b" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="DPROM" target="DBV" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="X1T" value="kv_transfer_params 经 API Server 路由到 D" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#2E7D32;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="145" width="120" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="SCb" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#BDBDBD;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="700" width="1100" height="214" as="geometry"/>
+                </mxCell>
+                <mxCell id="SCt" value="PD 分离请求状态机" style="text;html=1;fontSize=16;fontColor=#333;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="705" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1" value="WAITING&lt;br&gt;到达 P 侧入队" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="755" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE1" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" source="S1" target="S2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2" value="P-RUNNING&lt;br&gt;Prefill chunk" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="755" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE2" style="endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;" parent="1" source="S2" target="S3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE2T" value="Prefill 完成" style="text;html=1;fontSize=9;fillColor=#E3F2FD;fontColor=#2E7D32;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="355" y="725" width="70" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3" value="P 完成&lt;br&gt;blocks 保留&lt;br&gt;生成 params" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="752" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE3" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=2;" parent="1" source="S3" target="S4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE3T" value="API Server 转发" style="text;html=1;fontSize=9;fillColor=#FFF9C4;fontColor=#F9A825;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="535" y="725" width="90" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4" value="WAITING_FOR&lt;br&gt;_REMOTE_KVS&lt;br&gt;blocks 已分配&lt;br&gt;不占 token_budget" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="745" width="170" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE4" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S4" target="S5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE4T" value="KV 加载完成" style="text;html=1;fontSize=9;fillColor=#FFCC80;fontColor=#388E3C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="775" y="726" width="80" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5" value="D-RUNNING&lt;br&gt;每步 1t Decode" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="755" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="SE5" style="endArrow=classic;html=1;strokeColor=#616161;strokeWidth=2;" parent="1" source="S5" target="S6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S6" value="FINISHED&lt;br&gt;返回给用户" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="990" y="758" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="SEloop" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1;dashed=1;rounded=0;curved=1;" parent="1" source="S2" target="S2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="210" y="770"/>
+                            <mxPoint x="210" y="730"/>
+                            <mxPoint x="260" y="710"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="SEloopT" value="Chunked Prefill (还未完成)" style="text;html=1;fontSize=9;fillColor=#E3F2FD;fontColor=#1565C0;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="711" width="160" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="KI" value="" style="rounded=1;fillColor=#FFF9C4;strokeColor=#F9A825;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="845" width="1050" height="59" as="geometry"/>
+                </mxCell>
+                <mxCell id="KIt" value="关键洞察:" style="text;html=1;fontSize=14;fillColor=none;fontColor=#F57F00;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="855" width="90" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="KI1" value="P 侧: token_budget 是瓶颈, 2 个 Prefill chunk 就能吃满&lt;br&gt;D 侧: token_budget 几乎用不完, 8+ 个 Decode 请求同时运行&lt;br&gt;WAITING_FOR_REMOTE_KVS 是 PD 分离核心: 分配 blocks 但不消耗 token_budget" style="text;html=1;fontSize=12;fillColor=none;fontColor=#333;verticalAlign=middle;align=left;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="848" width="910" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.008;entryY=0.617;entryDx=0;entryDy=0;entryPerimeter=0;rounded=0;curved=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="Pdone" target="DWQ" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="560" y="474"/>
+                            <mxPoint x="560" y="182"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,242 @@
+<mxfile host="65bd71144e">
+    <diagram name="KV Transfer" id="kv">
+        <mxGraphModel dx="3343" dy="2597" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1150" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="vLLM KV 传输架构框架图 (PD 分离)" style="text;html=1;fontSize=24;fontColor=#1a237e;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="10" width="700" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="70" width="580" height="774" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pt" value="Prefill 节点 (kv_producer)" style="text;html=1;fontSize=18;fontColor=#1565C0;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="75" width="340" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="PSb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#BBDEFB;strokeColor=#1976D2;dashed=1;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="120" width="540" height="169" as="geometry"/>
+                </mxCell>
+                <mxCell id="PSt" value="Scheduler 进程" style="text;html=1;fontSize=14;fontColor=#1565C0;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="125" width="130" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="PS1" value="P-Scheduler&lt;br&gt;schedule()&lt;br&gt;update_from_output()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="170" width="150" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="PKS" value="KVConnector (调度侧)&lt;br&gt;NixlPullConnectorScheduler&lt;br&gt;request_finished() 标记可传输&lt;br&gt;build_connector_meta() 打包元数据&lt;br&gt;update_connector_output() 接收反馈" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="135" width="290" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="PT2" value="_reqs_need_send  _reqs_need_save  _reqs_in_batch  _heartbeat_by_engine" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="252" width="380" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;" parent="1" source="PS1" target="PKS" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="PWb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F3E5F5;strokeColor=#7B1FA2;dashed=1;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="330" width="540" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="PWt" value="Worker 进程 (GPU)" style="text;html=1;fontSize=14;fontColor=#7B1FA2;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="335" width="170" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="PW1" value="P-Worker&lt;br&gt;ModelRunner&lt;br&gt;KVConnectorMixin" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="410" width="150" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="PKW" value="KVConnector (Worker 侧)&lt;br&gt;NixlPullConnectorWorker&lt;br&gt;register_kv_caches()&lt;br&gt;start_load_kv()&lt;br&gt;wait_for_save()&lt;br&gt;get_finished()&lt;br&gt;build_connector_worker_meta()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="382" width="300" height="108" as="geometry"/>
+                </mxCell>
+                <mxCell id="PNX" value="NIXL Wrapper&lt;br&gt;register_memory() 注册显存&lt;br&gt;add_remote_agent() 添加远程代理&lt;br&gt;make_prepped_xfer() 准备传输&lt;br&gt;transfer() 发起异步传输&lt;br&gt;check_xfer_state() 检查完成&lt;br&gt;send_notif() 发送通知&lt;br&gt;get_new_notifs() 接收通知" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="514" width="230" height="122" as="geometry"/>
+                </mxCell>
+                <mxCell id="PKV" value="KV Cache [GPU]&lt;br&gt;HND 布局&lt;br&gt;block_size=16/64" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="549" width="200" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;" parent="1" source="PW1" target="PKW" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1;dashed=1;" parent="1" source="PKW" target="PNX" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#616161;strokeWidth=1;dashed=1;" parent="1" source="PNX" target="PKV" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pa5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="PS1" target="PW1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pmd" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="PKS" target="PKW" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="PmdT" value="NixlConnectorMetadata" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="311" width="180" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="Pmu" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=1;entryY=1;" parent="1" source="PKW" target="PKS" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="PmuT" value="KVConnectorOutput" style="text;html=1;fontSize=9;fillColor=#F3E5F5;fontColor=#7B1FA2;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="300" width="140" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="PSD" value="ZMQ 侧通道监听&lt;br&gt;提供 NixlAgentMetadata&lt;br&gt;两阶段解码 + 兼容性哈希校验&lt;br&gt;时钟同步时间戳" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E1BEE7;strokeColor=#8E24AA;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="682" width="250" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="PHB" value="心跳处理&lt;br&gt;接收 HB:req1,req2&lt;br&gt;续租 KV blocks" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="649" width="200" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="PEV" value="租约过期检查&lt;br&gt;自动释放过期 KV blocks&lt;br&gt;清理失活引擎 (TTL=3600s)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="770" width="500" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="Db" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="70" width="640" height="774" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dt" value="Decode 节点 (kv_consumer)" style="text;html=1;fontSize=18;fontColor=#E65100;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="75" width="340" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FFF8E1;strokeColor=#F57F17;dashed=1;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="120" width="590" height="189" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSt" value="Scheduler 进程" style="text;html=1;fontSize=14;fontColor=#E65100;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="125" width="130" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="DS1" value="D-Scheduler&lt;br&gt;schedule()&lt;br&gt;WAITING_FOR_REMOTE_KVS&lt;br&gt;_try_promote() 提升" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="186" width="180" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="DKS" value="KVConnector (调度侧)&lt;br&gt;NixlPullConnectorScheduler&lt;br&gt;get_num_new_matched_tokens()&lt;br&gt;update_state_after_alloc()&lt;br&gt;build_connector_meta()&lt;br&gt;on_new_request()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1210" y="128" width="330" height="94" as="geometry"/>
+                </mxCell>
+                <mxCell id="DT2" value="_reqs_need_recv  finished_recving_kv_req_ids  _heartbeat_req_engine" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="266" width="400" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;" parent="1" source="DS1" target="DKS" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DWb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F3E5F5;strokeColor=#7B1FA2;dashed=1;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="340" width="590" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="DWt" value="Worker 进程 (GPU)" style="text;html=1;fontSize=14;fontColor=#7B1FA2;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="345" width="170" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="DKW" value="KVConnector (Worker 侧)&lt;br&gt;NixlPullConnectorWorker&lt;br&gt;start_load_kv() 发起 RDMA 读取&lt;br&gt;_background_nixl_handshake() 后台握手&lt;br&gt;_read_blocks_for_req() 按请求读取&lt;br&gt;_get_new_notifs() 检查完成&lt;br&gt;_send_heartbeats() 发送心跳&lt;br&gt;_handle_failed_transfer() 错误处理" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1220" y="375" width="310" height="122" as="geometry"/>
+                </mxCell>
+                <mxCell id="DNX" value="NIXL Wrapper&lt;br&gt;make_prepped_xfer(READ) 准备读取&lt;br&gt;transfer() 发起异步传输&lt;br&gt;check_xfer_state() 检查完成&lt;br&gt;send_notif() 发送心跳+注册&lt;br&gt;get_new_notifs() 接收通知" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;spacingTop=6;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="990" y="540" width="250" height="94" as="geometry"/>
+                </mxCell>
+                <mxCell id="DKV" value="KV Cache [GPU]&lt;br&gt;HND 布局&lt;br&gt;block_size=16/64" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1360" y="549" width="180" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;" parent="1" source="DW1" target="DKW" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=1;dashed=1;" parent="1" source="DKW" target="DNX" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#616161;strokeWidth=1;dashed=1;" parent="1" source="DNX" target="DKV" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Da5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=1.5;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="DS1" target="DW1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dmd" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="DKS" target="DKW" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Dmu" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=1;entryY=1;" parent="1" source="DmdT" target="DKS" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DmuT" value="KVConnectorOutput" style="text;html=1;fontSize=9;fillColor=#F3E5F5;fontColor=#7B1FA2;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="311" width="140" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSD" value="ZMQ 侧通道客户端&lt;br&gt;发送 GET_META_MSG 请求&lt;br&gt;接收 NixlHandshakePayload&lt;br&gt;计算时钟偏移量" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E1BEE7;strokeColor=#8E24AA;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="682" width="250" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="DHB" value="后台握手&lt;br&gt;ThreadPoolExecutor&lt;br&gt;完成后放入 _ready_requests" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCEDC8;strokeColor=#558B2F;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1260" y="682" width="230" height="68" as="geometry"/>
+                </mxCell>
+                <mxCell id="DER" value="错误处理&lt;br&gt;_handle_failed_transfer() 标记失败块&lt;br&gt;recompute: 本地重算 | fail: 直接终止" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="770" width="500" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="E1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="PKS" target="DKS" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="E1T" value="通道1: 元数据流转 (经 API Server)&lt;br&gt;P 生成 kv_transfer_params&lt;br&gt;do_remote_prefill / remote_block_ids / ...&lt;br&gt;API Server 注入新请求并路由到 D" style="text;html=1;fontSize=10;fillColor=#BBDEFB;strokeColor=#1565C0;fontColor=#0D47A1;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="181.5" width="240" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="E2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=3;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="PKV" target="DKV" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="E2T" value="通道2: RDMA 数据面 (GPU-Direct)&lt;br&gt;NIXL READ (Pull) / WRITE (Push)&lt;br&gt;零拷贝, GPU 显存直传, 不经 CPU" style="text;html=1;fontSize=10;fillColor=#FFCC80;strokeColor=#E65100;fontColor=#BF360C;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="257" width="240" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="E3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#8E24AA;strokeWidth=2;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="PSD" target="DSD" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="E3T" value="通道3: ZMQ 侧通道&lt;br&gt;Agent 握手: 交换 NixlAgentMetadata&lt;br&gt;compatibility_hash 兼容性校验&lt;br&gt;时钟同步 (perf_counter 时间戳)" style="text;html=1;fontSize=10;fillColor=#E1BEE7;strokeColor=#8E24AA;fontColor=#6A1B9A;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="730" width="240" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="E4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" parent="1" source="DW1" target="PHB" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="E4T" value="心跳: D 发往 P&lt;br&gt;send_notif(HB:req_ids)&lt;br&gt;每 5s 续租 KV block" style="text;html=1;fontSize=9;fillColor=#FFCDD2;strokeColor=#C62828;fontColor=#B71C1C;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="685" y="321" width="180" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="Lb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#BDBDBD;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="996" width="290" height="174" as="geometry"/>
+                </mxCell>
+                <mxCell id="Lt" value="Pull 与 Push 模式对比" style="text;html=1;fontSize=16;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="1004" width="200" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="L1" value="Pull (READ): D 通过侧通道获取 P 元数据, 发起 NIXL READ, 从 P GPU 读到 D GPU" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1041" width="260" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L2" value="Push (WRITE): D 发 PUSH_REG 通知 P, P 后台匹配, 发起 WRITE 推送 KV 到 D GPU" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1081" width="260" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="L3" value="特殊场景: MLA/Mamba/异构TP/Block大小不匹配" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="55" y="1119" width="260" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSb2" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#BDBDBD;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="870" width="590" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSt2" value="核心数据结构" style="text;html=1;fontSize=14;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="875" width="150" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSa" value="NixlAgentMetadata: engine_id, agent_metadata, kv_caches_base_addr, num_blocks, block_lens, kv_cache_layout, block_size" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=9;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="908" width="550" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="DSc" value="NixlConnectorMetadata: reqs_to_recv, reqs_to_save, reqs_to_send, reqs_in_batch, heartbeat_by_engine, push_registrations, push_finished_blocks" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="938" width="550" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="NVb" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#BDBDBD;spacingTop=6;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="870" width="540" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="NVt" value="NIXL 协议版本演进 (v1-v5)" style="text;html=1;fontSize=14;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="875" width="260" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="NV1" value="v1: 兼容性检查 | v2: +remote_request_id | v3: +physical_blocks_per_logical | v4: +心跳续租 | v5: +过期时间戳+时钟同步" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=9;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="908" width="500" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="NV2" value="compatibility_hash 因子: vllm_ver, nixl_ver, model, dtype, num_kv_heads, head_size, num_layers, attn_backend, cache_dtype, cross_layers, HMA" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="938" width="500" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="DKW" target="DW1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1185" y="436" as="sourcePoint"/>
+                        <mxPoint x="570" y="675" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="1220" y="460"/>
+                            <mxPoint x="1145" y="460"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DW1" value="D-Worker&lt;br&gt;ModelRunner&lt;br&gt;KVConnectorMixin" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="995" y="410" width="150" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#7B1FA2;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=1;entryY=1;" edge="1" parent="1" source="DKW" target="DmdT">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1185" y="436" as="sourcePoint"/>
+                        <mxPoint x="1480" y="254" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DmdT" value="NixlConnectorMetadata" style="text;html=1;fontSize=10;fillColor=#C8E6C9;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1340" y="316" width="180" height="24" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

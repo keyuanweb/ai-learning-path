@@ -1,0 +1,265 @@
+<mxfile host="65bd71144e">
+    <diagram name="GPU Batch Timeline" id="gpu">
+        <mxGraphModel dx="1672" dy="1298" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="1050" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="vLLM GPU Batch 推理时序 — Prefill vs Decode vs PD分离" style="text;html=1;fontSize=22;fontColor=#1a237e;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="10" width="700" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="PFs" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="65" width="820" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="PFst" value="Prefill — Compute-bound" style="text;html=1;fontSize=18;fontColor=#1565C0;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="70" width="380" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF1" value="1. 输入准备&lt;br&gt;token-&gt;embedding&lt;br&gt;position encoding" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="150" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF1n" value="CPU预处理" style="text;html=1;fontSize=9;fillColor=none;fontColor=#1976D2;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="160" width="200" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF2" value="2. KV Block分配&lt;br&gt;allocate_slots()&lt;br&gt;blocks zeroing" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="225" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF2n" value="CPU侧,与GPU可并行" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#1976D2;strokeColor=#1565C0;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="230" width="580" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF3" value="3. Model Forward&lt;br&gt;Layer 0..N&lt;br&gt;Attention + MLP" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="310" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF3n" value="GPU主力 (~90%耗时)&lt;br&gt;大token量,计算饱和&lt;br&gt;GPU利用率 80~95%" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#1976D2;strokeColor=#1565C0;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="315" width="580" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF4" value="4. KV写入&lt;br&gt;逐层 save_kv_layer()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="400" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF4n" value="与Forward交织,零额外耗时" style="text;html=1;fontSize=9;fillColor=none;fontColor=#1976D2;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="410" width="200" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF5" value="5. 采样&lt;br&gt;sample_tokens()&lt;br&gt;仅最后一chunk" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="475" width="150" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF5n" value="中间chunk不采样" style="text;html=1;fontSize=9;fillColor=none;fontColor=#1976D2;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="485" width="200" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="PF_a0" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="135" y="205"/>
+                            <mxPoint x="135" y="222"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PF_a1" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="135" y="280"/>
+                            <mxPoint x="135" y="307"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PF_a2" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="135" y="360"/>
+                            <mxPoint x="135" y="397"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PF_a3" style="endArrow=classic;html=1;strokeColor=#1976D2;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="135" y="450"/>
+                            <mxPoint x="135" y="472"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DEs" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="65" width="730" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="DEst" value="Decode — Memory-bound" style="text;html=1;fontSize=18;fontColor=#E65100;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="70" width="380" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE1" value="1. KV读取&lt;br&gt;逐层 wait_for_layer_load()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="150" width="170" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE1n" value="KV Load (Memory-bound)&lt;br&gt;逐层读KV,受HBM带宽限制&lt;br&gt;GPU利用率 30~50%" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F57F17;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="155" width="470" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE2" value="2. Model Forward&lt;br&gt;每请求仅 1 token" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="230" width="170" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE2n" value="GPU Compute (short)&lt;br&gt;token极少,GPU利用率 15~30%" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#F57F17;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="235" width="470" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE3" value="3. KV写入&lt;br&gt;逐层 write KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="310" width="170" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE3n" value="与Forward交织,零额外耗时" style="text;html=1;fontSize=9;fillColor=none;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="320" width="200" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE4" value="4. 采样&lt;br&gt;sample_tokens()&lt;br&gt;每步必执行" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="390" width="170" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE4n" value="每step采1 token" style="text;html=1;fontSize=9;fillColor=none;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="400" width="200" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE_loop" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1115" y="445"/>
+                            <mxPoint x="1115" y="468"/>
+                            <mxPoint x="1115" y="490"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DE_loopL" value="循环 1..max_tokens 直到 EOS/STOP" style="text;html=1;fontSize=10;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="1130" y="472" width="230" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="DE_a0" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1015" y="205"/>
+                            <mxPoint x="1015" y="227"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DE_a1" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1015" y="280"/>
+                            <mxPoint x="1015" y="307"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DE_a2" style="endArrow=classic;html=1;strokeColor=#F57F17;strokeWidth=1.5;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1015" y="360"/>
+                            <mxPoint x="1015" y="387"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PDs" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="590" width="1600" height="214" as="geometry"/>
+                </mxCell>
+                <mxCell id="PDst" value="PD 分离 — KV 异步加载与 Forward 流水线化" style="text;html=1;fontSize=16;fontColor=#2E7D32;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="595" width="700" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_L1" value="数据加载&lt;br&gt;(RDMA)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="640" width="90" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_L2" value="GPU计算&lt;br&gt;(Forward)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="705" width="90" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_d1" value="start_load_kv()" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="645" width="190" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_d2" value="RDMA READ Layer 0 KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="645" width="190" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_d3" value="RDMA READ Layer 1 KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="645" width="190" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_d4" value="RDMA READ Layer N KV (异步预取)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCC80;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="645" width="190" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_f1" value="等待 Layer 0 KV" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#388E3C;strokeColor=#1B5E20;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="710" width="160" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_f2" value="Layer 0: Attention+MLP" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#388E3C;strokeColor=#1B5E20;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="710" width="160" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_f3" value="Layer 1: Attention+MLP" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#388E3C;strokeColor=#1B5E20;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="710" width="160" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_f4" value="Layer N: Attention+MLP" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#388E3C;strokeColor=#1B5E20;fontSize=10;verticalAlign=middle;align=center;fontColor=#fff;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="710" width="160" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_s1" style="endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="400" y="630"/>
+                            <mxPoint x="290" y="656"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PD_s1L" value="wait_for_layer_load(L0)" style="text;html=1;fontSize=9;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="682" width="140" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_s2" style="endArrow=classic;html=1;strokeColor=#C62828;strokeWidth=2;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="590" y="630"/>
+                            <mxPoint x="590" y="656"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="PD_s2L" value="L1 就绪" style="text;html=1;fontSize=9;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="682" width="60" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_n1" value="流水线化: RDMA加载 Layer&lt;i&gt; KV 与 GPU计算 Layer(i-1) Forward 可并行&lt;br&gt;等待仅发生在: 当前层 KV 未就绪时 wait_for_layer_load() 阻塞; 后续层异步预取" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="640" width="670" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="PD_n2" value="非PD分离: KV已在本地, wait_for_layer_load()几乎无等待 (HBM~2TB/s)&lt;br&gt;PD分离: 首层RDMA延迟~0.1-1ms, 后续层异步预取隐藏网络延迟 (IB~200GB/s)" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="705" width="670" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="SUM" value="" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FAFAFA;strokeColor=#BDBDBD;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="845" width="1600" height="175" as="geometry"/>
+                </mxCell>
+                <mxCell id="SUMt" value="对比总结" style="text;html=1;fontSize=16;fontColor=#333;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="850" width="400" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="H1" value="" style="text;html=1;fontSize=11;color=#333;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="885" width="180" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="H2" value="Prefill" style="text;html=1;fontSize=12;color=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="885" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="H3" value="Decode" style="text;html=1;fontSize=12;color=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="885" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="H4" value="PD分离 Decode" style="text;html=1;fontSize=12;color=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="885" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R860L" value="每请求 token 量" style="text;html=1;fontSize=10;fontColor=#333;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="910" width="180" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R860C1" value="大 (1000~4000t)" style="text;html=1;fontSize=10;fontColor=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="910" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R860C2" value="极小 (1t per req)" style="text;html=1;fontSize=10;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="910" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R860C3" value="极小 (1t per req)" style="text;html=1;fontSize=10;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="910" width="350" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R885L" value="瓶颈类型" style="text;html=1;fontSize=10;fontColor=#333;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="935" width="180" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R885C1" value="Compute-bound&lt;br&gt;GPU利用率高" style="text;html=1;fontSize=10;fontColor=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="935" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R885C2" value="Memory-bound&lt;br&gt;GPU利用率低" style="text;html=1;fontSize=10;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="935" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R885C3" value="Mem+Network&lt;br&gt;RDMA延迟" style="text;html=1;fontSize=10;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="935" width="350" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R910L" value="关键耗时" style="text;html=1;fontSize=10;fontColor=#333;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="960" width="180" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R910C1" value="Attention+MLP计算" style="text;html=1;fontSize=10;fontColor=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="960" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R910C2" value="KV Cache HBM读取" style="text;html=1;fontSize=10;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="960" width="300" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="R910C3" value="首层RDMA+后续异步" style="text;html=1;fontSize=10;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="960" width="350" height="22" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

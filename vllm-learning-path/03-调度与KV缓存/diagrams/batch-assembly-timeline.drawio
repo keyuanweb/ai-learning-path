@@ -1,0 +1,202 @@
+<mxfile host="65bd71144e">
+    <diagram name="Batch Assembly" id="batch-timeline">
+        <mxGraphModel dx="1254" dy="974" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1550" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="vLLM Batch 组批全过程 (时序解说)" style="text;html=1;fontSize=24;fontColor=#1a237e;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="10" width="700" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="cfg" value="配置: max_scheduled_tokens=4096, max_seqs=4, long_prefill_threshold=2048, block_size=16, 共10 blocks (160t)" style="text;html=1;fontSize=12;fillColor=#FAFAFA;strokeColor=#BDBDBD;verticalAlign=middle;align=center;fontColor=#616161;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="50" width="700" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="90" width="1140" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0t" value="Step 0: 初始空闲" style="text;html=1;fontSize=16;fillColor=#E0E0E0;fontColor=#333;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="95" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0wq" value="Waiting Queue&lt;br&gt;[空]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="140" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0a1" style="endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=2;" parent="1" source="S0wq" target="S0sc" edge="1">
+                    <mxGeometry y="5" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0sc" value="Scheduler&lt;br&gt;schedule()→空 batch" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#EEE;strokeColor=#9E9E9E;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="140" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0a2" style="endArrow=classic;html=1;strokeColor=#9E9E9E;strokeWidth=2;" parent="1" source="S0sc" target="S0ru" edge="1">
+                    <mxGeometry y="5" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0ru" value="Running Batch&lt;br&gt;[空]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="140" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S0kv" value="KV Cache: 10/10 blocks 空闲" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="140" width="250" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar0" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="S0b" target="S1b" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar0L" value="请求到达: A(500t), B(200t)" style="text;html=1;fontSize=12;fillColor=#FFF9C4;fontColor=#333;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="238" width="260" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="270" width="1140" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1t" value="Step 1: 请求到达, 入 Waiting Queue" style="text;html=1;fontSize=16;fillColor=#E3F2FD;fontColor=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="275" width="500" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1wq" value="Waiting Queue&lt;br&gt;[A(500t), B(200t)]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="315" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1a1" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" source="S1wq" target="S1sc" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1sc" value="Scheduler&lt;br&gt;add_request()→A,B 入 waiting" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="315" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1a2" style="endArrow=classic;html=1;strokeColor=#BDBDBD;strokeWidth=1;dashed=1;" parent="1" source="S1sc" target="S1ru" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1ru" value="Running Batch&lt;br&gt;[空]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="315" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="S1kv" value="KV Cache: 10/10 空闲" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E0E0;strokeColor=#616161;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="315" width="250" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar1" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="S1b" target="S2b" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar1L" value="首次调度, C(3000t) 到达" style="text;html=1;fontSize=12;fillColor=#FFF9C4;fontColor=#333;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="418" width="300" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#2E7D32;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="450" width="1140" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2t" value="Step 2: 首次调度 — A 入 Batch, B 被抢占" style="text;html=1;fontSize=16;fillColor=#E8F5E9;fontColor=#2E7D32;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="455" width="580" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2wq" value="Waiting&lt;br&gt;[B(200t*), C(3000t)]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="500" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2a1" style="endArrow=classic;html=1;strokeColor=#2E7D32;strokeWidth=2;" parent="1" source="S2wq" target="S2sc" edge="1">
+                    <mxGeometry y="5" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2sc" value="Scheduler&lt;br&gt;A: allocate(160t) chunked ✓&lt;br&gt;B: 空间不足→PREEMPTED!" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="495" width="210" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2a2" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S2sc" target="S2ru" edge="1">
+                    <mxGeometry y="5" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2ru" value="Running&lt;br&gt;[A: 160t Prefill]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="500" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2kv" value="KV Cache: A 占满 10 blocks ⚠" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="500" width="250" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="S2note" value="⚠ B 被抢占: num_computed→0, blocks 释放, 放回 waiting 队首等待" style="text;html=1;fontSize=11;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="552" width="600" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar2" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="S2b" target="S3b" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar2L" value="A 继续 Prefill chunk, D(10t) 到达" style="text;html=1;fontSize=12;fillColor=#FFF9C4;fontColor=#333;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="598" width="340" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="630" width="1140" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3t" value="Step 3: Chunked Prefill — A 继续, 短请求 D 插入" style="text;html=1;fontSize=16;fillColor=#FFF3E0;fontColor=#E65100;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="635" width="600" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3wq" value="Waiting&lt;br&gt;[B(200t*), C(3000t)]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="683" width="160" height="37" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3a1" style="endArrow=classic;html=1;strokeColor=#E65100;strokeWidth=2;" parent="1" source="S3wq" target="S3sc" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3sc" value="Scheduler&lt;br&gt;A: 继续 Prefill 340t&lt;br&gt;B: KV不够 skip, C: KV不够 skip&lt;br&gt;→ 新到 D(10t): 有空间 ✓ 入 batch!" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="678" width="210" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3a2" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S3sc" target="S3ru" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3ru" value="Running&lt;br&gt;[A:340t P, D:10t P]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="683" width="160" height="37" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3kv" value="KV Cache: A+D 占满" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="683" width="250" height="27" as="geometry"/>
+                </mxCell>
+                <mxCell id="S3note" value="小请求插队: B(200t)、C(3000t) 空间不够被跳过, D(10t) 刚好有 1 block 就直接入 batch" style="text;html=1;fontSize=11;fillColor=#FFCDD2;fontColor=#C62828;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="270" y="736" width="650" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar3" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="S3b" target="S4b" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar3L" value="A Prefill 完成, D 短请求完成释放空间, E(100t) 到达" style="text;html=1;fontSize=12;fillColor=#FFF9C4;fontColor=#333;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="778" width="480" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#388E3C;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="810" width="1140" height="139" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4t" value="Step 4: A 转 Decode, D 完成, B、C 终于入 Batch" style="text;html=1;fontSize=16;fillColor=#C8E6C9;fontColor=#388E3C;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="815" width="620" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4wq" value="Waiting&lt;br&gt;[B(200t*), C(3000t)]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="863" width="160" height="37" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4a1" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S4wq" target="S4sc" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4sc" value="Scheduler&lt;br&gt;A: Prefill完→Decode(1t) 释大量 blocks&lt;br&gt;D: FINISHED 释放 block&lt;br&gt;B: 200t ✓, C: 2048t chunk ✓" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="858" width="210" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4a2" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S4sc" target="S4ru" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4ru" value="Running&lt;br&gt;[A:1t D, B:200t P,&lt;br&gt; C:2048t P]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="858" width="160" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4kv" value="KV Cache: A 轻量+B+C 占满" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="863" width="250" height="37" as="geometry"/>
+                </mxCell>
+                <mxCell id="S4note" value="Batch 混合: A(Decode 1t) + B(Prefill 200t) + C(Prefill 2048t) — 三种类型同一个 batch" style="text;html=1;fontSize=11;fillColor=#C8E6C9;fontColor=#388E3C;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="285" y="917" width="650" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar4" style="endArrow=classic;html=1;strokeColor=#F9A825;strokeWidth=3;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="S4b" target="S5b" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ar4L" value="A 达到 max_tokens→FINISHED, B Prefill 完成" style="text;html=1;fontSize=12;fillColor=#FFF9C4;fontColor=#333;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="958" width="380" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5b" value="" style="rounded=1;fillColor=#FAFAFA;strokeColor=#1565C0;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="990" width="1140" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5t" value="Step 5: 稳态运行 — 请求循环到达和完成" style="text;html=1;fontSize=16;fillColor=#E3F2FD;fontColor=#1565C0;verticalAlign=middle;align=center;whiteSpace=wrap;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="995" width="560" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5wq" value="Waiting&lt;br&gt;[E(100t)]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="1043" width="160" height="47" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5a1" style="endArrow=classic;html=1;strokeColor=#1565C0;strokeWidth=2;" parent="1" source="S5wq" target="S5sc" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5sc" value="Scheduler&lt;br&gt;A: FINISHED 释放 blocks!&lt;br&gt;B: Prefill完→Decode(1t)&lt;br&gt;C: 继续 Prefill 952t&lt;br&gt;E: 100t ✓ 入 batch" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="1038" width="210" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5a2" style="endArrow=classic;html=1;strokeColor=#388E3C;strokeWidth=2;" parent="1" source="S5sc" target="S5ru" edge="1">
+                    <mxGeometry y="8" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5ru" value="Running&lt;br&gt;[B:1t D, C:952t P,&lt;br&gt; E:100t P]" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="1043" width="160" height="47" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5kv" value="KV Cache: A 释放后空间宽裕" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;verticalAlign=middle;align=center;overflow=fill;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="1043" width="250" height="47" as="geometry"/>
+                </mxCell>
+                <mxCell id="S5note" value="稳态: Batch 混合 Decode(1t) + Prefill(大小不一), token_budget 用 1053/4096 宽裕" style="text;html=1;fontSize=11;fillColor=#E3F2FD;fontColor=#1565C0;fontStyle=1;verticalAlign=middle;align=center;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="1106" width="650" height="25" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
