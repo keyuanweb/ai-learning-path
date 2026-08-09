@@ -1,0 +1,114 @@
+graph TB
+    %% ===== 样式 =====
+    classDef user fill:#d5e8d4,stroke:#82b366,stroke-width:2px,color:#333
+    classDef external fill:#e1d5e7,stroke:#9673a6,stroke-width:2px,color:#333
+    classDef gateway fill:#f8cecc,stroke:#b85450,stroke-width:2px,color:#333
+    classDef service fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px,color:#333
+    classDef middleware fill:#fff2cc,stroke:#d6b656,stroke-width:2px,color:#333
+    classDef config fill:#f5f5f5,stroke:#666,stroke-width:1.5px,color:#555,stroke-dasharray:5
+    classDef cp fill:#e1d5e7,stroke:#9673a6,stroke-width:1.5px,color:#555
+
+    %% ===== 用户端 =====
+    subgraph USER["🌐 用户端 (外部)"]
+        Browser["浏览器"]
+        App["移动 APP"]
+        DNS["DNS 解析<br/>api.example.com → VIP"]
+    end
+
+    %% ===== K8s 集群 =====
+    subgraph K8S["☸️ Kubernetes 集群 (生产环境)"]
+
+        %% --- 控制面 ---
+        subgraph CP["⚙️ 控制面节点 (3 节点高可用)"]
+            APIServer["API Server<br/>集群统一入口"]
+            etcd["etcd<br/>Raft 共识存储"]
+            Scheduler["Scheduler<br/>Pod 调度"]
+            CtrlMgr["Controller Manager<br/>状态 reconcile"]
+        end
+
+        %% --- 工作节点 ---
+        subgraph WORKER["🖥️ 工作节点 (≥3 节点)"]
+
+            %% 接入层
+            subgraph ACCESS["接入层"]
+                Ingress["Nginx Ingress Controller<br/>🔒 TLS 终止 · 域名路由 · 限流"]
+            end
+
+            %% 前端层
+            subgraph FRONTEND["前端层"]
+                FE_SVC["Frontend Service<br/>(ClusterIP :80)"]
+                FE_DEPLOY["Frontend Deployment<br/>React SPA · 副本 3"]
+            end
+
+            %% 网关层
+            subgraph GATEWAY["网关层"]
+                GW_SVC["API Gateway Service<br/>(ClusterIP :80)"]
+                GW_DEPLOY["API Gateway Deployment<br/>认证 · 限流 · 路由 · 副本 3"]
+            end
+
+            %% 微服务层
+            subgraph MICRO["微服务层"]
+                UserSvc["👤 用户服务<br/>Deployment + Svc · 副本 3"]
+                OrderSvc["📦 订单服务<br/>Deployment + Svc · 副本 3"]
+                ProductSvc["🏷️ 商品服务<br/>Deployment + Svc · 副本 3"]
+            end
+
+            %% 数据层
+            subgraph DATA["数据层 (中间件)"]
+                Redis["Redis<br/>StatefulSet · 哨兵"]
+                Postgres["PostgreSQL<br/>StatefulSet · 主从"]
+            end
+
+            %% 配置与弹性
+            subgraph OPS["配置与弹性"]
+                CM["ConfigMap<br/>应用配置"]
+                Secret["Secret<br/>密钥 · 证书"]
+                HPA["HPA 弹性伸缩<br/>CPU 70% → 3~20 副本"]
+                PDB["PodDisruptionBudget<br/>最少可用 2 副本"]
+            end
+
+        end
+    end
+
+    %% ===== 流量链路 =====
+    Browser -->|"HTTPS"| DNS
+    App -->|"HTTPS"| DNS
+    DNS -->|"解析 → VIP :6443"| Ingress
+
+    Ingress -->|"/ 路由"| FE_SVC
+    FE_SVC --> FE_DEPLOY
+    FE_DEPLOY -->|"/api/*"| GW_SVC
+    GW_SVC --> GW_DEPLOY
+
+    GW_DEPLOY -->|"/api/user/*"| UserSvc
+    GW_DEPLOY -->|"/api/order/*"| OrderSvc
+    GW_DEPLOY -->|"/api/product/*"| ProductSvc
+
+    %% ===== 数据访问 =====
+    UserSvc -->|"读写"| Postgres
+    UserSvc -->|"缓存"| Redis
+    OrderSvc -->|"读写"| Postgres
+    ProductSvc -->|"缓存"| Redis
+
+    %% ===== 配置注入 (虚线) =====
+    CM -.->|"配置注入"| FE_DEPLOY
+    CM -.->|"配置注入"| GW_DEPLOY
+    Secret -.->|"密钥注入"| GW_DEPLOY
+    Secret -.->|"密钥注入"| UserSvc
+
+    %% ===== 弹性伸缩 (虚线) =====
+    HPA -.->|"自动扩缩"| UserSvc
+    HPA -.->|"自动扩缩"| OrderSvc
+    HPA -.->|"自动扩缩"| ProductSvc
+
+    %% ===== 控制面 → 工作节点 (虚线) =====
+    APIServer -.->|"管理 / 调度"| Ingress
+
+    %% ===== 应用样式 =====
+    class Browser,App user
+    class DNS external
+    class Ingress gateway
+    class FE_DEPLOY,GW_DEPLOY,UserSvc,OrderSvc,ProductSvc service
+    class Redis,Postgres middleware
+    class CM,Secret,HPA,PDB config
+    class APIServer,etcd,Scheduler,CtrlMgr cp

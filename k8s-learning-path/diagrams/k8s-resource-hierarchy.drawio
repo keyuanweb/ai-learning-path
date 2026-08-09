@@ -1,0 +1,456 @@
+<mxfile host="app.diagrams.net" modified="2026-08-02" agent="draw.io">
+  <diagram name="K8s Resource Hierarchy" id="k8s-hierarchy">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1050">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Kubernetes 核心资源对象层次与关系" style="text;html=1;fontSize=24;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="350" y="10" width="700" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Cluster -->
+        <mxCell id="cluster" value="&lt;b&gt;Cluster 集群&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Node · Namespace · CRD · ClusterRole&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=3;fontSize=14;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="70" width="400" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Namespaces -->
+        <mxCell id="ns-1" value="&lt;b&gt;Namespace: k8s-learn&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Role · ResourceQuota · LimitRange · NetworkPolicy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="180" width="650" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ns-2" value="&lt;b&gt;Namespace: production&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Role · ResourceQuota · LimitRange · NetworkPolicy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="750" y="180" width="650" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ns-3" value="&lt;b&gt;Namespace: kube-system&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;系统组件 (kube-proxy, CoreDNS, CNI)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;fontSize=11;fontColor=#64748B;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="50" y="250" width="300" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Workload Layer -->
+        <mxCell id="workloads-label" value="工作负载 (Workloads)" style="text;html=1;fontSize=14;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="320" width="180" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Deployment -->
+        <mxCell id="deploy-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="50" y="350" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="deploy-title" value="Deployment" style="text;html=1;fontSize=13;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="355" width="140" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deploy" value="&lt;b&gt;web-deploy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;replicas: 3 · strategy: RollingUpdate&lt;br&gt;maxSurge: 1 · maxUnavailable: 0&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="383" width="270" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="rs" value="&lt;b&gt;ReplicaSet&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;web-deploy-7d8f9abc · replicas: 3 · selector: app=web&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=1.5;fontSize=9;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="443" width="270" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- StatefulSet -->
+        <mxCell id="sts-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="380" y="350" width="320" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sts-title" value="StatefulSet" style="text;html=1;fontSize=13;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="355" width="140" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="sts" value="&lt;b&gt;db-statefulset&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;replicas: 3 · serviceName: db-headless&lt;br&gt;稳定网络标识: db-0, db-1, db-2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="395" y="383" width="290" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="sts-note" value="&lt;font style=&quot;font-size:9px&quot;&gt;稳定存储: PVC 模板 + 有序启停&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1;fontSize=9;fontColor=#92400E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="395" y="445" width="290" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- DaemonSet -->
+        <mxCell id="ds-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="730" y="350" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ds-title" value="DaemonSet" style="text;html=1;fontSize=13;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="830" y="355" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ds" value="&lt;b&gt;fluentd-ds / node-exporter&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;每 Node 一个 Pod · 日志采集 · 监控&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="383" width="290" height="27" as="geometry" />
+        </mxCell>
+
+        <!-- Job & CronJob -->
+        <mxCell id="job-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="730" y="440" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="job-title" value="Job / CronJob" style="text;html=1;fontSize=13;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="820" y="445" width="140" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="job" value="&lt;b&gt;model-download · daily-backup&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;一次性/定时任务 · completions · backoffLimit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="470" width="290" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Pod Layer -->
+        <mxCell id="pod-section-label" value="Pod (最小调度单元)" style="text;html=1;fontSize=14;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="520" width="180" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Pod 1 -->
+        <mxCell id="pod-1-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="50" y="550" width="290" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-1-title" value="Pod: web-deploy-7d8f9-abc12" style="text;html=1;fontSize=10;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="70" y="555" width="250" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="container-1" value="&lt;b&gt;Container: nginx&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;nginx:1.25 · port:80&lt;br&gt;livenessProbe · readinessProbe&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=9;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="582" width="260" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="container-1b" value="&lt;b&gt;Container: sidecar-log&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;fluentd:latest · 日志采集&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=1.5;fontSize=9;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="634" width="260" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="volume-1" value="&lt;b&gt;Volume: emptyDir&lt;/b&gt; (共享日志)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1;fontSize=8;fontColor=#92400E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="676" width="260" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Pod 2 -->
+        <mxCell id="pod-2-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="370" y="550" width="330" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-2-title" value="Pod: db-0 (StatefulSet)" style="text;html=1;fontSize=10;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="555" width="190" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="container-2" value="&lt;b&gt;Container: postgres&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;postgres:16 · port:5432&lt;br&gt;envFrom: secretRef(db-secret)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=9;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="385" y="582" width="300" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="pvc-mount-2" value="&lt;b&gt;Volume: PVC → data-db-0&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;mountPath: /var/lib/postgresql/data · StorageClass: ssd&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=1.5;fontSize=9;fontColor=#7C2D12;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="385" y="634" width="300" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sts-id" value="&lt;b&gt;稳定标识:&lt;/b&gt; db-0.ns.svc.cluster.local" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;strokeWidth=1;fontSize=8;fontColor=#854D0E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="385" y="676" width="300" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Pod 3 (GPU) -->
+        <mxCell id="pod-3-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="730" y="550" width="320" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-3-title" value="Pod: llm-inference-7d8f9-ghi56" style="text;html=1;fontSize=10;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="760" y="555" width="260" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="container-3" value="&lt;b&gt;Container: vllm-openai&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;vllm/vllm-openai:latest · port:8000&lt;br&gt;resources.limits.nvidia.com/gpu: 1&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=9;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="582" width="290" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="container-3b" value="&lt;b&gt;Container: metrics-exporter&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;Prometheus metrics sidecar&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=1.5;fontSize=9;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="634" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gpu-info" value="&lt;b&gt;GPU:&lt;/b&gt; nvidia.com/gpu=1 · Node: GPU-Node-1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=1;fontSize=8;fontColor=#6B21A8;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="674" width="290" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Service & Network Layer -->
+        <mxCell id="svc-section-label" value="服务发现与网络 (Service &amp; Network)" style="text;html=1;fontSize=14;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="770" width="250" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-web" value="&lt;b&gt;Service: web-svc&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ClusterIP: 10.96.0.10&lt;br&gt;selector: app=web · port:80 → target:80&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;fontSize=10;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="50" y="800" width="250" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-db" value="&lt;b&gt;Service: db-headless&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;clusterIP: None · Headless&lt;br&gt;selector: app=db · DNS → Pod IP 列表&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;fontSize=10;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="330" y="800" width="250" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ingress-obj" value="&lt;b&gt;Ingress: web-ingress&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;host: app.example.com · TLS&lt;br&gt;path: / → web-svc:80&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#C7D2FE;strokeColor=#6366F1;strokeWidth=2;fontSize=10;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="610" y="800" width="250" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="netpol-obj" value="&lt;b&gt;NetworkPolicy: web-deny-all&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ingress: from app=api · port:80&lt;br&gt;egress: to CIDR 0.0.0.0/0 · DNS&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E7FF;strokeColor=#818CF8;strokeWidth=2;fontSize=10;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="890" y="800" width="250" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Config & Storage Layer -->
+        <mxCell id="config-section-label" value="配置与存储 (Config &amp; Storage)" style="text;html=1;fontSize=14;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="885" width="250" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="configmap-obj" value="&lt;b&gt;ConfigMap: app-config&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;MODEL_NAME=Llama-3.2 · MAX_TOKENS=4096&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FDE68A;strokeColor=#F59E0B;strokeWidth=2;fontSize=10;fontColor=#92400E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="50" y="915" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="secret-obj" value="&lt;b&gt;Secret: db-secret&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;POSTGRES_PASSWORD=*** · API_KEY=***&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FDE68A;strokeColor=#F59E0B;strokeWidth=2;fontSize=10;fontColor=#92400E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="300" y="915" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="pvc-obj" value="&lt;b&gt;PVC: data-db-0&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;StorageClass: ssd-gp3 · 100Gi · RWO&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=2;fontSize=10;fontColor=#7C2D12;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="550" y="915" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="sa-obj" value="&lt;b&gt;ServiceAccount: web-sa&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;绑定 Role: pod-reader · IRSA / Workload Identity&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#E0E7FF;strokeColor=#818CF8;strokeWidth=1.5;fontSize=10;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="800" y="915" width="250" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="hpa-obj" value="&lt;b&gt;HPA: web-hpa&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;target: web-deploy · min:2 max:10 · cpu:70%&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1080" y="915" width="250" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== EDGES (optimized) ==================== -->
+
+        <!-- Cluster → Namespaces: top-down hierarchy, exit bottom of cluster, enter top of namespaces -->
+        <mxCell id="edge-cluster-ns1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="cluster" target="ns-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="160" />
+              <mxPoint x="375" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge-cluster-ns2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="cluster" target="ns-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="160" />
+              <mxPoint x="1075" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Cluster → ns-3: route around ns-1 (go left side then down) -->
+        <mxCell id="edge-cluster-ns3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3B82F6;strokeWidth=1.5;dashed=1;exitX=0.15;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="cluster" target="ns-3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="145" />
+              <mxPoint x="30" y="145" />
+              <mxPoint x="30" y="160" />
+              <mxPoint x="200" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ns-1 → Deploy: top-down, center to center -->
+        <mxCell id="edge-ns1-deploy" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#22C55E;strokeWidth=1.5;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ns-1" target="deploy-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="310" />
+              <mxPoint x="200" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ns-1 → StatefulSet -->
+        <mxCell id="edge-ns1-sts" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#22C55E;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ns-1" target="sts-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="375" y="310" />
+              <mxPoint x="540" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ns-1 → DaemonSet: horizontal and down -->
+        <mxCell id="edge-ns1-ds" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#22C55E;strokeWidth=1.5;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ns-1" target="ds-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="602" y="310" />
+              <mxPoint x="890" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ns-1 → Job -->
+        <mxCell id="edge-ns1-job" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#22C55E;strokeWidth=1.5;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ns-1" target="job-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="602" y="310" />
+              <mxPoint x="890" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Deploy → ReplicaSet: internal to container, top-down -->
+        <mxCell id="edge-deploy-rs" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#16A34A;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="deploy" target="rs" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ReplicaSet → Pod 1 -->
+        <mxCell id="edge-rs-pod1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#4ADE80;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="rs" target="pod-1-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="520" />
+              <mxPoint x="195" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- StatefulSet → Pod 2 -->
+        <mxCell id="edge-sts-pod2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#4ADE80;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="sts" target="pod-2-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="520" />
+              <mxPoint x="535" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ns-1 → Pod 3 (GPU): route around the right side -->
+        <mxCell id="edge-ns1-pod3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#4ADE80;strokeWidth=1.5;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ns-1" target="pod-3-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="602" y="310" />
+              <mxPoint x="890" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Service → Pod (upward edge): route along right side, then up to pod -->
+        <mxCell id="edge-svc-pod1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" parent="1" source="svc-web" target="pod-1-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="35" y="827" />
+              <mxPoint x="35" y="780" />
+              <mxPoint x="137" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-svc-pod1-label" value="selector: app=web" style="text;html=1;fontSize=8;fontColor=#2563EB;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="20" y="795" width="85" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- Service db → Pod 2: horizontal then up -->
+        <mxCell id="edge-svc-db-pod2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="svc-db" target="pod-2-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="315" y="827" />
+              <mxPoint x="315" y="780" />
+              <mxPoint x="535" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Ingress → Service web: horizontal -->
+        <mxCell id="edge-ingress-svc" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#6366F1;strokeWidth=1.5;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ingress-obj" target="svc-web" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590" y="827" />
+              <mxPoint x="325" y="827" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ConfigMap → Pod 3: route around components from config area to pod -->
+        <mxCell id="edge-cm-pod3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F59E0B;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="configmap-obj" target="pod-3-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="35" y="936" />
+              <mxPoint x="35" y="780" />
+              <mxPoint x="1070" y="780" />
+              <mxPoint x="1070" y="607" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Secret → Pod 2: short upward -->
+        <mxCell id="edge-secret-pod2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F59E0B;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="secret-obj" target="pod-2-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="900" />
+              <mxPoint x="535" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- PVC → Pod 2: short upward -->
+        <mxCell id="edge-pvc-pod2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EA580C;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" parent="1" source="pvc-obj" target="pod-2-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="900" />
+              <mxPoint x="601" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- HPA → Deployment: long edge with waypoints along bottom margin -->
+        <mxCell id="edge-hpa-deploy" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#22C55E;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="hpa-obj" target="deploy-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="936" />
+              <mxPoint x="30" y="936" />
+              <mxPoint x="30" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-hpa-deploy-label" value="scale targetRef" style="text;html=1;fontSize=8;fontColor=#22C55E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="500" y="928" width="80" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- NetworkPolicy → Pod 1: left and up -->
+        <mxCell id="edge-netpol-pod1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#818CF8;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" parent="1" source="netpol-obj" target="pod-1-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="827" />
+              <mxPoint x="870" y="780" />
+              <mxPoint x="253" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ServiceAccount → Pod 3: up -->
+        <mxCell id="edge-sa-pod3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#818CF8;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="sa-obj" target="pod-3-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="925" y="900" />
+              <mxPoint x="890" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== ANNOTATIONS ==================== -->
+        <mxCell id="rel-summary" value="&lt;b&gt;📐 核心关系总结&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;&lt;br&gt;Cluster ─contains→ Namespace ─contains→ Workload ─manages→ Pod ─runs→ Container&lt;br&gt;Service ─selects→ Pod (via labels)&lt;br&gt;Ingress ─routes→ Service&lt;br&gt;ConfigMap/Secret ─injects→ Pod (env / volume mount)&lt;br&gt;PVC ─mounts→ Pod (PersistentVolume)&lt;br&gt;HPA ─scales→ Deployment/StatefulSet&lt;br&gt;NetworkPolicy ─controls→ Pod ingress/egress&lt;br&gt;ServiceAccount ─attaches→ Pod (RBAC)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;strokeWidth=1;fontSize=10;fontColor=#854D0E;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="70" width="500" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="patterns" value="&lt;b&gt;🔑 关键模式&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;&lt;br&gt;① &lt;b&gt;Label &amp; Selector&lt;/b&gt; — 松耦合绑定机制&lt;br&gt;  Service → Pod (app=web)&lt;br&gt;  Deployment → Pod (matchLabels)&lt;br&gt;&lt;br&gt;② &lt;b&gt;声明式管理&lt;/b&gt; — YAML → API Server → Controller&lt;br&gt;  Controller 持续 reconcile 期望 vs 实际&lt;br&gt;&lt;br&gt;③ &lt;b&gt;Owner Reference&lt;/b&gt; — 级联删除链&lt;br&gt;  Deployment → ReplicaSet → Pod&lt;br&gt;&lt;br&gt;④ &lt;b&gt;Immutable Infrastructure&lt;/b&gt;&lt;br&gt;  Pod 不可变，更新 = 新建 + 销毁旧&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#166534;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="250" width="500" height="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="yaml-example" value="&lt;b&gt;📝 声明式 YAML 示例&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;font-family:monospace&quot;&gt;apiVersion: apps/v1&lt;br&gt;kind: Deployment&lt;br&gt;metadata:&lt;br&gt;  name: web-deploy&lt;br&gt;  namespace: k8s-learn&lt;br&gt;spec:&lt;br&gt;  replicas: 3&lt;br&gt;  selector:&lt;br&gt;    matchLabels:&lt;br&gt;      app: web&lt;br&gt;  template:&lt;br&gt;    metadata:&lt;br&gt;      labels:&lt;br&gt;        app: web&lt;br&gt;    spec:&lt;br&gt;      containers:&lt;br&gt;      - name: nginx&lt;br&gt;        image: nginx:1.25&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;strokeWidth=1;fontSize=9;fontColor=#334155;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="460" width="250" height="210" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kubectl-cmds" value="&lt;b&gt;⚡ 常用查询命令&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;font-family:monospace&quot;&gt;&lt;br&gt;# 查看资源层级&lt;br&gt;kubectl get all -n k8s-learn&lt;br&gt;&lt;br&gt;# 查看 ownerReferences&lt;br&gt;kubectl get pod -o json \&lt;br&gt;  | jq '.metadata.ownerReferences'&lt;br&gt;&lt;br&gt;# 查看标签&lt;br&gt;kubectl get pods --show-labels&lt;br&gt;&lt;br&gt;# 查看 Service 后端&lt;br&gt;kubectl get endpoints web-svc&lt;br&gt;&lt;br&gt;# 列出所有 API 资源&lt;br&gt;kubectl api-resources&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;strokeWidth=1;fontSize=9;fontColor=#334155;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1370" y="460" width="220" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#D4D4D8;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="690" width="500" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title2" value="图例" style="text;html=1;fontSize=12;fontColor=#52525B;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1330" y="694" width="40" height="16" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l1" value="" style="rounded=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry x="1110" y="720" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l1t" value="集群级资源" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1145" y="718" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l2" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="720" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l2t" value="命名空间" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1285" y="718" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l3" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="720" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l3t" value="工作负载" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1415" y="718" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l4" value="" style="rounded=1;whiteSpace=wrap;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1110" y="748" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l4t" value="Pod/Container" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1145" y="746" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l5" value="" style="rounded=1;whiteSpace=wrap;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="748" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l5t" value="Service/网络" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1285" y="746" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="l6" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FDE68A;strokeColor=#F59E0B;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="748" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="l6t" value="配置/存储" style="text;html=1;fontSize=9;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1415" y="746" width="70" height="20" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

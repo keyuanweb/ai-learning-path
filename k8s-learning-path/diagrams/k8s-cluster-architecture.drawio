@@ -1,0 +1,368 @@
+<mxfile host="app.diagrams.net" modified="2026-08-02" agent="draw.io">
+  <diagram name="K8s Cluster Architecture" id="k8s-arch">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1100">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Kubernetes 集群架构总览" style="text;html=1;fontSize=24;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="10" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- External kubectl -->
+        <mxCell id="kubectl" value="kubectl / CI/CD&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;管理员 · 部署流水线&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontSize=13;fontColor=#1E293B;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="75" width="170" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="internet" value="&lt;font style=&quot;font-size:12px&quot;&gt;外部流量&lt;/font&gt;&lt;br&gt;Internet / Clients" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=2;fontSize=11;fontColor=#475569;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="75" width="160" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- Control Plane Container -->
+        <mxCell id="cp-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="170" width="680" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="cp-title" value="Control Plane 控制面" style="text;html=1;fontSize=18;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="175" width="340" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api-server" value="API Server&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;kube-apiserver · REST API · 认证鉴权&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="225" width="210" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="etcd-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0F9FF;strokeColor=#0EA5E9;strokeWidth=1.5;dashed=1;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="310" y="220" width="370" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="etcd-title" value="etcd 集群 (KV 存储)" style="text;html=1;fontSize=12;fontColor=#0369A1;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="223" width="230" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="etcd-1" value="etcd-1&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Raft Leader&lt;/font&gt;" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=11;fontColor=#0C4A6E;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="325" y="252" width="95" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="etcd-2" value="etcd-2&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Raft Follower&lt;/font&gt;" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=11;fontColor=#0C4A6E;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="252" width="95" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="etcd-3" value="etcd-3&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Raft Follower&lt;/font&gt;" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#E0F2FE;strokeColor=#0284C7;strokeWidth=1.5;fontSize=11;fontColor=#0C4A6E;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="555" y="252" width="95" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scheduler" value="Scheduler&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;kube-scheduler · Pod 调度决策&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="335" width="210" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="controller-manager" value="Controller Manager&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;kube-controller-manager · ReplicaSet / Deployment / Job 等控制器&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="310" y="335" width="370" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ccm" value="Cloud Controller Manager&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;cloud-controller-manager · 云平台对接 (可选)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#EFF6FF;strokeColor=#93C5FD;strokeWidth=1.5;dashed=1;fontSize=12;fontColor=#64748B;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="60" y="440" width="210" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Plugin Interfaces -->
+        <mxCell id="plugins-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FFF7ED;strokeColor=#F97316;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="590" width="680" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="plugins-title" value="可插拔接口 (Plugin Interfaces)" style="text;html=1;fontSize=14;fontColor=#C2410C;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="595" width="380" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cri" value="&lt;b&gt;CRI&lt;/b&gt;&lt;br&gt;容器运行时接口&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;containerd · CRI-O&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=2;fontSize=11;fontColor=#7C2D12;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="55" y="632" width="185" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cni" value="&lt;b&gt;CNI&lt;/b&gt;&lt;br&gt;网络接口&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Calico · Flannel · Cilium&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=2;fontSize=11;fontColor=#7C2D12;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="270" y="632" width="185" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="csi" value="&lt;b&gt;CSI&lt;/b&gt;&lt;br&gt;存储接口&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;云盘 · NFS · Ceph&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=2;fontSize=11;fontColor=#7C2D12;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="485" y="632" width="185" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- Worker Nodes Container -->
+        <mxCell id="workers-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="750" width="1580" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="workers-title" value="Worker Nodes 工作节点" style="text;html=1;fontSize=18;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="755" width="380" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Worker Node 1 -->
+        <mxCell id="wn-1-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="55" y="800" width="730" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="wn-1-title" value="Worker Node 1" style="text;html=1;fontSize=15;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="75" y="805" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kubelet-1" value="&lt;b&gt;kubelet&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;节点代理 · Pod 生命周期&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="75" y="842" width="160" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="kube-proxy-1" value="&lt;b&gt;kube-proxy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;iptables / IPVS 规则&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="260" y="842" width="170" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="cr-1" value="&lt;b&gt;容器运行时&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;containerd / CRI-O&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="455" y="842" width="175" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pods-1-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#ECFDF5;strokeColor=#6EE7B7;strokeWidth=1;dashed=1;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="75" y="920" width="685" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pods-1-title" value="Pods" style="text;html=1;fontSize=11;fontColor=#065F46;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="95" y="923" width="50" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-1a" value="&lt;b&gt;Pod A&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;nginx:1.25 · app=web&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="95" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-1b" value="&lt;b&gt;Pod B&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;app:v2 · app=web&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="310" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-1c" value="&lt;b&gt;Pod C&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;worker:latest · app=worker&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="525" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Worker Node 2 -->
+        <mxCell id="wn-2-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="810" y="800" width="770" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="wn-2-title" value="Worker Node 2" style="text;html=1;fontSize=15;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="830" y="805" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kubelet-2" value="&lt;b&gt;kubelet&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;节点代理 · Pod 生命周期&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="830" y="842" width="160" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="kube-proxy-2" value="&lt;b&gt;kube-proxy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;iptables / IPVS 规则&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1015" y="842" width="170" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="cr-2" value="&lt;b&gt;容器运行时&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;containerd / CRI-O&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;fontSize=11;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1210" y="842" width="175" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pods-2-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#ECFDF5;strokeColor=#6EE7B7;strokeWidth=1;dashed=1;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="830" y="920" width="725" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pods-2-title" value="Pods" style="text;html=1;fontSize=11;fontColor=#065F46;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="850" y="923" width="50" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-2a" value="&lt;b&gt;Pod D&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;redis:7 · app=cache&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="850" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-2b" value="&lt;b&gt;Pod E&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;app:v2 · app=web&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1065" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-2c" value="&lt;b&gt;Pod F&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:8px&quot;&gt;worker:latest · app=worker&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1280" y="952" width="190" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== EDGES (optimized routing) ==================== -->
+
+        <!-- kubectl → API Server: horizontal right-exit to top-entry, goes through gap above CP -->
+        <mxCell id="edge-kubectl-api" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#64748B;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" parent="1" source="kubectl" target="api-server" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-kubectl-api-label" value="kubectl / REST API" style="text;html=1;fontSize=9;fontColor=#64748B;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="130" y="155" width="100" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server ↔ etcd: bidirectional, horizontal between adjacent boxes -->
+        <mxCell id="edge-api-etcd" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#0EA5E9;strokeWidth=2;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="api-server" target="etcd-container" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-api-etcd-label" value="读写集群状态" style="text;html=1;fontSize=9;fontColor=#0EA5E9;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="278" y="252" width="80" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server → Scheduler: vertical down from center -->
+        <mxCell id="edge-api-scheduler" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="api-server" target="scheduler" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-api-scheduler-label" value="watch 未调度 Pod" style="text;html=1;fontSize=9;fontColor=#2563EB;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="100" y="303" width="100" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server → Controller Manager: horizontal right to left -->
+        <mxCell id="edge-api-cm" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=1.5;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="api-server" target="controller-manager" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-api-cm-label" value="watch 资源变更" style="text;html=1;fontSize=9;fontColor=#2563EB;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="278" y="345" width="85" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server → Cloud Controller Manager: vertical down left side -->
+        <mxCell id="edge-api-ccm" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#93C5FD;strokeWidth=1.5;dashed=1;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="api-server" target="ccm" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Scheduler → kubelet-1: dashed "bind" edge, routes left outside CP to Node 1 -->
+        <mxCell id="edge-scheduler-kubelet1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#8B5CF6;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="scheduler" target="kubelet-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="367" />
+              <mxPoint x="20" y="871" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-scheduler-kubelet1-label" value="bind Pod → Node" style="text;html=1;fontSize=9;fontColor=#8B5CF6;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="15" y="600" width="90" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server → kubelet-1: bidirectional, routes outside CP left edge then down to Node 1 -->
+        <mxCell id="edge-api-kubelet1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="api-server" target="kubelet-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="15" y="261" />
+              <mxPoint x="15" y="871" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-api-kubelet1-label" value="下发 PodSpec / 上报状态" style="text;html=1;fontSize=9;fontColor=#2563EB;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="15" y="550" width="108" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- API Server → kubelet-2: routes right side outside CP then down to Node 2 -->
+        <mxCell id="edge-api-kubelet2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#2563EB;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="api-server" target="kubelet-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="261" />
+              <mxPoint x="290" y="725" />
+              <mxPoint x="910" y="725" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-api-kubelet2-label" value="下发 PodSpec / 上报状态" style="text;html=1;fontSize=9;fontColor=#2563EB;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="500" y="718" width="130" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- kubelet → 容器运行时 (Node 1): horizontal within worker node -->
+        <mxCell id="edge-kubelet1-cr1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#16A34A;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="kubelet-1" target="cr-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-kubelet1-cr1-label" value="CRI gRPC" style="text;html=1;fontSize=9;fontColor=#16A34A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="350" y="855" width="60" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- kubelet → 容器运行时 (Node 2): horizontal within worker node -->
+        <mxCell id="edge-kubelet2-cr2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#16A34A;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="kubelet-2" target="cr-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-kubelet2-cr2-label" value="CRI gRPC" style="text;html=1;fontSize=9;fontColor=#16A34A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1105" y="855" width="60" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- kube-proxy-1 → CNI: routes up from Node 1 to CNI box in plugin layer -->
+        <mxCell id="edge-proxy1-cni" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EA580C;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" parent="1" source="kube-proxy-1" target="cni" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="780" />
+              <mxPoint x="340" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- kube-proxy-2 → CNI: routes up from Node 2 to CNI box -->
+        <mxCell id="edge-proxy2-cni" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EA580C;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" parent="1" source="kube-proxy-2" target="cni" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="780" />
+              <mxPoint x="380" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cni-edge-label" value="配置网络规则" style="text;html=1;fontSize=9;fontColor=#EA580C;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="700" y="768" width="80" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- Internet → kube-proxy-2: external traffic enters through worker node 2 -->
+        <mxCell id="edge-internet-proxy2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#94A3B8;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="internet" target="kube-proxy-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="165" />
+              <mxPoint x="1310" y="790" />
+              <mxPoint x="1100" y="790" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-internet-proxy2-label" value="外部流量 → Service" style="text;html=1;fontSize=9;fontColor=#94A3B8;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1265" y="600" width="100" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- CRI → cr-2: interface connection, routes between plugin and worker layers -->
+        <mxCell id="edge-cri-cr2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EA580C;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="cri" target="cr-2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="147" y="780" />
+              <mxPoint x="147" y="830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cri-edge-label" value="CRI 标准接口" style="text;html=1;fontSize=9;fontColor=#EA580C;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="110" y="740" width="80" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LEGEND ==================== -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FAFAFA;strokeColor=#D4D4D8;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="180" width="350" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="图例" style="text;html=1;fontSize=13;fontColor=#52525B;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1350" y="186" width="110" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-1" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="216" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1-text" value="控制面组件" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1295" y="216" width="90" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-2" value="" style="rounded=1;whiteSpace=wrap;fillColor=#BBF7D0;strokeColor=#16A34A;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1400" y="216" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-2-text" value="工作节点组件" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1445" y="216" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-3" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="246" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-3-text" value="可插拔接口" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1295" y="246" width="90" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-4" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1400" y="246" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-4-text" value="Pod 工作负载" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1445" y="246" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-edge-solid" value="" style="endArrow=classic;html=1;strokeColor=#52525B;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1250" y="290" as="sourcePoint" />
+            <mxPoint x="1310" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-edge-solid-text" value="同步通信" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="280" width="70" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-edge-dash" value="" style="endArrow=classic;html=1;strokeColor=#52525B;strokeWidth=1.5;dashed=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1400" y="290" as="sourcePoint" />
+            <mxPoint x="1460" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-edge-dash-text" value="异步/可选" style="text;html=1;fontSize=10;fontColor=#52525B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1470" y="280" width="80" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Annotations -->
+        <mxCell id="note-watch" value="&lt;b&gt;⚡ watch 机制&lt;/b&gt;&lt;br&gt;控制面组件通过 API Server&lt;br&gt;的 watch 接口监听资源变更，&lt;br&gt;而非轮询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;strokeWidth=1;fontSize=10;fontColor=#854D0E;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="370" width="200" height="68" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note-plugins" value="&lt;b&gt;🔌 可插拔设计&lt;/b&gt;&lt;br&gt;CRI/CNI/CSI 遵循标准接口，&lt;br&gt;可替换不同厂商实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;strokeWidth=1;fontSize=10;fontColor=#854D0E;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="460" width="200" height="68" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

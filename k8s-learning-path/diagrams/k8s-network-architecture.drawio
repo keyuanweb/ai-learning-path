@@ -1,0 +1,350 @@
+<mxfile host="app.diagrams.net" modified="2026-08-02" agent="draw.io">
+  <diagram name="K8s Network Architecture" id="k8s-network">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="1050">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Kubernetes 网络与服务架构" style="text;html=1;fontSize=24;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="10" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- External Access Layer -->
+        <mxCell id="ext-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#94A3B8;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="70" width="1580" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-title" value="外部访问层 (External Access)" style="text;html=1;fontSize=15;fontColor=#475569;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="600" y="75" width="300" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="client" value="&lt;b&gt;外部客户端&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;浏览器 · API 调用 · gRPC&lt;/font&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;strokeWidth=2;fontSize=11;fontColor=#334155;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="50" y="100" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="dns" value="&lt;b&gt;DNS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;CoreDNS / ExternalDNS&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=2;fontSize=11;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="280" y="100" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="cloud-lb" value="&lt;b&gt;云负载均衡器&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;AWS NLB · GCLB · Azure LB&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=2;fontSize=11;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="510" y="100" width="180" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ingress-ctrl" value="&lt;b&gt;Ingress Controller&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;nginx-ingress · Traefik · Contour&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=2;fontSize=11;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="770" y="100" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway-api" value="&lt;b&gt;Gateway API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;GatewayClass · Gateway · HTTPRoute&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#6366F1;strokeWidth=2;fontSize=11;fontColor=#3730A3;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="100" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tls" value="&lt;b&gt;TLS 终止&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;cert-manager · Let's Encrypt&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.5;fontSize=11;fontColor=#92400E;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1350" y="100" width="170" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Service Layer -->
+        <mxCell id="svc-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="200" width="1580" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-title" value="Service 服务发现层 (kube-proxy 实现负载均衡)" style="text;html=1;fontSize=15;fontColor=#1E40AF;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="205" width="480" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-clusterip-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="50" y="245" width="300" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-clusterip-title" value="ClusterIP (默认)" style="text;html=1;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="110" y="250" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-clusterip" value="&lt;b&gt;web-svc&lt;/b&gt;&lt;br&gt;ClusterIP: 10.96.0.10&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;集群内 DNS: web-svc.ns.svc.cluster.local&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="65" y="280" width="270" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-clusterip-note" value="&lt;font style=&quot;font-size:9px&quot;&gt;✅ 微服务互调&lt;br&gt;✅ 集群内 DNS 解析&lt;/font&gt;" style="text;html=1;fontSize=9;fontColor=#64748B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="75" y="345" width="130" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-nodeport-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="390" y="245" width="300" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-nodeport-title" value="NodePort" style="text;html=1;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="250" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-nodeport" value="&lt;b&gt;web-svc&lt;/b&gt;&lt;br&gt;NodePort: 30080&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;&lt;NodeIP&gt;:30080 → targetPort:80&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="405" y="280" width="270" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-nodeport-note" value="&lt;font style=&quot;font-size:9px&quot;&gt;⚠️ 端口范围 30000-32767&lt;br&gt;✅ 开发测试用&lt;/font&gt;" style="text;html=1;fontSize=9;fontColor=#64748B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="415" y="345" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-lb-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="730" y="245" width="300" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-lb-title" value="LoadBalancer" style="text;html=1;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="800" y="250" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-lb" value="&lt;b&gt;web-svc&lt;/b&gt;&lt;br&gt;External-IP: 203.0.113.10&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;云 LB → NodePort → Pod&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="745" y="280" width="270" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-lb-note" value="&lt;font style=&quot;font-size:9px&quot;&gt;✅ 生产公网入口&lt;br&gt;⚠️ 每 Service 一个 LB (贵)&lt;/font&gt;" style="text;html=1;fontSize=9;fontColor=#64748B;verticalAlign=middle;align=left;" parent="1" vertex="1">
+          <mxGeometry x="755" y="345" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="svc-other-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#DBEAFE;strokeColor=#2563EB;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="245" width="300" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-other-title" value="其他类型" style="text;html=1;fontSize=13;fontColor=#1E3A8A;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1170" y="250" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-externalname" value="&lt;b&gt;ExternalName&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;CNAME → external-db.example.com&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=1.5;fontSize=10;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="280" width="240" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-headless" value="&lt;b&gt;Headless&lt;/b&gt; (clusterIP: None)&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;DNS 直接返回 Pod IP 列表 · StatefulSet&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BFDBFE;strokeColor=#2563EB;strokeWidth=1.5;fontSize=10;fontColor=#1E3A8A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="325" width="240" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- kube-proxy Layer -->
+        <mxCell id="proxy-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FFF7ED;strokeColor=#F97316;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="430" width="1580" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy-title" value="kube-proxy 数据面 (每节点运行)" style="text;html=1;fontSize=15;fontColor=#C2410C;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="580" y="435" width="350" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="proxy-iptables" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="50" y="475" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy-iptables-title" value="iptables 模式 (默认)" style="text;html=1;fontSize=13;fontColor=#7C2D12;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="120" y="480" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy-iptables-detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;• 每个 Service 创建 iptables 规则链&lt;br&gt;• 随机负载均衡 (statistic mode random)&lt;br&gt;• 规则数 = Service × Endpoints (O(n²))&lt;br&gt;• 大规模集群规则膨胀，更新慢&lt;br&gt;• 不做连接追踪，无调度亲和性&lt;/font&gt;" style="text;html=1;fontSize=10;fontColor=#7C2D12;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="55" y="505" width="330" height="85" as="geometry" />
+        </mxCell>
+
+        <mxCell id="proxy-ipvs" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FED7AA;strokeColor=#EA580C;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="430" y="475" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy-ipvs-title" value="IPVS 模式 (推荐)" style="text;html=1;fontSize=13;fontColor=#7C2D12;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="520" y="480" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy-ipvs-detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;• Linux 内核 IPVS 模块，性能更高&lt;br&gt;• 支持多种调度算法: rr/lc/dh/sh&lt;br&gt;• O(1) 查找，规则数不影响性能&lt;br&gt;• 大规模集群 (1000+ Service) 首选&lt;br&gt;• 需加载 ip_vs 内核模块&lt;/font&gt;" style="text;html=1;fontSize=10;fontColor=#7C2D12;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="435" y="505" width="330" height="85" as="geometry" />
+        </mxCell>
+
+        <mxCell id="endpoints-box" value="" style="rounded=1;whiteSpace=wrap;fillColor=#FEF3C7;strokeColor=#F59E0B;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="810" y="475" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoints-title" value="Endpoints / EndpointSlice" style="text;html=1;fontSize=13;fontColor=#92400E;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="860" y="480" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoints-detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;• Endpoints Controller 自动维护&lt;br&gt;• 仅 Ready Pod 加入 Endpoints&lt;br&gt;• EndpointSlice (1.21+) 解决&lt;br&gt;  大 Service Endpoints 对象过大的问题&lt;br&gt;• 按 Node 拓扑分布 slices&lt;/font&gt;" style="text;html=1;fontSize=10;fontColor=#92400E;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="815" y="505" width="330" height="85" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cni-box" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1190" y="475" width="390" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cni-title" value="CNI 网络插件" style="text;html=1;fontSize=13;fontColor=#6B21A8;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1320" y="480" width="130" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cni-detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;• Calico: BGP/iPtables, 高性能, NetworkPolicy&lt;br&gt;• Flannel: VXLAN/host-gw, 简单易用&lt;br&gt;• Cilium: eBPF, 可观测性强, Hubble&lt;br&gt;• Weave: 自动发现, 加密通信&lt;br&gt;• 实现 Pod-to-Pod 跨节点通信&lt;/font&gt;" style="text;html=1;fontSize=10;fontColor=#6B21A8;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1195" y="505" width="380" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- Pod Layer -->
+        <mxCell id="pod-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=2;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="30" y="640" width="1580" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-title" value="Pod 后端实例 (Ready Pod 加入 Endpoints)" style="text;html=1;fontSize=15;fontColor=#166534;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="550" y="645" width="420" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="wn1-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="50" y="685" width="500" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="wn1-title" value="Worker Node 1 (10.0.1.10)" style="text;html=1;fontSize=13;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="690" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-a" value="&lt;b&gt;Pod A&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;IP: 10.244.1.2&lt;br&gt;app=web · Ready ✓&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="70" y="725" width="210" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-b" value="&lt;b&gt;Pod B&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;IP: 10.244.1.3&lt;br&gt;app=web · Ready ✓&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="310" y="725" width="210" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-c" value="&lt;b&gt;Pod C&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;IP: 10.244.1.4&lt;br&gt;app=web · NotReady ✗&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=1.5;dashed=1;fontSize=10;fontColor=#991B1B;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="70" y="790" width="210" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="wn2-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F7FEE7;strokeColor=#4ADE80;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="580" y="685" width="500" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="wn2-title" value="Worker Node 2 (10.0.1.20)" style="text;html=1;fontSize=13;fontColor=#15803D;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="710" y="690" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-d" value="&lt;b&gt;Pod D&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;IP: 10.244.2.2&lt;br&gt;app=web · Ready ✓&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="600" y="725" width="210" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="pod-e" value="&lt;b&gt;Pod E&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;IP: 10.244.2.3&lt;br&gt;app=web · Ready ✓&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;overflow=fill;fillColor=#DCFCE7;strokeColor=#22C55E;strokeWidth=2;fontSize=10;fontColor=#14532D;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="840" y="725" width="210" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="netpol-container" value="" style="rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#64748B;strokeWidth=1.5;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1110" y="685" width="470" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="netpol-title" value="NetworkPolicy (网络策略)" style="text;html=1;fontSize=13;fontColor=#334155;verticalAlign=middle;align=center;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1230" y="690" width="230" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="netpol-detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;• Ingress/Egress 规则控制 Pod 间流量&lt;br&gt;• namespaceSelector + podSelector 组合&lt;br&gt;• 默认拒绝-明确允许 (白名单模式)&lt;br&gt;• 需 CNI 支持 (Calico/Cilium 完整支持)&lt;br&gt;• Flannel 不支持 NetworkPolicy&lt;br&gt;• 实现零信任网络架构&lt;/font&gt;" style="text;html=1;fontSize=10;fontColor=#334155;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1120" y="715" width="450" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== EDGES (optimized) ==================== -->
+
+        <!-- Client → DNS: adjacent, horizontal direct -->
+        <mxCell id="edge-client-dns" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#64748B;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="client" target="dns" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Client → Cloud LB: skip DNS, route below at y=163 -->
+        <mxCell id="edge-client-lb" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#64748B;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="client" target="cloud-lb" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="235" y="127" />
+              <mxPoint x="235" y="163" />
+              <mxPoint x="490" y="163" />
+              <mxPoint x="490" y="127" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- DNS → Ingress: skip Cloud LB, route below -->
+        <mxCell id="edge-dns-ingress" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#6366F1;strokeWidth=1.5;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="dns" target="ingress-ctrl" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="116" />
+              <mxPoint x="450" y="163" />
+              <mxPoint x="750" y="163" />
+              <mxPoint x="750" y="116" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Cloud LB → Ingress: adjacent -->
+        <mxCell id="edge-lb-ingress" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#6366F1;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="cloud-lb" target="ingress-ctrl" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Ingress → Gateway: adjacent -->
+        <mxCell id="edge-ingress-gateway" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#6366F1;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ingress-ctrl" target="gateway-api" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- TLS → Ingress: dashed, route above gateway -->
+        <mxCell id="edge-tls-ingress" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#F59E0B;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.3;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" parent="1" source="tls" target="ingress-ctrl" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="116" />
+              <mxPoint x="1330" y="90" />
+              <mxPoint x="1010" y="90" />
+              <mxPoint x="1010" y="116" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Ingress → Service ClusterIP: straight down to target -->
+        <mxCell id="edge-ingress-clusterip" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="ingress-ctrl" target="svc-clusterip" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="836" y="190" />
+              <mxPoint x="200" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-ingress-clusterip-label" value="Ingress 路由 → Service" style="text;html=1;fontSize=9;fontColor=#3B82F6;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="450" y="182" width="120" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway → Service LB: straight down -->
+        <mxCell id="edge-gateway-lb" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#3B82F6;strokeWidth=2;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="gateway-api" target="svc-lb" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1126" y="190" />
+              <mxPoint x="880" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Service ClusterIP → kube-proxy iptables: straight down -->
+        <mxCell id="edge-svc-proxy" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EA580C;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="svc-clusterip" target="proxy-iptables" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="420" />
+              <mxPoint x="220" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-svc-proxy-label" value="watch Service/Endpoints 变更" style="text;html=1;fontSize=9;fontColor=#EA580C;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="120" y="413" width="140" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- kube-proxy iptables → Pod A: route down to pod layer -->
+        <mxCell id="edge-proxy-poda" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#16A34A;strokeWidth=2;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="proxy-iptables" target="pod-a" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="152" y="630" />
+              <mxPoint x="175" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- kube-proxy iptables → Pod B -->
+        <mxCell id="edge-proxy-podb" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#16A34A;strokeWidth=2;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="proxy-iptables" target="pod-b" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="288" y="630" />
+              <mxPoint x="415" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-proxy-proxy-label" value="iptables/IPVS 规则 → targetPort" style="text;html=1;fontSize=9;fontColor=#16A34A;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="200" y="620" width="160" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- NetworkPolicy → Worker Node 2: horizontal -->
+        <mxCell id="edge-netpol-pods" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;strokeColor=#EF4444;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="netpol-container" target="wn2-container" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1090" y="762" />
+              <mxPoint x="1090" y="762" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-netpol-label" value="NetworkPolicy 控制流量" style="text;html=1;fontSize=9;fontColor=#EF4444;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="748" width="120" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- Cross-node Pod communication: Pod A → Pod D -->
+        <mxCell id="edge-cross-node" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;startArrow=classic;html=1;strokeColor=#9333EA;strokeWidth=1.5;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pod-a" target="pod-d" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="295" y="752" />
+              <mxPoint x="295" y="672" />
+              <mxPoint x="580" y="672" />
+              <mxPoint x="580" y="752" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-cross-node-label" value="CNI 跨节点 Pod-to-Pod 通信" style="text;html=1;fontSize=9;fontColor=#9333EA;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="310" y="665" width="150" height="16" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== ANNOTATIONS ==================== -->
+        <mxCell id="flow-annotation" value="&lt;b&gt;📋 流量路径总结&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;① 外部请求 → DNS 解析 →&lt;br&gt;② Ingress Controller (L7 路由) / Cloud LB (L4)&lt;br&gt;③ → Service ClusterIP (虚拟 IP)&lt;br&gt;④ → kube-proxy 规则 (iptables/IPVS)&lt;br&gt;⑤ → 目标 Pod (仅 Ready Pod)&lt;br&gt;⑥ CNI 负责 Pod 间跨节点通信&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEFCE8;strokeColor=#EAB308;strokeWidth=1;fontSize=10;fontColor=#854D0E;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="30" y="885" width="400" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="key-takeaway" value="&lt;b&gt;🔑 关键要点&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;• Service 提供稳定虚拟 IP + DNS，Pod 可以任意替换&lt;br&gt;• kube-proxy 每节点运行，watch API Server 实时更新规则&lt;br&gt;• 大规模集群用 IPVS 模式 (O(1) vs O(n))&lt;br&gt;• Ingress 做 L7 路由(域名/路径)，一个入口对应多个 Service&lt;br&gt;• Gateway API 是 Ingress 的下一代，更灵活的角色分离&lt;br&gt;• NetworkPolicy 实现 Pod 级防火墙，默认全通 → 白名单&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#22C55E;strokeWidth=1.5;fontSize=10;fontColor=#166534;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="460" y="885" width="600" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cni-compare" value="&lt;b&gt;🔌 CNI 选型对比&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Calico: 高性能 + NetworkPolicy (生产首选)&lt;br&gt;Flannel: 最简单，适合学习/小集群&lt;br&gt;Cilium: eBPF 驱动，可观测性最强 (趋势)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;strokeWidth=1;fontSize=10;fontColor=#6B21A8;verticalAlign=middle;align=left;spacingLeft=8;" parent="1" vertex="1">
+          <mxGeometry x="1090" y="885" width="330" height="80" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
