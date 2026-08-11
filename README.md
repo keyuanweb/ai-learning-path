@@ -1,6 +1,6 @@
 # AI 学习路径合集
 
-AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理引擎源码、Agent 框架与 Harness 工程化、多模态推理、云原生部署等方向。
+AI 技术学习文档，涵盖 Claude Code 工具链、大模型原理、推理引擎源码、Agent 框架与 Harness 工程化、多模态推理、云原生部署、规范驱动开发等方向。
 
 ## 学习路径总览
 
@@ -24,6 +24,10 @@ flowchart LR
     p7[Claude Code]
     p8[Ray 分布式]
     p9[K8s 云原生]
+  end
+  subgraph methodology [开发方法论]
+    direction TB
+    p10[SDD 规范驱动]
   end
 ```
 
@@ -202,6 +206,22 @@ flowchart LR
 
 > 速记参考：[agent-harmess/](agent-harmess/)（四篇原始导图笔记：[稳定性](agent-harmess/没有%20Harness%20的%20Agent%20为什么不稳定.md)、[十一模块关系](agent-harmess/关系.md)、[八大模块速通](agent-harmess/八大模块速通.md)、[上线检查](agent-harmess/上线检查.md)；正式章节见本路径）
 
+### 11. [SDD 规范驱动开发](sdd-learning-path/)
+
+系统掌握 Specification-Driven Development 方法论——从核心理念与四级成熟度模型（L1 Spec-First / L2 Spec-Anchored / L3 Spec-as-Source / L4 Spec-to-Application），到完整七步工作流（Constitution → Specify → Clarify → Plan → Tasks → Implement → Verify），以及 GitHub Spec Kit、sdd-flow 等主流工具链的全流程实战。9 阶段 31 篇文档。
+
+| 阶段 | 内容 | 学时 |
+|------|------|------|
+| 00 | [入口 — 学习路线、环境搭建](sdd-learning-path/00-入口/) | 1.5h |
+| 01 | [核心理念 — SDD 定义、传统对比、TDD/BDD 关系、四级成熟度](sdd-learning-path/01-核心理念/) | 3~5h |
+| 02 | [Constitution与Specify — 项目宪章、规范编写、功能模板、NFR](sdd-learning-path/02-Constitution与Specify/) | 4~6h |
+| 03 | [Clarify澄清 — 澄清理念、歧义检测消歧、AI 辅助](sdd-learning-path/03-Clarify澄清/) | 2~4h |
+| 04 | [Plan与Tasks — 实施计划、任务分解、优先级排序与风险评估](sdd-learning-path/04-Plan与Tasks/) | 3~5h |
+| 05 | [Implement实现 — 规范驱动代码生成、上下文管理、规范同步](sdd-learning-path/05-Implement实现/) | 3~5h |
+| 06 | [Verify验证 — CI/CD+SDD+Git+AI 集成、验证策略、自动化测试、合规审计、反馈闭环](sdd-learning-path/06-Verify验证/) | 4~6h |
+| 07 | [工具链实战 — GitHub Spec Kit、sdd-flow 插件、工具选型](sdd-learning-path/07-工具链实战/) | 4~6h |
+| 08 | [案例与实践 — 端到端、多模块、AI 实战、团队落地经验](sdd-learning-path/08-案例与实践/) | 4~6h |
+
 ---
 
 ## 学习顺序建议
@@ -215,14 +235,18 @@ flowchart TD
   base --> toolNode["工具路线<br/>Claude Code"]
   base --> k8sNode["K8s 云原生<br/>可选部署前置"]
   base --> rayNode[Ray 分布式]
+  base --> sddNode["SDD 规范驱动<br/>开发方法论"]
   harnessNode --> agentNode
   agentNode --> implNode["Hermes 与 OpenClaw"]
   k8sNode --> rayNode
   k8sNode --> eng
+  sddNode --> agentNode
+  sddNode --> toolNode
 ```
 
 - **推理引擎方向**：LLM 基础 → vLLM → vLLM-Omni
 - **Agent 方向**：LLM 基础 → **Harness（工程兜底）** → Agent → Hermes（Python，深挖框架实现）→ OpenClaw（Node.js，对比学习 + 生态化思维）；速记可对照 [agent-harmess/](agent-harmess/)
 - **工具方向**：已有开发经验 → Claude Code → Agent SDK 开发
+- **方法论方向**：有项目开发经验 → SDD 规范驱动开发（推荐与 Claude Code 工具路线并行学习，sdd-flow 是 Claude Code 插件）；SDD 与 Agent / Harness 方向互补——规范驱动方法论提升 AI Agent 产出的可控性
 - **分布式方向**：LLM 基础 → Ray（分布式训练/推理/服务的统一基础设施）
 - **云原生部署方向**：K8s 基础（本路径）→ Ray 08 KubeRay / vLLM 生产部署 / LLM 服务化部署章节
