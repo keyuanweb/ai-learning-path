@@ -82,21 +82,26 @@ flowchart LR
 
 > 源码位置：`code/vllm-omni/`
 
-### 4. [Agent 学习路径](agent-learning-path/)
+### 4. [Agent 学习路径](agent-learning-path/) ★ 2026 全面更新
 
-系统掌握 LangChain + LangGraph 构建 AI Agent 的完整技术栈，从基础到工业级多 Agent 系统。
+系统掌握 AI Agent 完整技术栈：从 LangChain/LangGraph 基础到 MCP/A2A 开放协议、DeepAgents Harness、多框架对比、Agent 评估与企业治理。11 阶段 47 篇文档。
 
 | 阶段 | 内容 | 学时 |
 |------|------|------|
-| 00 | [入口 — 学习路线总览](agent-learning-path/00-入口/) | 15min |
-| 01 | [基础入门 — LangChain 核心概念、LCEL](agent-learning-path/01-入门/) | 3~5h |
+| 00 | [入口 — 学习路线总览、2026 Agent 生态全景](agent-learning-path/00-入口/) | 15min |
+| 01 | [基础入门 — LangChain 核心概念、LCEL、第一个 Chain](agent-learning-path/01-入门/) | 3~5h |
 | 02 | [LangGraph 核心 — StateGraph、条件分支、Checkpoint](agent-learning-path/02-图核心/) | 5~8h |
 | 03 | [Agent 实战 — Tool Calling、create_agent、HITL](agent-learning-path/03-Agent/) | 5~8h |
-| 04 | [Skill — SKILL.md 格式、Deep Agent、渐进式披露](agent-learning-path/04-Skill/) | 5~8h |
-| 05 | [RAG + Agent 融合 — Corrective RAG、Agentic RAG、Self-RAG、Graph RAG](agent-learning-path/05-RAG/) | 7~10h |
-| 06 | [多 Agent — Supervisor、Hierarchical、Swarm](agent-learning-path/06-多Agent/) | 8~12h |
-| 07 | [生产部署 — LangSmith、LangGraph Platform、安全](agent-learning-path/07-生产部署/) | 5~8h |
-| 08 | [工业级案例 — Kensho、Grab、Remote](agent-learning-path/08-案例/) | 3~5h |
+| 04 | [**MCP 协议 ★** — 协议概述、FastMCP、Agent集成、生产实践](agent-learning-path/04-MCP/) | 5~8h |
+| 05 | [Agent Skills — SKILL.md、DeepAgents、渐进式披露、评估治理](agent-learning-path/05-Skill/) | 5~8h |
+| 06 | [RAG + Agent — Corrective/Agentic/Self/Graph RAG](agent-learning-path/06-RAG/) | 7~10h |
+| 07 | [多 Agent — Supervisor/Hierarchical/Swarm、**A2A协议 ★**、框架对比](agent-learning-path/07-多Agent/) | 10~16h |
+| 08 | [案例研究 — 金融/客服/数据迁移、**MCP+A2A协作 ★**、DeepAgents实践](agent-learning-path/11-案例/) | 5~8h |
+| 09 | [**评估体系 ★** — LLM-as-Judge、轨迹评估、红队测试、持续监控](agent-learning-path/09-评估/) | 5~8h |
+| 10 | [生产部署 — LangSmith、Platform、安全防护、**企业治理 ★**](agent-learning-path/10-生产部署/) | 5~8h |
+| 11 | [综合实战 — 端到端项目，综合各阶段技能](agent-learning-path/) | 10~15h |
+
+> **2026 更新亮点**：新增 MCP 协议完整教程、A2A 跨框架协作、DeepAgents v1.x 深入、OpenAI Agents SDK 对比、Agent 评估体系（LLM-as-Judge/轨迹评估/红队测试）、企业级治理（ABAC/PII脱敏/沙箱/MCP Tunnels）、6 框架选型决策树
 
 ### 5. [Hermes Agent 源码学习](hermes-learning-path/)
 
