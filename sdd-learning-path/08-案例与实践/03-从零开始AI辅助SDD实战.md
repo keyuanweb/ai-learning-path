@@ -746,5 +746,5 @@ Spec 对照结果: 6/6 验收条件全部通过
 |---------------------|---------------|
 | 单人、单模块 | 多人多模块 → 接口契约前置（见 [02-多模块项目SDD实践](02-多模块项目SDD实践.md)） |
 | SQLite 本地存储 | PostgreSQL + Redis → 数据契约加入 Spec |
-| curl 手动验证 | CI/CD 自动化验证 → 见 [01-SDD-Git-CICD与AI集成](../04-Verify验证/01-SDD-Git-CICD与AI集成.md) |
+| curl 手动验证 | CI/CD 自动化验证 → 见 [01-SDD-Git-CICD与AI集成](../06-Verify验证/01-SDD-Git-CICD与AI集成.md) |
 | 单次开发 | 迭代开发 → 每个 Sprint 一个 Spec 增量 |
