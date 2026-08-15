@@ -12,9 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 11 个学习路径目录/         每个路径按阶段分目录，每阶段含编号文档
 agent-harmess/            Harness 原始导图笔记（4篇），供 harness-learning-path 速记参考
 code/                     四个参考源码仓库（vllm, vllm-omni, hermes-agent, agency-agents-zh），被 .gitignore 忽略
-scripts/                  辅助脚本与工具（如 geo-video 视频生成提示词模板）
 README.md                 学习路径总索引、11条路径对比表格、学习顺序建议
-.gitignore                忽略 code/、node_modules/、dist/、package*.json、.claude/ 等
+.gitignore                忽略 code/、node_modules/、dist/、package*.json、.env、scripts/ 等
 ```
 
 ## 文档编写约定
