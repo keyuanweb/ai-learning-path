@@ -31,7 +31,7 @@
 
 直观理解：**大量注意力与共享/dense 投影仍以高精度存放；packed INT4 主要落在 MoE 路由到的 expert 等符合规则的 Linear 上**（与 `ignore` 设计一致）。
 
-运行时 vLLM 将该 JSON 解析为 **`CompressedTensorsConfig`**，各并行线性层 / MoE 通过 **`QuantizeMethod`** 完成 **`create_weights`** → **加载期 `weight_loader`** → **`process_weights_after_loading`**。
+运行时 vLLM 将该 JSON 解析为 **`CompressedTensorsConfig`**，各并行线性层 / MoE 通过 **`QuantizeMethodBase`** 完成 **`create_weights`** → **加载期 `weight_loader`** → **`process_weights_after_loading`**。
 
 ---
 

@@ -103,7 +103,7 @@ graph = builder.compile()
 
 ## L5：Multi-Agent
 
-多个 Agent 协作完成复杂任务。详见阶段 6。
+多个 Agent 协作完成复杂任务。详见阶段 7。
 
 ```mermaid
 flowchart LR

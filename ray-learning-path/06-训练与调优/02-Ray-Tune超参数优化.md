@@ -32,7 +32,7 @@ graph LR
 
     style Serial fill:#f8d7da
     style Parallel fill:#fff3cd
-    style EarlyStop fill:#d4edga
+    style EarlyStop fill:#d4edda
 ```
   传统串行：3 × T | 并行：1 × T | 并行+早停：< 1 × T（省了失败的试验）
 

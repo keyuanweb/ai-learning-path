@@ -134,7 +134,6 @@ graph TD
     style HeadP fill:#fff3cd
     style Workers fill:#d4edda
 ```
-  **重要**：Worker Pod 由 Ray Autoscaler 控制数量（不是 K8s HPA！）
 
 **重要**：Ray 的 Autoscaler 负责增减 Worker Pod，不是 K8s HPA。这是因为 Ray 需要感知 Task 级资源需求来做决策。
 

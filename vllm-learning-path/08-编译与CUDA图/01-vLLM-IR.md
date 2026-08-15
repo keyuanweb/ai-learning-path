@@ -111,7 +111,6 @@ vLLM IR 是 CustomOp 的**迁移目标**。新 op 应直接用 IR，旧 CustomOp
 |----|------|------|
 | `rms_norm` | `ir/ops/layernorm.py` | RMS 归一化 |
 | `fused_add_rms_norm` | `ir/ops/layernorm.py` | Add + RMSNorm 融合 |
-| `linear` | `ir/ops/linear.py` | 线性变换 |
 
 > 注意：IR 仍在建设中，已注册的 op 数量有限。大部分模型仍在通过非 IR 路径执行。
 

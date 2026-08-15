@@ -87,7 +87,7 @@ result = await agent.run_conversation(
 
 ### 60+ 可配置参数
 
-`AIAgent.__init__` 在 [run_agent.py:1051](code/hermes-agent/run_agent.py#L1051) 提供了超过 60 个参数，分为几类:
+`AIAgent.__init__` 在 [run_agent.py:1051](../code/hermes-agent/run_agent.py#L1051) 提供了超过 60 个参数，分为几类:
 
 | 类别 | 关键参数 | 说明 |
 |------|---------|------|
@@ -304,7 +304,7 @@ flowchart LR
 
 ### 已有模型提供商插件
 
-[plugins/model-providers/](code/hermes-agent/plugins/model-providers/) 下已有 8 个:
+[plugins/model-providers/](../code/hermes-agent/plugins/model-providers/) 下已有 28 个，这里节选常见的 8 个:
 
 ```mermaid
 flowchart TD
@@ -402,4 +402,4 @@ hermes skills list
 
 ## 下一步
 
-到这里你已经完整了解了 Hermes Agent 的全部实现。回到 [00-概述与架构总览](00-概述与架构总览.md) 复习整体结构，或者开始深入阅读源码吧!
+到这里你已经掌握了 Hermes 的对外接口。下一章 [10-多Agent协作模式](10-多Agent协作模式.md) 看多个 Agent 如何分工协作。

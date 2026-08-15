@@ -6,10 +6,10 @@ StatefulSet 为 Pod 提供**稳定标识**（有序名称、固定网络 ID、�
 
 ```mermaid
 flowchart LR
-    STS["StatefulSet web"]
-    STS --> P0["web-0<br/>PVC-0"]
-    STS --> P1["web-1<br/>PVC-1"]
-    STS --> P2["web-2<br/>PVC-2"]
+    STS["StatefulSet nginx-sts"]
+    STS --> P0["nginx-sts-0<br/>PVC-0"]
+    STS --> P1["nginx-sts-1<br/>PVC-1"]
+    STS --> P2["nginx-sts-2<br/>PVC-2"]
     SVC["Headless Service"] --> P0
     SVC --> P1
     SVC --> P2
@@ -66,7 +66,7 @@ Pod  DNS：`nginx-sts-0.nginx-headless.k8s-learn.svc.cluster.local`
 ```bash
 kubectl apply -f statefulset.yaml
 kubectl get pods -n k8s-learn -l app=nginx-sts
-# 缩容按逆序：web-2 → web-1 → web-0
+# 缩容按逆序：nginx-sts-2 → nginx-sts-1 → nginx-sts-0
 kubectl scale sts nginx-sts --replicas=1 -n k8s-learn
 ```
 

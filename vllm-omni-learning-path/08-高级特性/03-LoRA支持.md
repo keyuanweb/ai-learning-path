@@ -32,7 +32,7 @@ vLLM-Omni 直接复用 vLLM 的 LoRA 系统（基于 Punica 内核），并做�
 ### `lora/request.py`
 
 ```python
-class OmniLoRARequest:
+class LoRARequest:
     lora_name: str       # LoRA 名称
     lora_path: str       # LoRA 权重路径
     lora_int_id: int     # LoRA 的内部 ID
@@ -41,10 +41,10 @@ class OmniLoRARequest:
 ### `config/lora.py`
 
 ```python
-class OmniLoRAConfig:
+class LoRAConfig:
     max_loras: int            # 最多同时加载多少个 LoRA
     max_lora_rank: int        # 最大 LoRA rank
-    lora_modules: list[str]   # 哪些模块挂 LoRA
+    target_modules: list[str] # 限制 LoRA 应用到哪些模块后缀
     fully_sharded_loras: bool # 是否跨 GPU 分片 LoRA
 ```
 
@@ -69,19 +69,19 @@ class OmniLoRAConfig:
 
 ```python
 class DiffusionLoRAManager:
-    def load_lora(self, lora_path):
-        # 加载 LoRA 权重
+    def add_adapter(self, lora_request):
+        # 注册并加载 LoRA 适配器
 
-    def activate_lora(self, lora_name):
+    def set_active_adapter(self, lora_request, lora_scale=1.0):
         # 激活特定 LoRA（切换 LoRA 时用）
 
-    def deactivate_lora(self):
-        # 停用 LoRA（使用基础模型）
+    def remove_adapter(self, adapter_id):
+        # 移除 LoRA 适配器
 ```
 
 ### LoRA Utils
 
-[`utils.py`](../../code/vllm-omni/vllm_omni/diffusion/lora/utils.py) 提供了 LoRA 相关的工具函数（如 LoRA 权重的合并、拆分）。
+[`utils.py`](../../code/vllm-omni/vllm_omni/diffusion/lora/utils.py) 提供了 LoRA 相关的工具函数（如 target modules 匹配、packed layers 模块展开）。
 
 ## LoRA 的使用示例
 

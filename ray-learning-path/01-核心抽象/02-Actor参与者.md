@@ -33,9 +33,6 @@ graph LR
     style Task fill:#fff3cd,stroke:#f0ad4e
     style Actor fill:#d4edda,stroke:#28a745
 ```
-    全新的环境            └─────────────────┘
-                             有记忆、可复用
-```
 
 ## 基本用法
 

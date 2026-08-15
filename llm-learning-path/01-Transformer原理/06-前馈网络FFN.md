@@ -50,7 +50,7 @@ $$\text{FFN}(x) = W_2 \cdot \sigma(W_1 \cdot x)$$
 $$\text{SwiGLU}(x) = (W_3 x \otimes \text{SiLU}(W_1 x)) \cdot W_2$$
 
 三个矩阵：
-- $W_1$：Gate 投影，通过 SiLU 后生成 [0, 1] 区间的门控值
+- $W_1$：Gate 投影，通过 SiLU 生成门控值（值域约为 [-0.28, ∞)，并非 [0, 1]）
 - $W_3$：Up 投影，生成实际的信号
 - $W_2$：Down 投影，将结果降回 $d_{model}$
 

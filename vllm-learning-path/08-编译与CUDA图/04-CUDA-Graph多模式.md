@@ -72,6 +72,7 @@ class BatchDescriptor:
     num_reqs: int         # 请求数
     uniform: bool         # 是否所有请求的 query 长度相同
     has_lora: bool        # 是否包含 LoRA adapter
+    num_active_loras: int = 0  # 活跃 LoRA adapter 数
 ```
 
 ## 模式切换流程
@@ -145,5 +146,5 @@ vLLM 的默认模式，实现最优性能：
 - `CUDAGraphMode` 枚举的定义和文档——理解每种模式的含义
 - `CudagraphDispatcher.dispatch()`——运行时选择 CUDA Graph 的入口
 - `CUDAGraphWrapper` 的嵌套设计——`FULL_AND_PIECEWISE` 的实现基础
-- `BatchDescriptor` 的四个字段——理解分派 key 的含义
+- `BatchDescriptor` 的五个字段——理解分派 key 的含义
 - Attention backend 的 `CUDAGraphSupport` 声明——如何影响模式降级

@@ -155,7 +155,7 @@ from claude_agent_sdk import ClaudeAgentClient, Config
 
 config = Config(
     model="sonnet",                    # opus / sonnet / haiku
-    permission_mode="default",         # default / plan / accept-edits
+    permission_mode="default",         # default / plan / acceptEdits
     allowed_tools=["Read", "Write", "Edit", "Bash(git *)"],
     denied_tools=["Bash(rm *)", "Bash(sudo *)"],
     max_turns=50,                      # 最大对话轮次
@@ -189,4 +189,4 @@ async with ClaudeAgentClient(config=config) as client:
 1. 用 Python 写一个简单的 `client.query()` 程序
 2. 实现流式输出，展示实时的事件流
 3. 创建交互式会话，体验多轮对话和会话分叉
-4. 对比配置 `permission_mode="plan"` 和 `"accept-edits"` 的行为差异
+4. 对比配置 `permission_mode="plan"` 和 `"acceptEdits"` 的行为差异

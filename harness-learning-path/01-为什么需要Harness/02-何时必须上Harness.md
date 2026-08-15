@@ -61,7 +61,7 @@ flowchart TD
 | 文档 | 说明 |
 |------|------|
 | [agent-harmess/没有 Harness 的 Agent 为什么不稳定.md](../../agent-harmess/没有%20Harness%20的%20Agent%20为什么不稳定.md) | 判断准则原文 |
-| [agent-learning-path/07-生产部署/](../../agent-learning-path/07-生产部署/) | 生产部署考量 |
+| [agent-learning-path/10-生产部署/](../../agent-learning-path/10-生产部署/) | 生产部署考量 |
 
 ## 小结
 

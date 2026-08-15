@@ -148,7 +148,7 @@ flowchart TD
 |----------|-------------|------|
 | 开源库/SDK | GitHub Spec Kit | Issue 驱动的规范管理，社区友好 |
 | 内部微服务 | sdd-flow + GitLab CI | 灵活的自定义验证，与内部 Git 平台集成 |
-| 个人项目 | LiorCohen/sdd 或无工具（手册流程） | 轻量，避免工具负担超过项目本身 |
+| 个人项目 | LiorCohen/sdd 或无工具（手动流程） | 轻量，避免工具负担超过项目本身 |
 | AI/ML 项目 | GitHub Spec Kit + sdd-flow 验证 | 模型行为规范需要更灵活的验证机制 |
 | 合规敏感项目 | GitHub Spec Kit + 自定义审计 Pipeline | 完整的变更追溯链，支持审计要求 |
 

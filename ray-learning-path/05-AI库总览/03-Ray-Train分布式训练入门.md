@@ -63,9 +63,12 @@ graph TD
     Driver["Ray Train Driver"]
     Driver --> W0["Worker 0<br/>DDP | GPU:0<br/>Data[0]"]
     Driver --> W1["Worker 1<br/>DDP | GPU:1<br/>Data[1]"]
+    Driver --> W2["Worker 2<br/>DDP | GPU:2<br/>Data[2]"]
     Driver --> W3["Worker 3<br/>DDP | GPU:3<br/>Data[3]"]
     W0 <-->|"NCCL AllReduce"| W1
-    W1 <-->|"NCCL AllReduce"| W3
+    W1 <-->|"NCCL AllReduce"| W2
+    W2 <-->|"NCCL AllReduce"| W3
+    W0 <-->|"NCCL AllReduce"| W2
     W0 <-->|"NCCL AllReduce"| W3
 
     style Driver fill:#fff3cd

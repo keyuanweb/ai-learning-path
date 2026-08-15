@@ -9,12 +9,12 @@ vLLM-Omni 扩展了 vLLM 的 OpenAI 兼容 API，新增了对图像、音频、�
 | 端点 | 功能 | 对应文件 |
 |------|------|---------|
 | `/v1/chat/completions` | 对话（含多模态输入） | `serving_chat.py` |
-| `/v1/images/generations` | 文生图 | `serving_audio_generate.py` 附近的图像处理 |
-| `/v1/audio/generations` | 文生音频 / 语音合成 | `serving_audio_generate.py` |
+| `/v1/images/generations` | 文生图 | `serving_chat.py`（多 Stage 模型）/ `api_server.py`（单 Stage 扩散） |
+| `/v1/audio/generate` | 文生音频 / 语音合成 | `serving_audio_generate.py` |
 | `/v1/audio/speech` | TTS 语音合成 | `serving_speech.py` |
 | `/v1/audio/speech/stream` | TTS 流式输出 | `serving_speech_stream.py` |
-| `/v1/video/generations` | 文生视频 | `serving_video.py` |
-| `/v1/video/generations/stream` | 视频流式输出 | `serving_video_stream.py` |
+| `/v1/videos` | 文生视频 | `serving_video.py` |
+| `/v1/video/chat/stream` | 视频流式输出 | `serving_video_stream.py` |
 | `/v1/realtime` | 实时对话（WebSocket） | `realtime_connection.py` |
 
 ## API 服务器入口

@@ -249,7 +249,7 @@ async with streamablehttp_client(
 | 认证层 | Bearer Token / OAuth 2.0 / mTLS |
 | 授权层 | 工具级权限控制 |
 | 审计层 | 所有工具调用日志 |
-| 网络层 | VPC 内网隔离，防火箱规则 |
+| 网络层 | VPC 内网隔离，防火墙规则 |
 
 ## 多 Server 管理与配置
 

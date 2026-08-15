@@ -13,8 +13,8 @@ vLLM-Omni 支持的语音模型大致可以分三类：
 | 类型 | 模型 | 工作方式 |
 |------|------|---------|
 | **全模态（含语音）** | Qwen-Omni, Ming-Flash-Omni | Thinker 理解语音 → Talker 生成语音 |
-| **纯 TTS** | CosyVoice3, Qwen3-TTS, Voxtral TTS, MOSS-TTS | 文字 → 语音 |
-| **语音对话** | MiMo Audio, Fish Speech | 语音 → 语音（end-to-end） |
+| **纯 TTS** | CosyVoice3, Qwen3-TTS, Voxtral TTS, MOSS-TTS, Fish Speech | 文字 → 语音 |
+| **语音对话** | MiMo Audio | 语音 → 语音（end-to-end） |
 
 ## CosyVoice3 —— 阿里开源的 TTS 模型
 

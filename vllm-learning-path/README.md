@@ -107,7 +107,7 @@ flowchart TD
 
 **核心设计要点**：
 
-1. **前后端分离**：前端 `LLMEngine` 管「请求从哪来、结果回哪去」；后端 `EngineCore` 管「调度-执行-采样的紧循环」。两者通过 `EngineCoreClient`（IPC 抽象层：InprocClient/MpClient/AsyncMPClient）通信。
+1. **前后端分离**：前端 `LLMEngine` 管「请求从哪来、结果回哪去」；后端 `EngineCore` 管「调度-执行-采样的紧循环」。两者通过 `EngineCoreClient`（IPC 抽象层：InprocClient/MPClient/AsyncMPClient）通信。
 2. **V1 统一调度**：不再区分 prefill/decode。每个 Request 有 `num_computed_tokens` 和 `num_tokens_with_spec`，调度器让前者追后者——自然地处理 chunked prefill、prefix caching、speculative decoding。
 3. **编译管线默认开启**：Dynamo tracing → PiecewiseBackend 切分 → Fusion Passes 融合 → IR Lowering → Inductor 代码生成 → CUDA Graph 录制。全流程对用户透明。
 4. **可插拔架构**：Attention Backend、量化方法、KV Transfer Connector、Plugin 均可按需替换，平台抽象层统一适配多硬件。
@@ -136,10 +136,10 @@ flowchart TD
 
 1. **用 IDE Ctrl+Click 追 import 链**。vLLM 大量使用 re-export（如 `vllm/engine/` → `vllm/v1/engine/`），IDE 跳转比 grep 快。
 2. **忽略 C++/CUDA 代码直到必要**。`csrc/` 目录是 kernel 实现，第一遍全部跳过。
-3. **复杂文件分多次读**：`scheduler.py`(~2800行) 只读 `schedule()`；`gpu_model_runner.py`(~7800行) 只读 `execute_model()`/`load_model()`；`arg_utils.py`(~2600行) 只扫字段分组。
+3. **复杂文件分多次读**：`core.py`(~2400行) 只读 `step()`；`gpu_model_runner.py`(~7800行) 只读 `execute_model()`/`load_model()`；`arg_utils.py`(~2750行) 只扫字段分组。
 4. **每读完一个阶段画图**。画出模块间的调用关系和数据流。
 5. **配合 examples/tests 打断点**。`code/vllm/examples/` 和 `code/vllm/tests/` 有对应测试。
-6. **先读设计文档**。`code/vllm/docs/design/` 下有 28 篇官方设计文档，是理解子系统的最佳入口。
+6. **先读设计文档**。`code/vllm/docs/design/` 下有 29 篇官方设计文档，是理解子系统的最佳入口。
 
 ## 常见误区
 

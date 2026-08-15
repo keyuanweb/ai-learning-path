@@ -180,7 +180,7 @@ Generate implementation plan for 001-core-task-management following constitution
 ```markdown
 Architecture: React → FastAPI Router → TaskService → TaskRepository → PostgreSQL
 
-Backend (6 files): app/models/task.py (ORM), app/schemas/task.py (Pydantic),
+Backend (5 files): app/models/task.py (ORM), app/schemas/task.py (Pydantic),
   app/repositories/task_repository.py (CRUD+soft_delete),
   app/services/task_service.py (business logic), app/api/v1/tasks.py (4 endpoints)
 
@@ -362,6 +362,6 @@ Spec Kit 将 SDD 固化为六个可执行步骤：**Constitution → Specify →
 | 技术探索/POC | 轻量，只用 specify + plan |
 | 多人协作中大型项目 | **最佳场景** |
 
-Spec Kit 适合从 **L2 级别**（结构化规范）开始 SDD 的团队。如果团队处于 L0 或 L1，建议先用 1-2 个小功能跑通流程，建立"规范先行"的肌肉记忆，再逐步推广到整个项目。
+Spec Kit 适合从 **L2 级别**（结构化规范）开始 SDD 的团队。如果团队处于 L1，建议先用 1-2 个小功能跑通流程，建立"规范先行"的肌肉记忆，再逐步推广到整个项目。
 
 > 从 `specify init todo-app` 开始，六步走一遍约 3-4 小时。动手之后你会发现 SDD 从概念变成了每天可用的工作习惯。

@@ -277,7 +277,7 @@ class BatchedModel:
 @serve.deployment(num_replicas=2)
 class HeavyModel:
     def __init__(self):
-        self.model = load_big_model()  # 久是正常的，给足时间
+        self.model = load_big_model()  # 慢是正常的，给足时间
 ```
 
 ### 2. GPU 推理用 async 但 GPU 是串行的

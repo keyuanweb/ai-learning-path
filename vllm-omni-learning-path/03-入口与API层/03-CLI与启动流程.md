@@ -17,10 +17,10 @@ vllm-omni = "vllm_omni.entrypoints.cli.main:main"
 
 ```bash
 # 启动 API 服务器
-vllm-omni serve Qwen/Qwen2.5-Omni-7B
+vllm-omni serve Qwen/Qwen2.5-Omni-7B --omni
 
 # 启动基准测试
-vllm-omni benchmark serve --model Qwen/Qwen2.5-Omni-7B
+vllm-omni bench serve --model Qwen/Qwen2.5-Omni-7B --omni
 ```
 
 ## CLI 架构
@@ -47,7 +47,7 @@ flowchart LR
 args = parse_args()
 
 # 2. 构建引擎参数
-engine_args = AsyncOmniEngineArgs(
+engine_args = OmniEngineArgs(
     model=args.model,
     tensor_parallel_size=args.tensor_parallel_size,
     pipeline_parallel_size=args.pipeline_parallel_size,
@@ -55,10 +55,10 @@ engine_args = AsyncOmniEngineArgs(
 )
 
 # 3. 创建 AsyncOmni 实例
-async_omni = AsyncOmni.from_engine_args(engine_args)
+async_omni = AsyncOmni(model=args.model, engine_args=engine_args)
 
 # 4. 启动 FastAPI + uvicorn
-app = build_app(async_omni)  # api_server.py
+app = build_openai_app(args, supported_tasks)  # api_server.py
 uvicorn.run(app, host=args.host, port=args.port)
 ```
 
@@ -66,7 +66,7 @@ uvicorn.run(app, host=args.host, port=args.port)
 
 | 参数 | 含义 |
 |------|------|
-| `--model` / `-m` | 模型名或路径 |
+| `--model` | 模型名或路径 |
 | `--host` / `--port` | 服务器地址 |
 | `--tensor-parallel-size` / `-tp` | 张量并行度 |
 | `--pipeline-parallel-size` / `-pp` | 流水线并行度 |
@@ -78,7 +78,7 @@ uvicorn.run(app, host=args.host, port=args.port)
 | `--async-chunk` | 启用异步分块（流式跨 Stage） |
 | `--trust-remote-code` | 信任远程代码 |
 | `--enable-sleep-mode` | 允许 Stage 休眠省显存 |
-| `--task-type` | TTS 任务类型（custom_voice/voice_design/base） |
+| `--task-type` | TTS 任务类型（CustomVoice/VoiceDesign/Base） |
 
 ## Benchmark CLI
 
@@ -86,10 +86,10 @@ uvicorn.run(app, host=args.host, port=args.port)
 
 ```bash
 # 启动基准测试服务器
-vllm-omni benchmark serve --model Qwen/Qwen2.5-Omni-7B
+vllm-omni bench serve --model Qwen/Qwen2.5-Omni-7B --omni
 ```
 
-这不同于 `vllm-omni serve`——benchmark serve 是以**基准测试模式**启动，会自动检查所有参与基准测试的模型的配置。
+这不同于 `vllm-omni serve`——bench serve 是以**基准测试模式**启动，会自动检查所有参与基准测试的模型的配置。
 
 ## `collect_env.py`
 

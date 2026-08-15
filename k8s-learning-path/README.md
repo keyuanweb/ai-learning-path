@@ -14,8 +14,9 @@ Kubernetes（K8s）是云原生应用的事实标准编排平台。本路径从�
 | 07-运维与可观测 | kubectl 调试、日志事件、Prometheus/Grafana | 5h |
 | 08-生态与交付 | Helm、Operator/CRD、GitOps/ArgoCD | 6h |
 | 09-AI 工作负载实战 | 推理服务部署、vLLM 与 KubeRay 案例 | 4h |
+| 10-生产应用部署实践 | 生产应用部署最佳实践 | 6h |
 
-**总计约 50 学时**
+**总计约 56 学时**
 
 ## 学习建议
 

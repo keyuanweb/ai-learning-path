@@ -234,7 +234,7 @@ app.invoke(None, config)  # None = 从上次中断处继续
 | 概念 | 一句话 |
 |------|--------|
 | **LangChain** | LLM 应用的标准化抽象（Chain、Memory、Retriever、Tool） |
-| **LCEL** | `|` 管道符串联组件 |
+| **LCEL** | `\|` 管道符串联组件 |
 | **LangGraph** | 有向图描述 Agent 控制流（State + Node + Edge） |
 | **State** | 图的共享记忆（每个字段可定义合并策略） |
 | **Checkpoint** | 状态快照 → 多轮对话 + 断点恢复 + Human-in-the-Loop |

@@ -155,7 +155,7 @@ You have a Kanban board for multi-agent task orchestration. Use it to:
 
 ### 第8层: 强制使用工具
 
-这是 Hermes Agent 区别于普通聊天模型的关键特性。如果配置了 `tool_use: enforce`:
+这是 Hermes Agent 区别于普通聊天模型的关键特性。如果配置了 `tool_use_enforcement: true`:
 
 ```mermaid
 flowchart LR

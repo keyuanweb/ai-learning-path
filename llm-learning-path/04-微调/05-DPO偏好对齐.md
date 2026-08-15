@@ -56,7 +56,7 @@ $$\mathcal{L}_{DPO} = -\log \sigma\!\left(\beta \log\frac{\pi_\theta(y_w|x)}{\pi
 
 $$\text{希望: } \frac{\pi_\theta(y_w)}{\pi_{ref}(y_w)} > \frac{\pi_\theta(y_l)}{\pi_{ref}(y_l)}$$
 
-如果当前模型給好回答的概率比参考模型高，且坏回答的概率比参考模型低，损失就小。反之就惩罚。
+如果当前模型给好回答的概率比参考模型高，且坏回答的概率比参考模型低，损失就小。反之就惩罚。
 
 ### DPO 为什么不需要奖励模型
 

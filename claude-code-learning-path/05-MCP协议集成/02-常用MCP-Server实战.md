@@ -95,7 +95,7 @@ claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /pat
 ### 安装
 
 ```bash
-claude mcp add playwright -- npx -y @anthropic/mcp-server-playwright
+claude mcp add playwright -- npx -y @playwright/mcp
 ```
 
 ### 使用场景
@@ -132,7 +132,7 @@ claude mcp add context7 -- npx -y @upstash/context7-mcp
 ### 安装
 
 ```bash
-claude mcp add postgres -- npx -y @anthropic/mcp-server-postgres
+claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres
 ```
 
 ### 配置
@@ -142,7 +142,7 @@ claude mcp add postgres -- npx -y @anthropic/mcp-server-postgres
   "mcpServers": {
     "postgres": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-postgres"],
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
       "env": {
         "DATABASE_URL": "postgresql://user:pass@localhost:5432/mydb"
       }
@@ -188,12 +188,12 @@ flowchart TD
     },
     "postgres": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-postgres"],
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
       "env": { "DATABASE_URL": "..." }
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-playwright"]
+      "args": ["-y", "@playwright/mcp"]
     }
   }
 }

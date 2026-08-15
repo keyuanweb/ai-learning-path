@@ -47,9 +47,9 @@ class LoadBalancer:
     """
     决定请求应该路由到哪个节点/实例：
     - 轮询（Round Robin）
-    - 最少连接数（Least Connections）
-    - 最短队列（Shortest Queue）
-    - 亲和性路由（一个请求的各 Stage 尽量在同一节点）
+    - 最少队列长度（Least Queue Length）
+    - 随机（Random）
+    - 其他策略可实现为 LoadBalancer 的子类
     """
 ```
 
@@ -58,14 +58,14 @@ class LoadBalancer:
 定义了协调器和客户端之间的消息格式：
 
 ```python
-# 注册消息
-{"type": "register", "node_id": "...", "stage_id": 0, ...}
+# 实例注册/更新消息（Stage → Coordinator）
+{"event_type": "update", "input_addr": "tcp://...", "output_addr": "tcp://...", "stage_id": 0, "status": "up", "queue_length": 0}
 
-# 心跳消息
-{"type": "heartbeat", "node_id": "...", "load": 0.7, ...}
+# 心跳消息（Stage → Coordinator）
+{"event_type": "heartbeat", "input_addr": "tcp://...", "output_addr": "tcp://...", "stage_id": 0, "status": "up", "queue_length": 7}
 
-# 路由请求
-{"type": "route_request", "request_id": "...", "target_stage": 1, ...}
+# 实例列表发布（Coordinator → Hub）
+{"instances": [{"stage_id": 0, "status": "up", "queue_length": 0, ...}]}
 ```
 
 ### `omni_coord_client_for_hub.py` —— 对外入口的客户端

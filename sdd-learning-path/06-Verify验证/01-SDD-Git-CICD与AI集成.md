@@ -160,7 +160,7 @@ flowchart LR
 
 ### 3.2 GitHub Actions 实现
 
-```yaml
+````yaml
 # .github/workflows/sdd-pipeline.yml
 name: SDD Pipeline
 
@@ -367,7 +367,7 @@ jobs:
           SPEC_VERSION=$(cat specs/current-version.txt)
           git tag -a "release/$SPEC_VERSION" -m "Release $SPEC_VERSION"
           git push origin "release/$SPEC_VERSION"
-```
+````
 
 ### 3.3 关键脚本
 

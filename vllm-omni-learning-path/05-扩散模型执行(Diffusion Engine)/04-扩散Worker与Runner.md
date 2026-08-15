@@ -15,7 +15,7 @@ class DiffusionWorker:
     1. 接收 batch（多个请求，同一去噪步）
     2. 准备输入 tensor
     3. 调用模型 forward
-    4. 调用 scheduler.step() 更新 latent
+    4. 调用 pipeline.step_scheduler() 更新 latent
     5. 返回更新后的 latent
     """
 ```
@@ -23,27 +23,13 @@ class DiffusionWorker:
 ### 执行流程
 
 ```python
-def execute_step(self, batch):
-    # 1. 准备输入
-    latent = batch.get_latents()              # 当前噪声状态 (B,C,H,W)
-    timesteps = batch.get_timesteps()          # 当前步数
-    encoder_hidden_states = batch.get_conds()  # 条件 embedding
-
-    # 2. 模型前向（预测噪声）
-    noise_pred = self.model_runner.run(
-        latent=latent,
-        timestep=timesteps,
-        encoder_hidden_states=encoder_hidden_states,
-    )
-
-    # 3. Scheduler 更新
-    new_latent = self.scheduler.step(noise_pred, timesteps, latent)
-
-    # 4. 更新 batch 状态
-    batch.update_latents(new_latent)
-    batch.advance_timestep()
-
-    return batch
+def execute_stepwise(self, scheduler_output: DiffusionSchedulerOutput) -> BaseRunnerOutput:
+    # 委托给 DiffusionModelRunner 执行一次去噪 step：
+    # 1. 准备输入：构造 InputBatch（latent、timestep、条件）
+    # 2. 模型前向（预测噪声）：pipeline.denoise_step(input_batch)
+    # 3. Scheduler 更新：pipeline.step_scheduler(req, noise_pred)
+    # 4. 更新请求状态：step_index 前进，完成的请求做 post_decode
+    return self.model_runner.execute_stepwise(scheduler_output)
 ```
 
 ## DiffusionModelRunner —— 管理模型前向
@@ -55,12 +41,12 @@ class DiffusionModelRunner:
     - 构造 InputBatch
     - 调用 DiT Transformer.forward()
     - 处理 CFG（条件/无条件双路径）
-    - 处理 CUDA Graph 加速
+    - 处理跨 Stage 的 KV cache 接收
     """
 
-    def run(self, latent, timestep, encoder_hidden_states, **kwargs):
-        # 调用模型的 __call__ 或 forward
-        return self.model(latent, timestep, encoder_hidden_states, **kwargs)
+    def execute_model(self, req: OmniDiffusionRequest) -> DiffusionOutput:
+        # 调用 pipeline 的 forward 执行完整扩散生成
+        return self.pipeline.forward(req)
 ```
 
 ### InputBatch —— 批量输入管理
@@ -114,8 +100,8 @@ companion_replica_id = await stage_pool.submit_initial(
 [`diffusion/compile.py`](../../code/vllm-omni/vllm_omni/diffusion/compile.py) 使用 `torch.compile` 来加速 DiT 模型：
 
 ```python
-# 对整个 DiT Transformer 做 torch.compile
-compiled_model = torch.compile(model, mode="reduce-overhead")
+# 对 DiT Transformer 的重复 block 做区域编译（regionally_compile）
+compiled_model = regionally_compile(model, dynamic=True)
 ```
 
 因为扩散模型要跑 N 步（N 通常为 20-50），每步的 forward 图相同，所以 `torch.compile` 的加速效果显著。
@@ -124,8 +110,8 @@ compiled_model = torch.compile(model, mode="reduce-overhead")
 
 [`diffusion/offloader/`](../../code/vllm-omni/vllm_omni/diffusion/offloader/) 实现了模型层的 CPU offloading：
 
-- `SequentialBackend`：顺序加载/卸载层（简单但慢）
-- `LayerwiseBackend`：按层加载/卸载（更精细的显存控制）
+- `ModelLevelOffloadBackend`：模型级加载/卸载（encoder 与 DiT 互斥，简单但慢）
+- `LayerWiseOffloadBackend`：按层加载/卸载（更精细的显存控制）
 
 当 GPU 显存不够时，可以将部分层放到 CPU 内存，用到时再加载回来。
 

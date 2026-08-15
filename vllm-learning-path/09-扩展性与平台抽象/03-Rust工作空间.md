@@ -84,10 +84,10 @@ Rust 前端通过 ZMQ 连接到已有 Python engine。适合 P/D 分离部署或
 Rust parser 通过 PyO3 导出到 Python：
 
 ```python
-# Python 侧调用 Rust parser
-from vllm.rust.parser import DeepSeekV3_2Parser  # pyo3 binding
+# Python 侧调用 Rust tool parser
+from vllm._rust_tool_parser import ToolParser  # pyo3 binding
 
-# Rust parser (src/parser/python/) 提供 Python 可调用的解析器类
+# Rust parser（rust/src/parser/python/，vllm-tool-parser-py crate）提供 Python 可调用的解析器类
 # 比纯 Python 实现快 10-100x
 ```
 
@@ -107,4 +107,4 @@ Rust 前端目前仍是**实验性**的：
 - `rust/src/chat/` —— 理解 chat completions 的 Rust 实现
 - `rust/src/server/` —— Axum HTTP server 架构
 - `build_rust.sh` —— Rust workspace 的构建流程
-- Python 侧启动 Rust 子进程的代码（`vllm` 中的 `--use-rust-frontend` 逻辑）
+- Python 侧启动 Rust 子进程的代码（`vllm` 中的 `VLLM_USE_RUST_FRONTEND` 逻辑）

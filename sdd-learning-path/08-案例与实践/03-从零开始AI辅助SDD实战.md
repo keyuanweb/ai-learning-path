@@ -196,7 +196,7 @@ Q5: V1 单用户场景，预期 QPS < 10，SQLite 默认配置即可
 
 ### AI 输出
 
-```markdown
+````markdown
 # Plan: URL Shortener v1.0
 
 ## 文件结构
@@ -242,7 +242,7 @@ CREATE TABLE links (
 | GET | /api/links/{short_code}/stats | 统计 | — | StatsResponse |
 | GET | /api/links | 列表 | ?page=1&size=20 | PaginatedLinks |
 | GET | /health | 健康检查 | — | {"status": "ok"} |
-```
+````
 
 ---
 
@@ -711,7 +711,7 @@ async def health_check():
 
 测试覆盖率: 78% ✅ (超过 70% 门禁)
 
-Spec 对照结果: 6/6 验收条件全部通过
+Spec 对照结果: 7/7 验收条件全部通过
 ```
 
 ---

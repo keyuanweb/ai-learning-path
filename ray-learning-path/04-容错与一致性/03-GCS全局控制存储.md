@@ -155,7 +155,7 @@ graph TD
     D --> E["方法调用走直连通道<br/>GCS 不再参与"]
 
     style C fill:#e1f5ff
-    style E fill:#d4edga
+    style E fill:#d4edda
 ```
 
 **关键设计**：GCS 只存位置信息，数据面和调用面不经过 GCS。这避免了 GCS 成为性能瓶颈。
@@ -172,7 +172,7 @@ graph TD
     D --> E["Worker 更新本地路由表<br/>后续调用发到新位置"]
 
     style C fill:#fff3cd
-    style E fill:#d4edga
+    style E fill:#d4edda
 ```
 
 ## GCS 一致性保证

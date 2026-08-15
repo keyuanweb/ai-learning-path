@@ -99,7 +99,7 @@ flowchart TD
 
 ### 2.1 Proxy 层：轮询路由
 
-当前 Proxy 使用 `itertools.cycle` 轮询分发（[disagg_proxy_demo.py](../../code/vllm/examples/disaggregated/disaggregated_serving/disagg_proxy_demo.py#L56-L59)）：
+当前 Proxy 使用 `itertools.cycle` 轮询分发（[disagg_proxy_demo.py](../../code/vllm/examples/disaggregated/disaggregated_serving/disagg_proxy_demo.py#L58-L59)）：
 
 ```python
 self.prefill_cycler = itertools.cycle(prefill_instances)
@@ -237,7 +237,7 @@ for each request in waiting:
 
 ### 3.3 满载时的抢占
 
-当 KV Cache 不足时触发抢占（[scheduler.py:419-452](../../code/vllm/vllm/v1/core/sched/scheduler.py#L419)）：
+当 KV Cache 不足时触发抢占（[scheduler.py:571-603](../../code/vllm/vllm/v1/core/sched/scheduler.py#L571)）：
 
 | 策略 | 行为 |
 |------|------|
@@ -477,7 +477,7 @@ t=35    ┌─ fail 策略 → FINISHED_ERROR
 | 加载失败 fail 策略 | `scheduler.py` | L1854–1856 |
 | 加载失败 recompute 策略 | `scheduler.py` | L2708–2709 |
 | `kv_load_failure_policy` | `config/kv_transfer.py` | L69–72 |
-| Proxy 轮询路由 | `disagg_proxy_demo.py` | L56–59 |
+| Proxy 轮询路由 | `disagg_proxy_demo.py` | L58–59 |
 | DP8 交错路由 | `moriio_toy_proxy_server.py` | L213–237 |
 | `finish_requests()` | `scheduler.py` | L2127–2167 |
 

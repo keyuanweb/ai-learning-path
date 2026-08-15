@@ -80,7 +80,7 @@ LLM 的 Attention 机制在读取 prompt 时会"看到"示例中的模式，然�
 
 ### 为什么有效
 
-Auto-Regressive Generation——每个生成的 token 成为后续 token 的条件。让模型先"说出"推理中间步骤等价于给了后续推理提供了中间结果。
+Auto-Regressive Generation——每个生成的 token 成为后续 token 的条件。让模型先"说出"推理中间步骤等价于给后续推理提供了中间结果。
 
 ### CoT 的变体
 

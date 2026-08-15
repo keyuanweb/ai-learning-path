@@ -2,7 +2,7 @@
 
 **源码**：[`code/vllm/vllm/v1/worker/gpu/model_runner.py`](../../code/vllm/vllm/v1/worker/gpu/model_runner.py)
 
-约 3000+ 行。这是 worker 侧最核心的文件。第一遍只读 `load_model()` 和 `execute_model()`。
+约 1600 行。这是 worker 侧最核心的文件。第一遍只读 `load_model()` 和 `execute_model()`。
 
 ## `load_model()` — 模型加载
 
@@ -88,13 +88,13 @@ def execute_model(self, scheduler_output: SchedulerOutput) -> ModelRunnerOutput:
 管理序列到 KV 物理块的映射：
 - `block_table[seq_idx]` = `[block_id_1, block_id_2, ...]` — 该序列持有的 KV 块号列表
 - 不同 attention type 有各自的 block table（因为块池不同）
-- Worker 维护 CPU 侧的 block table，kernel 通过它寻址 GPU 上的 kV 缓存
+- Worker 维护 CPU 侧的 block table，kernel 通过它寻址 GPU 上的 KV 缓存
 
-### CUDAGraphManager
+### CudaGraphManager
 
 在 warmup 阶段录制多种 batch 规模的 CUDA graph。运行时根据 batch 配置匹配最适合的 graph 直接重放，跳过所有 kernel launch overhead。
 
-录制策略取决于 `CUDAGraphSupport` 级别：
+录制策略取决于 `AttentionCGSupport` 级别：
 - `ALWAYS` — 为每种可能 batch size 录制 graph（包括不等长 prefill）
 - `UNIFORM_SINGLE_TOKEN_DECODE` — 只为「每个请求 1 token」录制
 - `UNIFORM_BATCH` — 只为所有请求 query 长度相同录制
@@ -102,7 +102,7 @@ def execute_model(self, scheduler_output: SchedulerOutput) -> ModelRunnerOutput:
 
 ### RequestState tracker
 
-`GPUModelRunner` 内部维护 `req_states: dict[str, RequestState]`：
+`GPUModelRunner` 内部维护 `req_states: RequestState`（批量级状态跟踪器）：
 ```python
 class RequestState:
     token_ids: list[int]        # 请求的完整 token 序列
@@ -143,6 +143,6 @@ MRV2 是对现有 GPUModelRunner 的彻底重写，解决 V1 的技术债务：
 
 针对 MoE 模型的优化：将 batch 拆分为两个 micro-batch，用双 CPU 线程实现 all-to-all 通信与计算的重叠，降低 MoE dispatch/combine 的延迟开销。
 
-- 组件：`UBatchWrapper`、`UBatchContext`（[`vllm/v1/worker/gpu_ubatch_wrapper.py`](../../code/vllm/vllm/v1/worker/gpu_ubatch_wrapper.py)）
+- 组件：`UBatchWrapper`（[`vllm/v1/worker/gpu_ubatch_wrapper.py`](../../code/vllm/vllm/v1/worker/gpu_ubatch_wrapper.py)）、`UBatchContext`（[`vllm/v1/worker/ubatching.py`](../../code/vllm/vllm/v1/worker/ubatching.py)）
 - 前提：DP+EP 部署，DeepEP 后端
 - 开关：`--enable-dbo`、`--dbo-decode-token-threshold`、`--dbo-prefill-token-threshold`

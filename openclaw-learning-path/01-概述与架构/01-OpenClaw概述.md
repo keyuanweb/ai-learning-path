@@ -39,7 +39,7 @@ flowchart TD
 
 ### 4. 模块化可插拔
 
-Gateway、Agent Runtime、Skills、Memory、Plugin 五层各自独立，可替换或扩展。
+Channel、Gateway、Agent Runtime、Skills、Memory、Plugin 六层各自独立，可替换或扩展。
 
 ### 5. Workspace 即为 Agent
 

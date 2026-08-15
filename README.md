@@ -61,6 +61,9 @@ flowchart LR
 | 05 | [模型实现 — LLaMA/Qwen 等具体模型适配](vllm-learning-path/05-模型实现/) | 3~4h |
 | 06 | [Attention后端 — FlashAttention/FlashInfer 等](vllm-learning-path/06-Attention后端/) | 2~3h |
 | 07 | [高级特性 — Prefix Caching/Spec Decode/多模态](vllm-learning-path/07-高级特性/) | 3~5h |
+| 08 | [编译与CUDA图 — vLLM IR、torch.compile、Fusion Passes、CUDA Graphs 多模式](vllm-learning-path/08-编译与CUDA图/) | 6~8h |
+| 09 | [扩展性与平台抽象 — Plugin 系统、多硬件平台、Rust 工作空间](vllm-learning-path/09-扩展性与平台抽象/) | 4~5h |
+| 10 | [推理增强特性 — Reasoning/Tool Parser、入口点扩展、EP/KV Transfer 深化、DBO/MRV2、KV Offload 扩展](vllm-learning-path/10-推理增强特性/) | 8~10h |
 
 > 源码位置：`code/vllm/`
 
@@ -84,7 +87,7 @@ flowchart LR
 
 ### 4. [Agent 学习路径](agent-learning-path/) ★ 2026 全面更新
 
-系统掌握 AI Agent 完整技术栈：从 LangChain/LangGraph 基础到 MCP/A2A 开放协议、DeepAgents Harness、多框架对比、Agent 评估与企业治理。11 阶段 47 篇文档。
+系统掌握 AI Agent 完整技术栈：从 LangChain/LangGraph 基础到 MCP/A2A 开放协议、DeepAgents Harness、多框架对比、Agent 评估与企业治理。11 阶段 49 篇文档。
 
 | 阶段 | 内容 | 学时 |
 |------|------|------|
@@ -96,10 +99,9 @@ flowchart LR
 | 05 | [Agent Skills — SKILL.md、DeepAgents、渐进式披露、评估治理](agent-learning-path/05-Skill/) | 5~8h |
 | 06 | [RAG + Agent — Corrective/Agentic/Self/Graph RAG](agent-learning-path/06-RAG/) | 7~10h |
 | 07 | [多 Agent — Supervisor/Hierarchical/Swarm、**A2A协议 ★**、框架对比](agent-learning-path/07-多Agent/) | 10~16h |
-| 08 | [案例研究 — 金融/客服/数据迁移、**MCP+A2A协作 ★**、DeepAgents实践](agent-learning-path/11-案例/) | 5~8h |
 | 09 | [**评估体系 ★** — LLM-as-Judge、轨迹评估、红队测试、持续监控](agent-learning-path/09-评估/) | 5~8h |
 | 10 | [生产部署 — LangSmith、Platform、安全防护、**企业治理 ★**](agent-learning-path/10-生产部署/) | 5~8h |
-| 11 | [综合实战 — 端到端项目，综合各阶段技能](agent-learning-path/) | 10~15h |
+| 11 | [案例研究 — 金融/客服/数据迁移、**MCP+A2A协作 ★**、DeepAgents实践](agent-learning-path/11-案例/) | 5~8h |
 
 > **2026 更新亮点**：新增 MCP 协议完整教程、A2A 跨框架协作、DeepAgents v1.x 深入、OpenAI Agents SDK 对比、Agent 评估体系（LLM-as-Judge/轨迹评估/红队测试）、企业级治理（ABAC/PII脱敏/沙箱/MCP Tunnels）、6 框架选型决策树
 
@@ -177,7 +179,7 @@ flowchart LR
 
 ### 9. [Kubernetes 学习路径](k8s-learning-path/)
 
-系统掌握 Kubernetes 容器编排，从本地 kind 集群到生产 Helm/GitOps 交付，覆盖工作负载、网络、存储、安全与可观测，末阶段衔接 vLLM 推理与 KubeRay 部署。
+系统掌握 Kubernetes 容器编排，从本地 kind 集群到生产 Helm/GitOps 交付，覆盖工作负载、网络、存储、安全与可观测，阶段 09 衔接 vLLM 推理与 KubeRay 部署。
 
 | 阶段 | 内容 | 学时 |
 |------|------|------|
@@ -191,6 +193,7 @@ flowchart LR
 | 07 | [运维与可观测 — kubectl 调试、日志、Prometheus/Grafana](k8s-learning-path/07-运维与可观测/) | 5h |
 | 08 | [生态与交付 — Helm、Operator/CRD、GitOps/ArgoCD](k8s-learning-path/08-生态与交付/) | 6h |
 | 09 | [AI 工作负载实战 — 推理服务、vLLM 与 KubeRay](k8s-learning-path/09-AI工作负载实战/) | 4h |
+| 10 | [生产应用部署实践 — Namespace/RBAC、完整 Deployment、Service/Ingress、HPA/PDB](k8s-learning-path/10-生产应用部署实践/) | 6h |
 
 ### 10. [Agent Harness 学习路径](harness-learning-path/)
 

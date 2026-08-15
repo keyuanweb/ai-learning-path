@@ -83,10 +83,10 @@ cache_key = hash(
 
 ```python
 # compilation/caching.py
-def get_cache_key(vllm_config: VllmConfig) -> str:
-    model_hash = hash_source_files(model_source_files)
-    config_hash = hash(vllm_config.to_json())
-    return combine_hashes([model_hash, config_hash])
+def aot_compile_hash_factors(vllm_config: VllmConfig) -> list[str]:
+    env_hash = hash_factors(envs.compile_factors())  # 环境因子（如 VLLM_PP_LAYER_PARTITION）
+    config_hash = vllm_config.compute_hash()         # VllmConfig 整体 hash
+    return [env_hash, config_hash]
 ```
 
 ## Dynamic Shapes 处理

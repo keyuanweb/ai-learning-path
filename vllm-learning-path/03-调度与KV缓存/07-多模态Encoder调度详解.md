@@ -65,7 +65,7 @@ flowchart LR
 
 Decoder（LLM）和 Encoder（ViT/音频编码器）在**不同的硬件上计算**（如 LLM 在 GPU 0~3，ViT 在 GPU 0），资源独立。Encoder budget 防止单步内堆积过多图片/视频编码任务导致 Encoder 成为瓶颈。
 
-Encoder Budget 的计算逻辑（[`encoder_budget.py`](../../code/vllm/vllm/multimodal/encoder_budget.py) L117-L121）：
+Encoder Budget 的计算逻辑（[`encoder_cache_manager.py`](../../code/vllm/vllm/v1/core/encoder_cache_manager.py) 的 `compute_mm_encoder_budget()`，公式见 L309-L311）：
 
 ```python
 encoder_compute_budget = max(
@@ -400,7 +400,7 @@ flowchart TD
 
 ## 8. 多模态 Chunked Prefill 特殊性
 
-### 7.1 `disable_chunked_mm_input` 参数
+### 8.1 `disable_chunked_mm_input` 参数
 
 默认 `False`。设为 `True` 时，禁止 decoder chunk 跨越 multimodal item 边界：
 
@@ -421,7 +421,7 @@ Step 1: num_new_tokens = 300 → 覆盖 [text_A, IMG前半, ...]
         需要等下一步 IMG 能被完整调度
 ```
 
-### 7.2 回退时序示例
+### 8.2 回退时序示例
 
 ```mermaid
 sequenceDiagram
@@ -502,7 +502,7 @@ if self.ec_connector is not None and self.ec_connector.has_cache_item(item_ident
 | Encoder Cache Manager | [`encoder_cache_manager.py`](../../code/vllm/vllm/v1/core/encoder_cache_manager.py) 全部 |
 | `MultiModalBudget` | [`encoder_budget.py`](../../code/vllm/vllm/multimodal/encoder_budget.py) L44–L194 |
 | EC Connector 接口 | [`ec_connector/base.py`](../../code/vllm/vllm/distributed/ec_transfer/ec_connector/base.py) |
-| `SchedulerOutput` encoder 字段 | [`output.py`](../../code/vllm/vllm/v1/core/sched/output.py) L213, L225 |
+| `SchedulerOutput` encoder 字段 | [`output.py`](../../code/vllm/vllm/v1/core/sched/output.py) L214, L225 |
 
 ---
 

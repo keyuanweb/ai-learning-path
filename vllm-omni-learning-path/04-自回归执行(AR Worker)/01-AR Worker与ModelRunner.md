@@ -43,12 +43,12 @@ flowchart TD
   recv["接收请求 prompt_token_ids + mm_features"]
   exec["execute_model"]
   recv --> exec
-  subgraph prep [准备输入 prepare_input]
+  subgraph prep [准备输入 _prepare_inputs]
     m1[多模态特征合并]
     m2[attention mask 构建]
   end
   exec --> prep
-  prep --> fwd["模型前向 GPUARModelRunner.forward"]
+  prep --> fwd["模型前向 GPUARModelRunner._model_forward"]
   subgraph modelFwd [前向内部]
     e1[Token Embedding]
     e2[N 层 Transformer 含多模态注入]
@@ -83,7 +83,7 @@ class GPUARModelRunner(GPUModelRunner):
 2. **额外输出收集**：除了 logits，还收集 thinker embedding（给 Talker 用）
 3. **KV Cache 标记**：标记哪些 KV 需要传输给下游 Stage
 
-## Geneneration Worker —— 非自回归生成
+## Generation Worker —— 非自回归生成
 
 ```python
 class GPUGenerationWorker(GPUWorker):
@@ -122,7 +122,7 @@ class OmniConnectorModelRunnerMixin:
 [`gpu_memory_utils.py`](../../code/vllm-omni/vllm_omni/worker/gpu_memory_utils.py) 负责计算和分配每个 Stage 的 GPU 显存：
 
 ```python
-# 确定每个 Stage 应该用多少 KB Cache 块
+# 确定每个 Stage 应该用多少 KV Cache 块
 def determine_num_kv_cache_blocks(stage_config):
     # 考虑：模型权重占多少、KV Cache 需要多少、是否有其他 Stage 共享 GPU
 ```

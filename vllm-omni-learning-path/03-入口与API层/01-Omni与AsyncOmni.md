@@ -10,8 +10,8 @@
 | 特性 | `Omni` | `AsyncOmni` |
 |------|--------|-------------|
 | 使用场景 | 离线推理（脚本/批量处理） | 在线服务（API 服务器） |
-| 调用方式 | `omni.generate(prompts, params)` | `async_omni.generate(prompts, params)` |
-| 返回值 | `list[OmniRequestOutput]` 或 Generator | `list[OmniRequestOutput]` |
+| 调用方式 | `omni.generate(prompts, params)` | `async_omni.generate(prompt, sampling_params_list)` |
+| 返回值 | `list[OmniRequestOutput]` 或 Generator | `AsyncGenerator[OmniRequestOutput]` |
 | 底层实现 | 同步调用 + 后台线程跑 event loop | 直接使用 asyncio |
 
 两者都继承自 `OmniBase`，共享大部分逻辑（配置解析、采样参数处理等）。
@@ -41,7 +41,7 @@ for output in omni.generate(
     print(output.text)  # 边生成边输出
 ```
 
-`Omni.generate()` 内部启动一个后台线程运行 Orchestrator 的 asyncio event loop，主线程同步等待结果。
+`Omni` 底层通过 `AsyncOmniEngine` 启动一个后台线程运行 Orchestrator 的 asyncio event loop，`generate()` 在主线程同步等待结果。
 
 ## AsyncOmni —— 异步服务入口
 
@@ -50,11 +50,13 @@ from vllm_omni import AsyncOmni
 
 async_omni = AsyncOmni(model="Qwen/Qwen2.5-Omni-7B")
 
-# 异步调用
-outputs = await async_omni.generate(
-    prompts=["你好"],
+# 异步调用（返回 AsyncGenerator，逐条产出结果）
+outputs = async_omni.generate(
+    prompt="你好",
     sampling_params_list=sampling_params,
 )
+async for output in outputs:
+    ...
 ```
 
 `AsyncOmni` 是 OpenAI 兼容 API 服务器的基础。API 服务器在[`entrypoints/openai/api_server.py`](../../code/vllm-omni/vllm_omni/entrypoints/openai/api_server.py) 中创建 `AsyncOmni` 实例，然后处理 HTTP 请求。
@@ -71,10 +73,10 @@ def resolve_sampling_params_list(self, sampling_params_list):
     # 这个方法将它们统一转换为 list[SamplingParams]，长度 = Stage 数量
 ```
 
-### 引擎启动：`_init_engine`
+### 引擎启动：`__init__`
 
 ```python
-def _init_engine(self, ...):
+def __init__(self, ...):
     # 1. 根据模型名解析 Pipeline 配置
     # 2. 创建各个 Stage 的 EngineCore Proc
     # 3. 创建 Orchestrator
@@ -85,7 +87,7 @@ def _init_engine(self, ...):
 
 ```python
 def _maybe_expand_sampling_params(self, sampling_params_list):
-    # PD 模式下用户可能只提供 N-1 组参数（因为 Prefill 和 Decode 在同一 Stage）
+    # PD 模式下用户可能只提供 N-1 组参数（Prefill 与 Decode 被拆成两个 Stage，但用户仍按一个 Stage 提供参数）
     # 这个方法自动补全缺失的参数
 ```
 
@@ -94,7 +96,7 @@ def _maybe_expand_sampling_params(self, sampling_params_list):
 ```mermaid
 flowchart TD
   n0["omni.generate(prompts, sampling_params_list)"]
-  n1["OmniBase._init_engine()           ← 创建 Orchestrator + Stage Pools"]
+  n1["OmniBase.__init__()           ← 创建 Orchestrator + Stage Pools"]
   n2["对每个 prompt："]
   n3["预处理（tokenize, mm_data 编码）"]
   n4["构造 ClientRequestState"]

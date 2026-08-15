@@ -70,7 +70,7 @@ delegate_task(
 )
 ```
 
-子 Agent 收到的 System Prompt（[delegate_tool.py:581-604](code/hermes-agent/tools/delegate_tool.py#L581-L604)）：
+子 Agent 收到的 System Prompt（[delegate_tool.py:581-604](../code/hermes-agent/tools/delegate_tool.py#L581-L604)）：
 
 ```
 You are a focused subagent working on a specific delegated task.
@@ -139,7 +139,7 @@ delegate_task(
 )
 ```
 
-底层使用 `ThreadPoolExecutor` 并发执行（[delegate_tool.py:2081-2090](code/hermes-agent/tools/delegate_tool.py#L2081-L2090)）：
+底层使用 `ThreadPoolExecutor` 并发执行（[delegate_tool.py:2081-2090](../code/hermes-agent/tools/delegate_tool.py#L2081-L2090)）：
 
 ```python
 # 实际执行逻辑（简化版）
@@ -184,7 +184,7 @@ delegate_task(
 )
 ```
 
-Orchestrator 收到的 System Prompt 扩展（[delegate_tool.py:617-636](code/hermes-agent/tools/delegate_tool.py#L617-L636)）：
+Orchestrator 收到的 System Prompt 扩展（[delegate_tool.py:617-636](../code/hermes-agent/tools/delegate_tool.py#L617-L636)）：
 
 ```
 ## Subagent Spawning (Orchestrator Role)
@@ -251,11 +251,11 @@ flowchart TD
     D2 -.-|"❌ 被拒绝"| E1
 ```
 
-深度上限由 `delegation.max_spawn_depth` 控制（默认 2，硬上限 3）。
+深度上限由 `delegation.max_spawn_depth` 控制（默认 1，硬上限 3）。
 
 ## 隔离机制
 
-每个子 Agent 是**真正的独立 AIAgent 实例**（[delegate_tool.py:896](code/hermes-agent/tools/delegate_tool.py#L896)），享有以下隔离：
+每个子 Agent 是**真正的独立 AIAgent 实例**（[delegate_tool.py:896](../code/hermes-agent/tools/delegate_tool.py#L896)），享有以下隔离：
 
 | 隔离维度 | 机制 |
 |---------|------|
@@ -281,7 +281,7 @@ DELEGATE_BLOCKED_TOOLS = frozenset([
 
 ### 审批安全
 
-子 Agent 运行在独立线程中，如果执行危险命令（如 `rm -rf`），默认**自动拒绝**，防止阻塞父 Agent 的 UI（[delegate_tool.py:68-76](code/hermes-agent/tools/delegate_tool.py#L68-L76)）：
+子 Agent 运行在独立线程中，如果执行危险命令（如 `rm -rf`），默认**自动拒绝**，防止阻塞父 Agent 的 UI（[delegate_tool.py:68-76](../code/hermes-agent/tools/delegate_tool.py#L68-L76)）：
 
 ```python
 def _subagent_auto_deny(command, description, **kwargs):
@@ -296,7 +296,7 @@ def _subagent_auto_deny(command, description, **kwargs):
 
 ### 案例 1: Subagent-Driven Development（基于技能）
 
-这是 [software-development/subagent-driven-development](code/hermes-agent/skills/software-development/subagent-driven-development/SKILL.md) 技能的完整流程：
+这是 [software-development/subagent-driven-development](../code/hermes-agent/skills/software-development/subagent-driven-development/SKILL.md) 技能的完整流程：
 
 ```mermaid
 flowchart TD
@@ -396,7 +396,7 @@ for task in ["t1", "t2", "t3", "t4"]:
 
 ### 案例 2: Kanban 多 Agent 流水线
 
-这是 [devops/kanban-orchestrator](code/hermes-agent/skills/devops/kanban-orchestrator/SKILL.md) 技能的完整流程。与 `delegate_task` 的临时子 Agent 不同，Kanban 使用**持久化角色**（profiles），每个角色是独立的长生命周期 Agent。
+这是 [devops/kanban-orchestrator](../code/hermes-agent/skills/devops/kanban-orchestrator/SKILL.md) 技能的完整流程。与 `delegate_task` 的临时子 Agent 不同，Kanban 使用**持久化角色**（profiles），每个角色是独立的长生命周期 Agent。
 
 角色 roster：
 
@@ -477,7 +477,7 @@ kanban_complete(
 
 ### 案例 3: Spike 快速验证（探索型多 Agent）
 
-[software-development/spike](code/hermes-agent/skills/software-development/spike/SKILL.md) 技能演示了多 Agent 在**事实发现/原型验证**场景的用法：
+[software-development/spike](../code/hermes-agent/skills/software-development/spike/SKILL.md) 技能演示了多 Agent 在**事实发现/原型验证**场景的用法：
 
 ```python
 # 用户: "我想知道 WebSocket 推送 LLM token 流是否可行"
@@ -512,8 +512,8 @@ delegation:
   # 子Agent迭代预算
   max_iterations: 50
 
-  # 嵌套深度 (默认2, 硬上限3)
-  max_spawn_depth: 2
+  # 嵌套深度 (默认1, 硬上限3)
+  max_spawn_depth: 1
 
   # 并行子Agent数量上限
   max_concurrent_children: 3

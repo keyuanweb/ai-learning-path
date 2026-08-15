@@ -89,14 +89,14 @@ class AttentionMetadataBuilder(ABC):
 ## CUDA Graph 支持级别
 
 ```python
-class CUDAGraphSupport(IntEnum):
+class AttentionCGSupport(Enum):
     ALWAYS = 3                       # 任何 batch 配置都能用（FlashAttention-3 on H100）
     UNIFORM_BATCH = 2                # 所有 query 长度相同才能用
     UNIFORM_SINGLE_TOKEN_DECODE = 1  # 纯 decode（每个请求 1 token）才能用
     NEVER = 0                        # 不支持 CUDA graph
 ```
 
-不同后端的 CUDA graph 支持级别决定了 `CUDAGraphManager` 的录制策略。
+不同后端的 CUDA graph 支持级别决定了 `CudagraphDispatcher` 的录制策略。
 
 ## 阅读重点
 
@@ -104,4 +104,4 @@ class CUDAGraphSupport(IntEnum):
 - `AttentionMetadataBuilder` 是「调度层到 kernel 层」的翻译器
 - 不同后端的差异在 `forward()` 中调用的具体 CUDA/Triton kernel
 - MLA 两阶段（MHA + MQA）的设计是针对压缩 KV 缓存的优化
-- `CUDAGraphSupport` 级别决定了 warmup 录制和运行时重放的策略
+- `AttentionCGSupport` 级别决定了 warmup 录制和运行时重放的策略

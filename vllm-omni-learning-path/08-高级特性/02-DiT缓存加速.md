@@ -32,20 +32,19 @@ flowchart LR
 | 文件 | 功能 |
 |------|------|
 | `backend.py` | TeaCache 后端：管理缓存读写 |
-| `config.py` | TeaCache 配置：哪些层缓存、阈值多少 |
+| `config.py` | TeaCache 配置：阈值与各模型系数 |
 | `extractors.py` | 特征提取器：从模型输出中提取"是否变化大"的信号 |
 | `hook.py` | PyTorch hooks：拦截模型前向，注入缓存逻辑 |
 | `state.py` | 缓存状态管理 |
-| `coefficient_estimator.py` | 系数估计器：估计缓存命中率 |
+| `coefficient_estimator.py` | 系数估计器：估计 L1 距离重缩放系数 |
 
 ### TeaCache 配置
 
 ```python
 class TeaCacheConfig:
-    layers_to_cache: list[str]   # 哪些层要缓存
-    cache_threshold: float       # 变化阈值（越小越精确，越大越快速）
-    start_step: int              # 从第几步开始缓存
-    end_step: int                # 到第几步结束缓存
+    rel_l1_thresh: float         # 相对 L1 距离阈值（越小越精确，越大越快速）
+    coefficients: list[float]    # L1 距离重缩放的多项式系数
+    transformer_type: str        # Transformer 类名（如 "QwenImageTransformer2DModel"）
 ```
 
 ### 工作原理
@@ -93,11 +92,11 @@ class CacheDiTBackend:
 [`selector.py`](../../code/vllm-omni/vllm_omni/diffusion/cache/selector.py) 决定用哪种缓存方案：
 
 ```python
-def select_cache_backend(model_name):
-    if model_name in TEA_CACHE_SUPPORTED:
-        return TeaCacheBackend()
-    elif model_name in CACHE_DIT_SUPPORTED:
-        return CacheDiTBackend()
+def get_cache_backend(cache_backend, cache_config):
+    if cache_backend == "tea_cache":
+        return TeaCacheBackend(cache_config)
+    elif cache_backend == "cache_dit":
+        return CacheDiTBackend(cache_config)
     else:
         return None  # 不支持缓存
 ```

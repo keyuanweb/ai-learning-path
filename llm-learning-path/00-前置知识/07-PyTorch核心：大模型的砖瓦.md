@@ -22,7 +22,7 @@
 
 Python 的列表（list）是通用的，但做数学运算太慢——每个元素都是独立的对象，无法 GPU 加速。Tensor 把数据打包成**连续内存块**——一个指令就能对所有元素同时操作。
 
-### PyTorch 列表 vs Python 列表
+### PyTorch Tensor vs Python 列表
 
 ```python
 # Python 列表——每个元素逐个处理

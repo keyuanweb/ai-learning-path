@@ -79,7 +79,7 @@ Layer 2: [p_1, ..., p_k, hidden_1, ..., hidden_n]
 
 ---
 
-## 4. IA³ (Infused Adapter by Inhibiting and Amplifying)
+## 4. IA³ (Infused Adapter by Inhibiting and Amplifying Inner Activations)
 
 ### 核心思想
 

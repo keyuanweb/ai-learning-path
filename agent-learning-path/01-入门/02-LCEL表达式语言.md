@@ -137,7 +137,7 @@ class WordCountRunnable(RunnableSerializable):
 
 # 可以像标准组件一样组合
 runnable = WordCountRunnable()
-chain = runnunnable | (lambda x: f"共 {x['count']} 个词")
+chain = runnable | (lambda x: f"共 {x['count']} 个词")
 chain.invoke("hello world today")  # "共 3 个词"
 ```
 

@@ -289,7 +289,7 @@ model = prepare_model(model)
 # ❌ DataLoader 的 num_workers > 0 可能与 Ray Worker 竞争资源
 DataLoader(dataset, batch_size=64, num_workers=8)
 
-# ✅ 在 Ray Worker 内部，num_workers 通常设为 0 或小区值
+# ✅ 在 Ray Worker 内部，num_workers 通常设为 0 或小值
 DataLoader(dataset, batch_size=64, num_workers=2)
 ```
 

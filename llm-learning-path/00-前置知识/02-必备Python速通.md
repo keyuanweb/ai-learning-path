@@ -18,7 +18,7 @@ squares = []
 for i in range(10):
     squares.append(i ** 2)
 
-# 列表推导式 —— 一句话等价上面三行
+# 列表推导式 —— 一句话等价于上面三行
 squares = [i ** 2 for i in range(10)]
 
 # 加条件

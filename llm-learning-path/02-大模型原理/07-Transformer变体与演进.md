@@ -123,10 +123,10 @@ flowchart LR
   n3["2022  FlashAttention             → IO感知优化（不改变复杂度，实际加速2-4×）"]
   n4["2023  Mamba                      → SSM 挑战 Attention"]
   n5["2023  GQA (LLaMA 2)              → KV Cache 优化"]
-  n6["2024  MoE (DeepSeek-V3, Qwen3)   → 稀疏激活"]
+  n6["2024-2025  MoE (DeepSeek-V3, Qwen3)   → 稀疏激活"]
   n7["2024  MLA (DeepSeek-V2/V3)       → KV Cache 极致压缩"]
   n8["2024  MTP (DeepSeek-V3)          → 多 token 预测"]
-  n9["2025  FlashAttention-3            → H100 专用优化"]
+  n9["2024  FlashAttention-3            → H100 专用优化"]
   n10["2025  混合注意力/SSM              → Qwen3-Next, Kimi K2"]
   n0 --> n1
   n1 --> n2

@@ -102,7 +102,7 @@ sequenceDiagram
 
     rect rgb(255, 243, 224)
         Note over S: ② 关键决策：load_kv_async=True
-        S->>S: allocate_slots(外部4000t, delay_cache=True)
+        S->>S: allocate_slots(外部4000t, delay_cache_blocks=True)
         Note right of S: 分配 KV blocks ✓<br/>消耗 token_budget ✗<br/>加入 running ✗
         S->>KC: update_state_after_alloc()
         S->>S: req_X → WAITING_FOR_REMOTE_KVS
@@ -121,7 +121,7 @@ sequenceDiagram
     W-->>S: KVConnectorOutput.finished_recving = {req_X}
 
     Note over S,W: === Step N+3: 提升入 Batch ===
-    S->>S: ③ _try_promote(req_X)
+    S->>S: ③ _try_promote_blocked_waiting_request(req_X)
     Note right of S: finished_recving 匹配!<br/>cache_blocks(req_X, 4000)
     S->>S: req_X → WAITING (重新排队)
     S->>S: num_computed=4000, num_new=1<br/>→ allocate(1t) → RUNNING ✓

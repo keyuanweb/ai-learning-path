@@ -110,10 +110,10 @@ flowchart TD
 每个 Stage 的 Client 上有一个 `process_engine_inputs` 方法，它负责把上一 Stage 的**原始输出**转为当前 Stage 的**输入格式**：
 
 ```python
-def process_engine_inputs(self, source_outputs, original_prompt, streaming_context):
+def process_engine_inputs(self, source_outputs, prompt, streaming_context):
     """
     source_outputs: 上一 Stage 的输出列表
-    original_prompt: 用户最初输入的 prompt
+    prompt: 用户最初输入的 prompt
     streaming_context: 流式状态
 
     返回：当前 Stage 的输入列表（可以是多个，如 CFG 双路径）

@@ -6,7 +6,7 @@
 
 ## 核心定位
 
-Ray 是一个**开源的统一分布式计算框架**，从 UC Berkeley RISELab 诞生，2025 年正式加入 PyTorch Foundation。你可以把它理解成：
+Ray 是一个**开源的统一分布式计算框架**，从 UC Berkeley RISELab 诞生，2024 年正式加入 PyTorch Foundation。你可以把它理解成：
 
 > **Ray 是「分布式计算的 Python 标准库」——就像 `multiprocessing` 能让你用多核，Ray 让你用多机；而且不止多进程，它提供了函数(Task)、类(Actor)、变量(Object) 三个原语，将单机 Python 程序变成分布式程序只需加几行装饰器。**
 

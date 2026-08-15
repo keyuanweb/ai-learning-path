@@ -100,8 +100,7 @@ stateDiagram-v2
   running --> done: kanban_complete
   running --> blocked: kanban_block
   blocked --> ready: unblock
-  running --> reclaimed: claim 超时或 PID 消失
-  reclaimed --> todo: 回收后重试
+  running --> ready: claim 超时或 PID 消失 (task_runs 记录 reclaimed)
   done --> archived: 手动归档
 ```
 
@@ -119,7 +118,7 @@ stateDiagram-v2
 
 ### CAS 认领机制
 
-[kanban_db.py:1826](code/hermes-agent/hermes_cli/kanban_db.py#L1826) `claim_task()` 是唯一的认领入口：
+[kanban_db.py:1826](../code/hermes-agent/hermes_cli/kanban_db.py#L1826) `claim_task()` 是唯一的认领入口：
 
 ```sql
 UPDATE tasks
@@ -157,7 +156,7 @@ if undone:
 
 ## 第四部分: 7 个 Kanban 工具
 
-Kanban 工具**只在两种情况下**注册到 Agent 的工具 Schema 中（[kanban_tools.py:42](code/hermes-agent/tools/kanban_tools.py#L42)）：
+Kanban 工具**只在两种情况下**注册到 Agent 的工具 Schema 中（[kanban_tools.py:42](../code/hermes-agent/tools/kanban_tools.py#L42)）：
 
 1. `HERMES_KANBAN_TASK` 环境变量存在（Worker 被 Dispatcher spawn）
 2. 当前 Profile 的 `toolsets` 配置包含 `"kanban"`（Orchestrator profile）
@@ -274,7 +273,7 @@ kanban_link(parent_id="t_aaa", child_id="t_bbb")
 
 ## 第五部分: Worker 生命周期
 
-每个被 Dispatcher spawn 的 Worker 在 System Prompt 中自动注入 `KANBAN_GUIDANCE` 块（[prompt_builder.py:188](code/hermes-agent/agent/prompt_builder.py#L188)），定义了 6 步生命周期：
+每个被 Dispatcher spawn 的 Worker 在 System Prompt 中自动注入 `KANBAN_GUIDANCE` 块（[prompt_builder.py:188](../code/hermes-agent/agent/prompt_builder.py#L188)），定义了 6 步生命周期：
 
 ```mermaid
 flowchart LR
@@ -285,7 +284,7 @@ flowchart LR
   s5 --> s6[6 创建后续任务]
 ```
 
-**注入点**在 [run_agent.py:5376](code/hermes-agent/run_agent.py#L5376)：
+**注入点**在 [run_agent.py:5376](../code/hermes-agent/run_agent.py#L5376)：
 
 ```python
 if "kanban_show" in self.valid_tool_names:
@@ -335,7 +334,7 @@ kanban_complete(
 
 ### Worker 上下文构建
 
-[kanban_db.py:3933](code/hermes-agent/hermes_cli/kanban_db.py#L3933) `build_worker_context()` 为 Worker 构建完整的任务上下文，按顺序包含：
+[kanban_db.py:3933](../code/hermes-agent/hermes_cli/kanban_db.py#L3933) `build_worker_context()` 为 Worker 构建完整的任务上下文，按顺序包含：
 
 1. 任务标题（必含）
 2. 任务正文（上限 8KB）
@@ -538,11 +537,11 @@ Worker 通过 `kanban_heartbeat()` 延长 claim TTL，避免长时间运行的�
 
 ### 断路器
 
-每个任务有一个 `consecutive_failures` 计数器（重命名为 `spawn_failures`）。任何非成功结局（spawn 失败、超时、崩溃）都会递增。成功完成时重置为 0。
+每个任务有一个 `consecutive_failures` 计数器（旧列名 `spawn_failures`）。任何非成功结局（spawn 失败、超时、崩溃）都会递增。成功完成时重置为 0。
 
 ```python
 # 断路器逻辑
-failure_limit = task.max_retries or config.kanban.failure_limit or 3
+failure_limit = task.max_retries or config.kanban.failure_limit or 2
 if task.consecutive_failures >= failure_limit:
     # 自动 block，不再重试
     block_task(conn, task_id, reason=f"Circuit breaker: {n} consecutive failures")

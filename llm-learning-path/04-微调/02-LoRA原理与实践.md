@@ -1,6 +1,6 @@
 # LoRA 原理与实践
 
-LoRA (Low-Rank Adaptation) 解决了大模型微调的核心矛盾：**全参数微调效果好但太贵（175B 模型需要 700GB+ 显存），而 freeze 大部分参数微调效果好。**
+LoRA (Low-Rank Adaptation) 解决了大模型微调的核心矛盾：**全参数微调效果好但太贵（175B 模型需要 700GB+ 显存），而 freeze 大部分参数微调效果差。**
 
 ---
 

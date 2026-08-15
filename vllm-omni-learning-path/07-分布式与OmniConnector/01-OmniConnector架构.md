@@ -44,7 +44,7 @@ flowchart LR
 flowchart TD
   n0["Orchestrator / StagePool  ← 使用连接器"]
   n1["▼"]
-  n2["KVTransferManager      ← 管理传输生命周期"]
+  n2["OmniKVTransferManager ← 管理传输生命周期"]
   n3["▼"]
   n4["OmniConnector Adapter  ← 适配不同的传输后端"]
   n5["▼    ▼    ▼          ▼"]
@@ -57,20 +57,20 @@ flowchart TD
   n5 --> n6
 ```
 
-## KVTransferManager —— 传输管理器
+## OmniKVTransferManager —— 传输管理器
 
 [`kv_transfer_manager.py`](../../code/vllm-omni/vllm_omni/distributed/omni_connectors/kv_transfer_manager.py) 负责 KV Cache 传输的全生命周期：
 
 ```python
-class KVTransferManager:
-    def start_transfer(self, kv_blocks, target_stage):
-        # 发起 KV Cache 传输
+class OmniKVTransferManager:
+    def handle_finished_requests_kv_transfer(self, finished_reqs, kv_caches, ...):
+        # 从 GPU blocks 提取 KV Cache 并传输给下游 Stage
 
-    def wait_for_completion(self, transfer_id):
-        # 等待传输完成
+    def receive_kv_cache(self, req, target_device=None):
+        # 接收 KV Cache 并填充请求对象（旧接口）
 
-    def get_transfer_status(self, transfer_id):
-        # 查询传输状态
+    def receive_multi_kv_cache(self, req, ...):
+        # 接收主 KV Cache 与可选的 CFG 伴随 KV Cache
 ```
 
 ## 连接器工厂
@@ -108,11 +108,11 @@ def create_connector(config: dict):
 
 ## Monkey Patch
 
-[`kv_transfer/monkey_patch.py`](../../code/vllm-omni/vllm_omni/distributed/kv_transfer/monkey_patch.py) 通过"猴子补丁"修改 vLLM 原生的 KV Cache 行为，使其支持跨 Stage 传输：
+[`kv_transfer/monkey_patch.py`](../../code/vllm-omni/vllm_omni/distributed/kv_transfer/monkey_patch.py) 通过"猴子补丁"修补 vLLM 原生 MooncakeConnector 的请求 ID 不匹配问题（PD 解耦下 Prefill 与 Decode 引擎会为同一请求生成不同的 ID 后缀）：
 
 ```python
-# 在 vLLM EngineCore 的 step() 之后拦截 KV Cache
-# 将其序列化并通过 OmniConnector 发送给下游 Stage
+# 把 remote_request_id 通过 kv_transfer_params 传递
+# 使 Decode 侧引用 Prefill 引擎中正确的 KV Cache 条目
 ```
 
 ## 阅读时间

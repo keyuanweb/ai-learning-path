@@ -18,27 +18,30 @@ Pipeline = "一个模型 的 Stage 拆分方案"
 
 ```python
 # qwen2_5_omni/pipeline.py
-def get_stage_configs():
-    return [
-        {
-            "stage_id": 0,
-            "model_stage": "thinker",
-            "worker_type": "ar",
-            "model_arch": "Qwen2_5OmniThinkerModel",
-        },
-        {
-            "stage_id": 1,
-            "model_stage": "talker",
-            "worker_type": "generation",
-            "model_arch": "Qwen2_5OmniTalkerModel",
-        },
-        {
-            "stage_id": 2,
-            "model_stage": "token2wav",
-            "worker_type": "generation",
-            "model_arch": "Qwen2_5OmniToken2WavModel",
-        },
-    ]
+QWEN2_5_OMNI_PIPELINE = PipelineConfig(
+    model_type="qwen2_5_omni",
+    model_arch="Qwen2_5OmniForConditionalGeneration",
+    stages=(
+        StagePipelineConfig(
+            stage_id=0,
+            model_stage="thinker",
+            execution_type=StageExecutionType.LLM_AR,
+            model_arch="Qwen2_5OmniThinkerModel",
+        ),
+        StagePipelineConfig(
+            stage_id=1,
+            model_stage="talker",
+            execution_type=StageExecutionType.LLM_AR,
+            model_arch="Qwen2_5OmniTalkerModel",
+        ),
+        StagePipelineConfig(
+            stage_id=2,
+            model_stage="code2wav",
+            execution_type=StageExecutionType.LLM_GENERATION,
+            model_arch="Qwen2_5OmniToken2WavModel",
+        ),
+    ),
+)
 ```
 
 ## Pipeline 配置的两个来源
@@ -48,36 +51,44 @@ def get_stage_configs():
 [`stage_configs/`](../../code/vllm-omni/vllm_omni/model_executor/stage_configs/) 目录下存放了 YAML 格式的 Stage 配置：
 
 ```yaml
-# 示例 YAML 配置
-model_arch: Qwen2_5OmniForConditionalGeneration
-stages:
+# 示例 YAML 配置（stage_configs/ 下的文件结构）
+stage_args:
   - stage_id: 0
-    model_stage: thinker
-    worker_type: ar
-    model_arch: Qwen2_5OmniThinkerModel
+    stage_type: llm
+    engine_args:
+      model_stage: thinker
+      worker_type: ar
+      model_arch: Qwen2_5OmniThinkerModel
   - stage_id: 1
-    model_stage: talker
-    worker_type: generation
-    model_arch: Qwen2_5OmniTalkerModel
+    stage_type: llm
+    engine_args:
+      model_stage: talker
+      worker_type: ar
+      model_arch: Qwen2_5OmniTalkerModel
 ```
 
-### 2. Python 代码函数
+### 2. Python 代码
 
-很多模型在 `pipeline.py` 中定义了 `get_stage_configs()` 或 `get_pipeline_config()` 函数，以编程方式生成 Stage 配置。
+很多模型在 `pipeline.py` 中定义了 `PipelineConfig` 配置变量（如 `QWEN2_5_OMNI_PIPELINE`），以编程方式生成 Stage 配置。
 
 ### PipelineRegistry
 
 [`pipeline_registry.py`](../../code/vllm-omni/vllm_omni/config/pipeline_registry.py) 统一管理所有模型的 Pipeline 配置：
 
 ```python
-class PipelineRegistry:
-    def get_pipeline(self, model_arch):
-        # 查询模型架构名 → 返回 Stage 列表
-        ...
-
-    def register(self, model_arch, pipeline_config):
-        # 注册新的 Pipeline
-        ...
+# config/pipeline_registry.py
+_OMNI_PIPELINES = {
+    # model_type -> (module_path, variable_name)
+    "qwen2_5_omni": (
+        "vllm_omni.model_executor.models.qwen2_5_omni.pipeline",
+        "QWEN2_5_OMNI_PIPELINE",
+    ),
+    "qwen3_omni_moe": (
+        "vllm_omni.model_executor.models.qwen3_omni.pipeline",
+        "QWEN3_OMNI_PIPELINE",
+    ),
+    # ... 其他模型；首次查找时延迟 import 对应模块
+}
 ```
 
 ## Stage 配置的关键字段
@@ -103,14 +114,14 @@ class PipelineRegistry:
 
 ```python
 # 示例：qwen3_omni.py 中的转换函数
-def process_thinker_output_for_talker(thinker_outputs, original_prompt):
+def thinker2talker(source_outputs, prompt):
     """
     Thinker 输出 → Talker 输入
     提取：文本 token + 音频控制 signal + additional_information
     """
     ...
 
-def process_talker_output_for_code2wav(talker_outputs, original_prompt):
+def talker2code2wav(source_outputs, prompt):
     """
     Talker 输出 → Code2Wav 输入
     提取：声学特征 code

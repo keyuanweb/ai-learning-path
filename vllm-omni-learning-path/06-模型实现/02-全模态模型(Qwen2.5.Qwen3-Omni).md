@@ -21,7 +21,7 @@ flowchart TD
   n6["输入：Thinker 输出的文本 + 音频 code"]
   n7["模型：~1B Transformer"]
   n8["输出：声学特征 (mel spectrogram 参数)"]
-  n9["worker_type: 'generation'"]
+  n9["worker_type: 'ar'"]
   n10["Stage 2: Token2Wav（Qwen2_5OmniToken2WavModel）"]
   n11["输入：Talker 输出的声学特征"]
   n12["模型：神经声码器（或 DiT）"]
@@ -43,7 +43,7 @@ flowchart TD
   n13 --> n14
 ```
 
-### `qwen2_5_omni.py` —— 主模型类
+### `qwen2_5_omni/` —— 模型类
 
 ```python
 class Qwen2_5OmniForConditionalGeneration(nn.Module):
@@ -54,23 +54,26 @@ class Qwen2_5OmniForConditionalGeneration(nn.Module):
     - 输出文本 token + 音频控制 code
     """
 
-class Qwen2_5OmniThinkerModel(nn.Module):
-    """Thinker 阶段单独使用时的模型类"""
+class Qwen2_5OmniThinkerForConditionalGeneration(nn.Module):
+    """Thinker 阶段单独使用时的模型类（注册名 Qwen2_5OmniThinkerModel）"""
 
-class Qwen2_5OmniTalkerModel(nn.Module):
-    """Talker 阶段单独使用时的模型类"""
+class Qwen2_5OmniTalkerForConditionalGeneration(nn.Module):
+    """Talker 阶段单独使用时的模型类（注册名 Qwen2_5OmniTalkerModel）"""
 ```
 
 ### `pipeline.py` —— Stage 流水线定义
 
 ```python
 # qwen2_5_omni/pipeline.py
-def get_qwen2_5_omni_pipeline():
-    return [
-        StageConfig(stage_id=0, model_stage="thinker", worker_type="ar"),
-        StageConfig(stage_id=1, model_stage="talker", worker_type="generation"),
-        StageConfig(stage_id=2, model_stage="token2wav", worker_type="generation"),
-    ]
+QWEN2_5_OMNI_PIPELINE = PipelineConfig(
+    model_type="qwen2_5_omni",
+    model_arch="Qwen2_5OmniForConditionalGeneration",
+    stages=(
+        StagePipelineConfig(stage_id=0, model_stage="thinker", execution_type=StageExecutionType.LLM_AR),
+        StagePipelineConfig(stage_id=1, model_stage="talker", execution_type=StageExecutionType.LLM_AR),
+        StagePipelineConfig(stage_id=2, model_stage="code2wav", execution_type=StageExecutionType.LLM_GENERATION),
+    ),
+)
 ```
 
 ### `stage_input_processors/qwen2_5_omni.py`
@@ -78,7 +81,7 @@ def get_qwen2_5_omni_pipeline():
 定义了 Thinker → Talker → Token2Wav 的数据转换逻辑：
 
 ```python
-def process_thinker_output_for_talker(thinker_output, original_prompt):
+def thinker2talker(source_outputs, prompt):
     # 从 Thinker 输出中提取：
     # - 文本 reply token（用于 Talker 知道说什么）
     # - 音频控制 code（用于 Talker 知道怎么说）

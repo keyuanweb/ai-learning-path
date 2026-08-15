@@ -17,7 +17,7 @@ flowchart TD
   entry["entrypoints/omni.py<br/>Omni / AsyncOmni 用户入口<br/>Prompt → 内部请求 → Orchestrator"]
   orch["engine/orchestrator.py<br/>Orchestrator 编排器<br/>1 add_request 2 提交 Stage0<br/>3 轮询各 Stage 4 完成后转下一 Stage<br/>5 最后 Stage 完成则返回用户"]
   s0["StagePool Stage0 Thinker<br/>AR Worker / AR Scheduler / GPU Model Runner<br/>输出 token + embedding"]
-  s1["StagePool Stage1 Talker<br/>Generation Worker / Diffusion Engine<br/>消费 Stage0 token 输出 音波图像视频"]
+  s1["StagePool Stage1 Talker<br/>Generation Worker / Diffusion Engine<br/>消费 Stage0 token 输出 音频图像视频"]
   conn["OmniConnector KV Cache 跨 Stage 传输"]
 
   user --> entry --> orch

@@ -64,22 +64,29 @@ flowchart TD
 [`selector.py`](../../code/vllm-omni/vllm_omni/diffusion/attention/selector.py) 自动选择最优后端：
 
 ```python
-def select_attention_backend():
-    if flash_attn_available():
-        return FlashAttentionBackend()
-    elif sage_attn_available():
-        return SageAttentionBackend()
-    else:
-        return PyTorchSDPABackend()
+def get_attn_backend(head_size: int) -> type[AttentionBackend]:
+    # 1. 用户可通过环境变量 DIFFUSION_ATTENTION_BACKEND 强制指定后端
+    # 2. 否则由平台层（vllm_omni.platforms）根据硬件能力选择
+    # 返回后端类，如 FlashAttentionBackend / SageAttentionBackend / SDPABackend
 ```
 
 ### Attention Backend 抽象基类
 
 ```python
 class AttentionBackend(ABC):
+    """扩散 Attention 后端基类"""
+
+    @staticmethod
     @abstractmethod
-    def forward(self, query, key, value, attn_mask=None):
-        # 执行 QKV attention
+    def get_name() -> str:
+        # 后端名称（如 flash-attn）
+        ...
+
+class AttentionImpl(ABC):
+    """后端注意力实现基类"""
+
+    def forward(self, query, key, value, attn_metadata=None):
+        # 执行 QKV attention（按平台分发到 forward_cuda/forward_hip 等）
         ...
 ```
 
@@ -107,9 +114,9 @@ flowchart LR
 [`parallel/ulysses.py`](../../code/vllm-omni/vllm_omni/diffusion/attention/parallel/ulysses.py)：
 
 ```
-所有 GPU 都有完整的 Q
-KV 按 head 维度切分到不同 GPU
-通过 all-to-all 通信交换 QKV
+每个 GPU 持有局部序列的完整 QKV
+通过 all-to-all 通信交换 QKV 的 head
+交换后每个 GPU 持有完整序列的部分 head
 每个 GPU 算自己那部分 head 的 attention
 ```
 
@@ -124,7 +131,7 @@ Ring + Ulysses 可以组合使用，在 head 维度和序列维度上同时做�
 [`layer.py`](../../code/vllm-omni/vllm_omni/diffusion/attention/layer.py) 封装了 DiT 的 Attention 层：
 
 ```python
-class DiffusionAttention(nn.Module):
+class Attention(nn.Module):
     """
     DiT 的 Attention 层：
     - Self-Attention（潜变量内部）

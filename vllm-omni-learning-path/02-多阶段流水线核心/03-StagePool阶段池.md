@@ -35,7 +35,7 @@ class StagePool:
 ### 轮询 + 亲和性
 
 ```python
-def _pick_replica(self, affinity_request_id=None):
+def select_replica_id(self, request_id, *, affinity_request_id=None):
     if affinity_request_id and affinity_request_id in self._request_bindings:
         # 亲和性：同一个"父请求"的子请求路由到同一个副本
         return self._request_bindings[affinity_request_id]
@@ -65,14 +65,14 @@ def release_bindings(self, request_ids):
 ```python
 # 第一次提交（新请求）
 async def submit_initial(self, request_id, req_state, prompt, ...):
-    replica_id = self._pick_replica(affinity_request_id)
+    replica_id = self.select_replica_id(request_id, affinity_request_id=affinity_request_id)
     self._request_bindings[request_id] = replica_id
-    await self.clients[replica_id].submit(request)  # 发送到对应副本
+    await self.clients[replica_id].add_request_async(request)  # 发送到对应副本
 
 # 流式更新（后续数据）
 async def submit_update(self, request_id, req_state, prompt, ...):
     replica_id = self._request_bindings[request_id]  # 必须用同一个副本
-    await self.clients[replica_id].update(request)
+    await self.clients[replica_id].add_request_async(request)
 ```
 
 第一次提交时选择一个副本并绑定；之后的更新必须发到同一个副本。

@@ -84,22 +84,23 @@ flowchart LR
 
 ## DiffusionEngine 的核心方法
 
-### `generate()` —— 处理一个 batch 的扩散请求
+### `step()` —— 处理一个扩散请求
 
 ```python
-def generate(self, requests: list[OmniDiffusionRequest]):
-    # 1. RequestScheduler：把请求加入队列
-    for req in requests:
-        self.request_scheduler.add_request(req)
+async def step(self, request: OmniDiffusionRequest) -> list[OmniRequestOutput]:
+    # 1. 预处理（如图片 resize、格式转换）
+    if self.pre_process_func is not None:
+        request = self.pre_process_func(request)
 
-    # 2. 主循环：处理所有请求直到完成
-    while self.request_scheduler.has_pending():
-        batch = self.request_scheduler.get_batch()
-        outputs = self.executor.run_batch(batch)
-        self.request_scheduler.update(outputs)
+    # 2. 把请求交给调度器并等待执行完成
+    output = await self.async_add_req_and_wait_for_response(request)
 
-    # 3. 返回结果
-    return self.request_scheduler.collect_results()
+    # 3. 后处理（如帧插值、颜色校正）
+    if self.post_process_func is not None:
+        outputs = self.post_process_func(output.output)
+
+    # 4. 返回结果
+    return outputs
 ```
 
 ### 请求批处理
@@ -112,7 +113,7 @@ def generate(self, requests: list[OmniDiffusionRequest]):
 
 ```python
 class DiffusionWorker:
-    def execute_model(self, batch):
+    def execute_stepwise(self, scheduler_output):
         # 执行模型 forward：
         # 1. 准备 latent（噪声）输入
         # 2. 准备 timestep embedding
@@ -136,18 +137,17 @@ class DiffusionWorker:
 # diffusion/data.py
 class OmniDiffusionConfig:
     model_class_name: str             # 模型类名（如 "FluxPipeline"）
-    diffusion_load_format: str        # "diffusers" 或 "gguf"
+    diffusion_load_format: str        # "default" / "custom_pipeline" / "dummy" / "diffusers"
     model: str                        # 模型路径
-    num_inference_steps: int          # 默认去噪步数
     vae_use_slicing: bool             # VAE 切片（省显存）
     vae_use_tiling: bool              # VAE 分块（大图用）
     parallel_config: ...              # 并行配置
 
 class DiffusionOutput:
-    images: list[PIL.Image]           # 生成的图片
-    audios: list[bytes]               # 生成的音频
-    videos: list[list[PIL.Image]]     # 生成的视频帧
-    latents: Tensor                   # 潜空间输出（给下游用）
+    output: Tensor | dict | None                 # 最终输出（潜空间张量或 dict）
+    trajectory_latents: Tensor | dict | None     # 去噪轨迹 latent（给下游用）
+    trajectory_decoded: list[Image.Image] | None # 解码后的图像/视频帧
+    error: str | None                            # 错误信息
 ```
 
 ## 阅读时间

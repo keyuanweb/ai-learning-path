@@ -280,7 +280,7 @@ deep_research = builder.compile(checkpointer=MemorySaver())
 
 ```mermaid
 flowchart TD
-    INVOKE['invoke({"question": "..."})'] --> PLAN["[plan]\n→ subtopics = [A, B, C]"]
+    INVOKE["invoke({question: ...})"] --> PLAN["[plan]\n→ subtopics = [A, B, C]"]
     PLAN -->|"Send"| RA["Send\nresearch A"]
     PLAN -->|"Send"| RB["Send\nresearch B"]
     PLAN -->|"Send"| RC["Send\nresearch C"]

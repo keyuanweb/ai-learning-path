@@ -110,7 +110,7 @@ from langgraph.checkpoint.memory import MemorySaver
 checkpointer = MemorySaver()
 
 # 在 LangGraph 中使用 checkpoint 实现多轮对话记忆
-# 详见 02-LangGraph核心/04-状态管理与Checkpoint.md
+# 详见 02-图核心/04-状态管理与Checkpoint.md
 ```
 
 ## Output Parsers：结构化输出
