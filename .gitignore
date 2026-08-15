@@ -5,3 +5,7 @@ package-lock.json
 package.json
 .env
 scripts/
+.claude/
+.clawhub/
+.mcp.json
+agency-agents-zh/
